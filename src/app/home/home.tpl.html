@@ -4,7 +4,7 @@
           left-buttons="[{type: 'button-icon icon ion-navicon',content: 'MyHouzz', tap: toggleSideMenu }]"
           right-buttons="[{type: 'button-icon icon ion-plus',tap: onMore }]">
     <ion-content class="padding-header">
-        <div gallery-links>
+        <div gallery-links ng-if="selected.value=='photos'">
             <a class="thumb-list"
                ng-repeat="obj in objects track by obj.id"
                ng-href="{{obj | fullImagePath:0}}"

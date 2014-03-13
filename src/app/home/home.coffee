@@ -31,20 +31,20 @@ angular.module('app.home', ['Gallery', 'restangular'])
         href: $filter('fullImagePath')(obj, 0)
         title: obj.title
 
+    $scope.$on 'item.changed', (e, value)->
 
-    collection = Many('photos')
+      console.log "value", value
 
-    objects = null
-    $scope.imageLinks = null
-    $scope.imageLinksMore = null
-    $scope.objects = objects = collection.list({num:3})
+      collection = Many(value)
 
-    if !objects.$resolved
-      Popup.loading objects.$promise, null, MESSAGE.LOAD_FAILED
+      objects = null
+      $scope.objects = objects = collection.list({num:3})
 
-    objects.$promise.then ->
-#      $scope.imageLinks = obj2Links objects
-      $scope.haveMore = objects.meta.more
+      if !objects.$resolved
+        Popup.loading objects.$promise, null, MESSAGE.LOAD_FAILED
+
+      objects.$promise.then ->
+        $scope.haveMore = objects.meta.more
 
     #Load more objects
     $scope.onMore = ->
@@ -53,7 +53,6 @@ angular.module('app.home', ['Gallery', 'restangular'])
       promise = collection.more()
       if promise
         promise.then (data)->
-#          $scope.imageLinksMore = obj2Links data
           $scope.haveMore = objects.meta.more
 
   )

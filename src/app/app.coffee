@@ -15,20 +15,22 @@ angular.module( 'app', ['ionic', 'templates-app', 'templates-common',
     $urlRouterProvider.otherwise("/")
   )
 
-  .controller('AppCtrl', ($scope, Single, Popup) ->
+  .controller('AppCtrl', ($scope, Single, Popup, $timeout) ->
 
     #Load meta info first
     $scope.meta = Single('meta').get()
 
     $scope.sideItems = [
-                        {icon: 'ion-ios7-photos', content: 'Photos'}
-                        {icon: 'ion-ios7-cart', content: 'Products'}
-                        {icon: 'ion-social-designernews', content: 'Professionals'}
-                        {icon: 'ion-ios7-bookmarks', content: 'Ideabooks'}
-                        {icon: 'ion-chatboxes', content: 'Discussions'}
-                        {icon: 'ion-person', content: 'My Houzz'}
+                        {icon: 'ion-ios7-photos', content: 'Photos', value: 'photos'}
+                        {icon: 'ion-ios7-cart', content: 'Products', value: 'products'}
+                        {icon: 'ion-social-designernews', content: 'Professionals', value: 'pros'}
+                        {icon: 'ion-ios7-bookmarks', content: 'Ideabooks', value: 'ideabooks'}
+                        {icon: 'ion-chatboxes', content: 'Discussions', value: 'discussions'}
+                        {icon: 'ion-person', content: 'My Houzz', value: 'my'}
                         ]
 
+
+    $scope.selected = $scope.sideItems[0]
 
     $scope.toggleSideMenu = ->
 
@@ -38,13 +40,17 @@ angular.module( 'app', ['ionic', 'templates-app', 'templates-common',
       else
         locals =
           items: $scope.sideItems
+          selected: $scope.selected
+
         template = "<side-menu on-hide='$dismiss()'></side-menu>"
         $scope.sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template
         $scope.sidebar.promise.then( (item)->
-          console.log item
+          $scope.selected = item
+          $scope.$broadcast('item.changed', item.value)
         ).finally ->
           $scope.sidebar = null
 
+    $timeout -> $scope.$broadcast('item.changed', $scope.selected.value)
   )
 
 

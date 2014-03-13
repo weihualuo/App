@@ -1,4 +1,4 @@
 
-<li class="side-menu-item" ng-class="{active: state=='photos'}" ng-click="$close(item)" ng-repeat="item in items">
+<li class="side-menu-item" ng-class="{active: item==selected}" ng-click="$close(item)" ng-repeat="item in items">
     <i class="icon {{item.icon}}"></i> {{item.content}}
 </li>
