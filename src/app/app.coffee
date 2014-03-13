@@ -1,5 +1,5 @@
 angular.module( 'app', ['ionic', 'templates-app', 'templates-common',
-                        'Model', 'app.home',  'myWidget', 'Service', 'ui.popup',
+                        'Model', 'app.home', 'app.discussion', 'myWidget', 'Service', 'ui.popup',
                         'MESSAGE'
 ])
   .config( ($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) ->
@@ -12,25 +12,45 @@ angular.module( 'app', ['ionic', 'templates-app', 'templates-common',
       templateUrl: "home/home.tpl.html",
       controller: 'HomeCtrl'
     )
+    .state( 'discussion',
+      url: "/dis",
+        templateUrl: "discussion/discussion.tpl.html",
+        controller: 'DiscussionCtrl'
+    )
+
+
     $urlRouterProvider.otherwise("/")
   )
 
-  .controller('AppCtrl', ($scope, Single, Popup, $timeout) ->
+  .controller('AppCtrl', ($scope, Single, Popup, $timeout, $state) ->
+
+    console.log $state
 
     #Load meta info first
     $scope.meta = Single('meta').get()
 
     $scope.sideItems = [
-                        {icon: 'ion-ios7-photos', content: 'Photos', value: 'photos'}
-                        {icon: 'ion-ios7-cart', content: 'Products', value: 'products'}
-                        {icon: 'ion-social-designernews', content: 'Professionals', value: 'pros'}
-                        {icon: 'ion-ios7-bookmarks', content: 'Ideabooks', value: 'ideabooks'}
-                        {icon: 'ion-chatboxes', content: 'Discussions', value: 'discussions'}
-                        {icon: 'ion-person', content: 'My Houzz', value: 'my'}
+                        {icon: 'ion-ios7-photos', content: 'Photos', value: 'photos', view: 'home'}
+                        {icon: 'ion-ios7-cart', content: 'Products', value: 'products', view: 'home'}
+                        {icon: 'ion-social-designernews', content: 'Professionals', value: 'pros', view: 'home'}
+                        {icon: 'ion-ios7-bookmarks', content: 'Ideabooks', value: 'ideabooks', view: 'home'}
+                        {icon: 'ion-chatboxes', content: 'Discussions', value: 'discussions', view: 'discussion'}
+                        {icon: 'ion-person', content: 'My Houzz', value: 'my', view: 'my'}
                         ]
 
 
-    $scope.selected = $scope.sideItems[0]
+
+    onItemSelected = (item)->
+      $scope.selected = item
+      console.log 'view', item.view, $state.current.name
+      $scope.$broadcast('item.changed', item)
+#      if item.view != $state.current.name
+#        $state.go item.view
+#      #defaut route to home viewe
+#      else
+#        $scope.$broadcast('item.changed', item)
+
+    $timeout -> onItemSelected($scope.sideItems[0])
 
     $scope.toggleSideMenu = ->
 
@@ -44,13 +64,8 @@ angular.module( 'app', ['ionic', 'templates-app', 'templates-common',
 
         template = "<side-menu on-hide='$dismiss()'></side-menu>"
         $scope.sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template
-        $scope.sidebar.promise.then( (item)->
-          $scope.selected = item
-          $scope.$broadcast('item.changed', item.value)
-        ).finally ->
-          $scope.sidebar = null
+        $scope.sidebar.promise.then(onItemSelected).finally -> $scope.sidebar = null
 
-    $timeout -> $scope.$broadcast('item.changed', $scope.selected.value)
   )
 
 

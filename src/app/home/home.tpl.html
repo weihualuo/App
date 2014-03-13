@@ -1,10 +1,10 @@
 
 
-<ion-view title="'Home'"
+<ion-view title="title"
           left-buttons="[{type: 'button-icon icon ion-navicon',content: 'MyHouzz', tap: toggleSideMenu }]"
           right-buttons="[{type: 'button-icon icon ion-plus',tap: onMore }]">
     <ion-content class="padding-header">
-        <div gallery-links ng-if="selected.value=='photos'">
+        <div ng-if="pos=='photos'" gallery-links>
             <a class="thumb-list"
                ng-repeat="obj in objects track by obj.id"
                ng-href="{{obj | fullImagePath:0}}"
@@ -12,6 +12,40 @@
                 <img ng-src="{{obj | fullImagePath:6}}" alt="{{obj.title}}">
             </a>
         </div>
+
+        <div ng-if="pos=='products'">
+            <a class="product-list"
+               ng-repeat="obj in objects track by obj.id" >
+                <img style="vertical-align: middle" ng-src="{{meta.imgbase+obj.params[1].image.image}}" /><br>
+                <span>{{obj.title}}</span>
+            </a>
+        </div>
+
+        <div ng-if="pos=='pros'">
+            <a class="item item-thumbnail-left" ng-repeat="obj in objects track by obj.id" ng-click="">
+                <img ng-src="{{obj.image}}">
+                <h2>{{obj.name}}<span class="badge">{{obj.category.cn}}</span></h2>
+                <p>{{obj.desc}}</p>
+            </a>
+        </div>
+
+        <div ng-if="pos=='ideabooks'">
+            <a class="item item-thumbnail-left" ng-repeat="obj in objects track by obj.id" ng-click="">
+                <img ng-src="{{meta.imgbase+obj.pieces[1].image.image}}">
+                <h2>{{obj.title}}<span class="badge">{{obj.author.name}}</span></h2>
+                <p>{{obj.desc}}</p>
+            </a>
+
+        </div>
+
+        <div ng-if="pos=='discussions'">
+           <h1 style="text-align: center"> 讨论区 </h1>
+        </div>
+
+        <div ng-if="pos=='my'">
+           <h1 style="text-align: center"> 我的HOUZZ </h1>
+        </div>
+
     </ion-content>
 </ion-view>
 

@@ -26,18 +26,23 @@ angular.module('app.home', ['Gallery', 'restangular'])
 
     console.log 'HomeListCtrl'
 
+    collection = null
+    objects = null
+
     obj2Links  = (objs)->
       _.map objs, (obj)->
         href: $filter('fullImagePath')(obj, 0)
         title: obj.title
 
-    $scope.$on 'item.changed', (e, value)->
+    $scope.$on 'item.changed', (e, item)->
 
-      console.log "value", value
+      $scope.title = item.content
+      $scope.pos = item.value
 
-      collection = Many(value)
+      if item.view != 'home' then return
 
-      objects = null
+      collection = Many(item.value)
+
       $scope.objects = objects = collection.list({num:3})
 
       if !objects.$resolved
@@ -48,7 +53,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
 
     #Load more objects
     $scope.onMore = ->
-      if !$scope.haveMore
+      if !$scope.haveMore or !collection
         return
       promise = collection.more()
       if promise
