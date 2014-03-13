@@ -32,17 +32,18 @@ angular.module( 'app', ['ionic', 'templates-app', 'templates-common',
 
     $scope.toggleSideMenu = ->
 
-      if !$scope.sidebar
-        locals =
-          items: $scope.sideItems
-          onSideMenuHide: ()-> @$close()
-
-        template = "<side-menu on-hide='onSideMenuHide()'></side-menu>"
-        $scope.sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template
-      else
+      if $scope.sidebar
         $scope.sidebar.end()
         $scope.sidebar = null
-
+      else
+        locals =
+          items: $scope.sideItems
+        template = "<side-menu on-hide='$dismiss()'></side-menu>"
+        $scope.sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template
+        $scope.sidebar.promise.then( (item)->
+          console.log item
+        ).finally ->
+          $scope.sidebar = null
 
   )
 

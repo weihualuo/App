@@ -153,7 +153,7 @@ angular.module( 'ui.popup', [])
       #Return
       ret =
         promise: deferred.promise
-        end: hidePopup
+        end: scope.$dismiss
   )
 
 
