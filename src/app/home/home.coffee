@@ -56,19 +56,6 @@ angular.module('app.home', ['Gallery', 'restangular'])
 #          $scope.imageLinksMore = obj2Links data
           $scope.haveMore = objects.meta.more
 
-    $scope.onSideMenu = ->
-      $scope.showSideMenu = !$scope.showSideMenu
-    $scope.onSideMenuHide = ->
-      $scope.showSideMenu = false
-
-    $scope.menus = [
-                    {icon: 'ion-ios7-photos', content: 'Photos'}
-                    {icon: 'ion-ios7-cart', content: 'Products'}
-                    {icon: 'ion-social-designernews', content: 'Professionals'}
-                    {icon: 'ion-ios7-bookmarks', content: 'Ideabooks'}
-                    {icon: 'ion-chatboxes', content: 'Discussions'}
-                    {icon: 'ion-person', content: 'My Houzz'}
-                  ]
   )
 
 

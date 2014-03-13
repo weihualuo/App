@@ -15,10 +15,34 @@ angular.module( 'app', ['ionic', 'templates-app', 'templates-common',
     $urlRouterProvider.otherwise("/")
   )
 
-  .controller('AppCtrl', ($scope, Single) ->
+  .controller('AppCtrl', ($scope, Single, Popup) ->
 
     #Load meta info first
     $scope.meta = Single('meta').get()
+
+    $scope.sideItems = [
+                        {icon: 'ion-ios7-photos', content: 'Photos'}
+                        {icon: 'ion-ios7-cart', content: 'Products'}
+                        {icon: 'ion-social-designernews', content: 'Professionals'}
+                        {icon: 'ion-ios7-bookmarks', content: 'Ideabooks'}
+                        {icon: 'ion-chatboxes', content: 'Discussions'}
+                        {icon: 'ion-person', content: 'My Houzz'}
+                        ]
+
+
+    $scope.toggleSideMenu = ->
+
+      if !$scope.sidebar
+        locals =
+          items: $scope.sideItems
+          onSideMenuHide: ()-> @$close()
+
+        template = "<side-menu on-hide='onSideMenuHide()'></side-menu>"
+        $scope.sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template
+      else
+        $scope.sidebar.end()
+        $scope.sidebar = null
+
 
   )
 

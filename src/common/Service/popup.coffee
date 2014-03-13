@@ -114,7 +114,7 @@ angular.module( 'ui.popup', [])
       end: hidePopup
 
 
-    modal : (templateUrl, locals)->
+    modal : (templateUrl, locals, template)->
 
       deferred = $q.defer()
       scope = $rootScope.$new(true)
@@ -137,7 +137,7 @@ angular.module( 'ui.popup', [])
         scope.$destroy()
         window.onpopstate = null
 
-      template = '<div class="popup-modal popup-in-up"></div>'
+      template ?= '<div class="popup-modal popup-in-up"></div>'
       angularDomEl = angular.element(template)
 
       $http.get(templateUrl, cache: $templateCache).then (result)->
@@ -150,10 +150,10 @@ angular.module( 'ui.popup', [])
           hidePopup()
           scope.$apply()
 
-      #Return a promise
-      deferred.promise
-
-
+      #Return
+      ret =
+        promise: deferred.promise
+        end: hidePopup
   )
 
 
