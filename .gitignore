@@ -1,0 +1,10 @@
+*.sw*
+*~
+.idea
+.DS_Store
+build/
+bin/
+node_modules/
+vendor/
+component/
+deploy.sh

@@ -1,0 +1,115 @@
+
+@import '../../vendor/ionic-v0.9.26/css/ionic';
+
+@import "variables";
+@import "mixinx";
+@import "utilities";
+@import "popup";
+
+@import "../app/home/home";
+@import "../app/detail/detail";
+@import "../app/edit/edit";
+
+
+// fix soft keyboard bug:
+body{
+  position: static;
+  overflow: auto;
+}
+
+.side-menu-backdrop{
+  position: fixed;
+  left: 0;
+  top: @headerHeight;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+.side-menu{
+  background: rgba(0,0,0,0.7);
+  .opacity(50);
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 30%;
+  min-width: 200px;
+  z-index: 11;
+}
+.side-menu-item{
+  .padding;
+  color: #ffffff;
+  font-size: @icon-medium;
+  &.active{
+    color: #b8dcf2;
+  }
+}
+
+//view is used in ionic
+//.view{
+//  background: @bodyBackground;
+//}
+.ng-click-active{
+  background: @bg-active;
+}
+
+.tab-item{
+  &.active{
+    background: darkgray;
+//    -webkit-filter: invert(100%);
+  }
+}
+
+//:active is not work for a.item:active on mobile browser
+.item{
+  &.ng-click-active{
+    background: @bg-active;
+  }
+}
+//a:active{
+//  background: @bg-active;
+//}
+
+
+button[disabled], input[disabled]{
+  color: gray !important;
+}
+
+.icon-large{
+  font-size: @icon-medium;
+}
+
+//Not work on MP?
+.view-left-right {
+
+  .translate3d(0, 0, 0);
+
+  &.ng-enter, &.ng-leave{
+    .transition(all ease-in-out 300ms);
+  }
+//  start at right
+  &.ng-enter{
+    .translate3d(100%, 0, 0);
+  }
+  &.ng-enter-active{
+    .translate3d(0, 0, 0);
+  }
+//  end at left
+  &.ng-leave-active{
+    .translate3d(-100%, 0, 0);
+  }
+
+  &.reverse{
+    //  start at left
+    &.ng-enter{
+      .translate3d(-100%, 0, 0);
+    }
+    //  end at right
+    &.ng-leave-active{
+      .translate3d(100%, 0, 0);
+    }
+  }
+
+}
+

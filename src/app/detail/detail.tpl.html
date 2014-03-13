@@ -1,0 +1,162 @@
+
+<div class="bar bar-header bar-dark">
+    <button class="button button-clear icon ion-ios7-arrow-back" ng-click="goHome()"></button>
+    <h1 class="title">活动详情</h1>
+    <button class="button button-clear icon ion-ios7-compose-outline" ng-click="onComment()"></button>
+</div>
+
+<div ng-show="e.$resolved">
+
+    <div ng-show="activeTab=='info'">
+        <content
+                has-header="true"
+                has-footer="true"
+                scroll="true"
+                class="padding"
+                >
+            <div class="clearfix">
+                <!--Thumbnail2 width=135, set 10px margin-->
+                <div class="pull-left" style="width: 145px">
+                    <img ng-src="{{e.image.thumbnail2 | fullImagePath}}"/>
+                </div>
+                <div >
+                    <h3>{{e.title}}</h3>
+                    <span><small>{{e.status|statusText}}</small></span>
+                </div>
+            </div>
+
+            <div>
+                <span>活动类型：{{e.ca}}</span><br>
+                <span>开始时间：{{e.start_time| date:'yyyy年MM月dd日 HH:mm'}}</span><br>
+                <span>结束时间：{{e.end_time| date:'yyyy年MM月dd日 HH:mm'}}</span><br>
+                <span>活动地点：{{e.avenue}}</span><br>
+                <span>发起人　：{{e.starter.name}}</span>
+            </div>
+
+            <div class="padding-vertical">
+                <button class="button button-dark"
+                        ng-click="onEdit()"
+                        ng-show="IamOwner">
+                    修改活动
+                </button>
+                <button class="button button-dark"
+                        ng-click="onRegister()"
+                        >
+                    我要报名
+                </button>
+                <button class="button button-dark"
+                        ng-click="onFollow()"
+                        ng-hide="IamOwner"
+                        >
+                    我有兴趣
+                </button>
+                <button class="button button-dark"
+                        ng-click="onUpload()"
+                        >
+                    上传照片
+                </button>
+            </div>
+
+            <h4>活动介绍</h4><hr>
+            <div style="white-space:pre-wrap">{{e.description}}</div>
+        </content>
+    </div>
+
+    <div ng-show="activeTab=='attendants'">
+        <content
+                has-header="true"
+                has-footer="true"
+                scroll="true"
+                class="padding"
+                >
+            <a ng-repeat="u in e.attendees track by u.id" class="avatar-list">
+                <img style="vertical-align: middle" ng-src={{u.profile_image_url}} /><br>
+                <span>{{u.name}}</span>
+            </a>
+            <div style="clear: both"></div>
+            <button class="button button-stable"
+                    ng-click="onRegister()"
+                    ng-hide="IamIn"
+                    >
+                我要报名
+            </button>
+            <button class="button button-stable"
+                    ng-click="onUnRegister()"
+                    ng-show="IamIn"
+                    >
+                取消报名
+            </button>
+        </content>
+    </div>
+
+    <!--There is a bug with ng-switch or ng-if in the list-->
+    <div ng-show="activeTab=='discuss'">
+        <content
+                has-header="true"
+                has-footer="true"
+                scroll="true"
+                on-refresh="onRefresh()"
+                ng-controller='CommentCtrl'
+                >
+            <refresher></refresher>
+
+            <div class="list">
+
+                <a class="item item-avatar item-icon-right" ng-repeat="c in e.comment_set track by c.id" ng-click>
+                    <img ng-src={{c.author.profile_image_url}}>
+                    <h2 class="pull-left">{{c.author.name}} : </h2>
+                    <small class="item-note">{{c.created | date:'MM月dd日 HH:mm'}}</small>
+                    <p style="clear: both;white-space:pre-wrap">{{c.body}}</p>
+                </a>
+            </div>
+
+        </content>
+    </div>
+
+    <div ng-show="activeTab=='album'">
+        <content
+                has-header="true"
+                has-footer="true"
+                scroll="true"
+                >
+            <a class="thumb-list" ng-repeat="img in e.album track by img.id">
+                <img  ng-src="{{img.thumbnail2 | fullImagePath }}" ng-click="slideView(img)">
+            </a>
+
+            <div class="padding" style="clear:both">
+                <button class="button button-dark"
+                        ng-click="onUpload()"
+                        >
+                    上传照片
+                </button>
+            </div>
+
+        </content>
+    </div>
+</div>
+
+<div class="tabs tabs-icon-top">
+    <my-tabs active-tab="activeTab" value="info">
+        <i class="icon ion-ios7-information"></i>
+        简介
+    </my-tabs>
+    <my-tabs active-tab="activeTab" value="attendants">
+        <i class="icon ion-ios7-people"></i>
+        参与名单
+    </my-tabs>
+    <my-tabs on-click="onShare()">
+        <i class="icon ion-share"></i>
+        分享
+    </my-tabs>
+    <my-tabs active-tab="activeTab" value="discuss">
+        <i class="icon ion-ios7-chatbubble"></i>
+        讨论
+    </my-tabs>
+    <my-tabs active-tab="activeTab" value="album">
+        <i class="icon ion-ios7-photos"></i>
+        相册
+    </my-tabs>
+</div>
+
+
+

@@ -1,0 +1,34 @@
+
+.input-label.error{
+  color: red;
+}
+
+.file-select{
+  position: relative;
+}
+input[type=file]{
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.image-preview{
+  position: relative;
+  width: @thumb-width;
+  height: @thumb-height;
+
+  >.image-loading{
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    margin-left: -15px;
+    margin-top: -15px;
+  }
+  >img{
+    position: absolute;
+    max-height: @thumb-height;
+    max-width: @thumb-width;
+  }
+}

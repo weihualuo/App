@@ -1,0 +1,44 @@
+
+
+<ion-view title="'Home'"
+          left-buttons="[{type: 'button-icon icon ion-navicon',content: 'MyHouzz', tap: onSideMenu }]"
+          right-buttons="[{type: 'button-icon icon ion-plus',tap: onMore }]">
+    <ion-content class="padding-header">
+        <div gallery-links>
+            <a class="thumb-list"
+               ng-repeat="obj in objects track by obj.id"
+               ng-href="{{obj | fullImagePath:0}}"
+               title="{{obj.title}}">
+                <img ng-src="{{obj | fullImagePath:6}}" alt="{{obj.title}}">
+            </a>
+        </div>
+    </ion-content>
+</ion-view>
+
+<side-menu ng-if='showSideMenu' on-hide='onSideMenuHide()'>
+    <!--[-->
+    <!--{icon: 'ion-ios7-photos', content: 'Photos'}-->
+    <!--{icon: 'ion-ios7-cart', content: 'Products'}-->
+    <!--{icon: 'ion-social-designernews', content: 'Professionals'}-->
+    <!--{icon: 'ion-ios7-bookmarks', content: 'Ideabooks'}-->
+    <!--{icon: 'ion-chatboxes', content: 'Discussions'}-->
+    <!--{icon: 'ion-person', content: 'My Houzz'}-->
+    <!--]-->
+
+    <li class="side-menu-item" ng-class="{active: state=='photos'}" >
+        <i class="icon ion-ios7-photos"></i> Photos
+    </li>
+
+</side-menu>
+
+<div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls">
+    <div class="slides"></div>
+    <h3 class="title"></h3>
+    <a class="prev">‹</a>
+    <a class="next">›</a>
+    <a class="close">×</a>
+    <a class="play-pause"></a>
+</div>
+
+
+

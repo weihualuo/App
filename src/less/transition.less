@@ -1,0 +1,67 @@
+
+
+
+
+@-webkit-keyframes turn2front {
+  0% { -webkit-transform: rotate3d(0,1,0,180deg); }
+  100% { -webkit-transform: rotate3d(0,0,0,0deg); }
+}
+@-webkit-keyframes turn2back {
+  0% { -webkit-transform: rotateY(-180deg); }
+  100% { -webkit-transform: rotateY(0deg); }
+}
+
+.turnfront{
+  -webkit-animation: turn2front 0.5s linear;
+}
+.turnback{
+  -webkit-animation: turn2back 0.5s linear;
+}
+
+
+/*
+ * Slide
+ * slide pages horizontally
+ */
+@-webkit-keyframes slideInFromRight {
+  0% { -webkit-transform: translate3d(100%, 0, 0); }
+  100% { -webkit-transform: translate3d(0, 0, 0); }
+}
+@-webkit-keyframes slideOutToRight {
+  0% { -webkit-transform: translate3d(0, 0, 0); }
+  100% { -webkit-transform: translate3d(100%, 0, 0); }
+}
+@-webkit-keyframes slideInFromLeft {
+  0% { -webkit-transform: translate3d(-100%,0,0); }
+  100% { -webkit-transform: translate3d(0, 0, 0); }
+}
+@-webkit-keyframes slideOutToLeft {
+  0% { -webkit-transform: translate3d(0,0,0); }
+  100% { -webkit-transform: translate3d(-100%, 0, 0); }
+}
+.mb-slide {
+  -webkit-animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease;
+  .mb-in{
+    -webkit-animation-name: slideInFromRight;
+    .mb-reverse {
+      -webkit-animation-name: slideOutToRight;
+      -webkit-transform: translate3d(100%, 0, 0);
+    }
+  }
+  .mb-out {
+    -webkit-animation-name: slideOutToLeft;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    .mb-reverse {
+      -webkit-animation-name: slideInFromLeft;
+    }
+  }
+
+}
+
+.active-page-add{
+  .mb-slide.mb-in;
+}
+.active-page-remove{
+  .mb-slide.mb-out;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html
+      ng-app="app"
+      ng-controller="AppCtrl"
+        >
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta content=”yes” name=”apple-mobile-web-app-capable” />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+
+    <title ng-bind="pageTitle">MyHouzz</title>
+
+    <% styles.forEach( function ( file ) { %>
+    <link rel="stylesheet" type="text/css" href="<%= file %>" />
+	<% }); %>
+
+    <link rel="stylesheet" href="assets/css/blueimp-gallery.css">
+    <link rel="stylesheet" href="assets/css/blueimp-gallery-indicator.css">
+
+    <% scripts.forEach( function ( file ) { %>
+    <script type="text/javascript" src="<%= file %>"></script>
+	<% }); %>
+
+  </head>
+  <body ng-init='appTitle="MyHouzz"'>
+    <div ng-if="false" style="position: absolute;top: 48%; width: 100%; text-align: center;z-index: 2">
+        Page Loading...
+    </div>
+
+    <div>
+        <ion-nav-bar animation="nav-title-slide-ios7"
+                     type="bar-calm"
+                     class="translucent"
+                     back-button-type="button-icon"
+                     back-button-label=" Back"
+                     back-button-icon="ion-arrow-left-c"></ion-nav-bar>
+        <ion-nav-view animation="slide-left-right"></ion-nav-view>
+    </div>
+  <script>
+      console.log(new Date());
+  </script>
+  </body>
+</html>

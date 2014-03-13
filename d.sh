@@ -1,0 +1,1 @@
+cp -r bin/ /Users/mac/Me/web/sae/houzz/1/static/
