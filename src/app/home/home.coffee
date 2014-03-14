@@ -29,6 +29,11 @@ angular.module('app.home', ['Gallery', 'restangular'])
     collection = null
     objects = null
 
+    scrollResize = (reset)->
+      $scope.scrollView.scrollTo(0,0) if reset
+      #Wait for the list render progress completed
+      $timeout (->$scope.$broadcast('scroll.resize')), 300
+
     obj2Links  = (objs)->
       _.map objs, (obj)->
         href: $filter('fullImagePath')(obj, 0)
@@ -59,6 +64,17 @@ angular.module('app.home', ['Gallery', 'restangular'])
       if promise
         promise.then (data)->
           $scope.haveMore = objects.meta.more
+
+
+    #Refresh the list
+    $scope.onRefresh = ()->
+      promise = collection.refresh()
+      if promise
+        promise.catch(->
+          $popup.alert(MESSAGE.LOAD_FAILED)
+        ).finally ->
+          $scope.$broadcast('scroll.refreshComplete')
+          scrollResize()
 
   )
 
