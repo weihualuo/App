@@ -140,15 +140,21 @@ angular.module( 'ui.popup', [])
       template ?= '<div class="popup-modal popup-in-up"></div>'
       angularDomEl = angular.element(template)
 
-      $http.get(templateUrl, cache: $templateCache).then (result)->
-        angularDomEl.html(result.data)
-        element = $compile(angularDomEl)(scope)
-        $animate.enter(element, parent)
-        #To be compatible with browser and android back button
-        $location.hash('modal')
-        window.onpopstate = ->
-          hidePopup()
-          scope.$apply()
+      $http.get(templateUrl, cache: $templateCache)
+      .then(
+        (result)->
+          angularDomEl.html(result.data)
+          element = $compile(angularDomEl)(scope)
+          $animate.enter(element, parent)
+          #To be compatible with browser and android back button
+          $location.hash('modal')
+          window.onpopstate = ->
+            hidePopup()
+            scope.$apply()
+        ()->
+          deferred.reject()
+          console.log "Failed to load", templateUrl
+      )
 
       #Return
       ret =

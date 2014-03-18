@@ -62,9 +62,58 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch', 'templates-app', 'templat
           items: $scope.sideItems
           selected: $scope.selected
 
-        template = "<side-menu on-hide='$dismiss()'></side-menu>"
+        template = "<side-pane position='left' on-hide='$dismiss()'></side-pane>"
         $scope.sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template
         $scope.sidebar.promise.then(onItemSelected).finally -> $scope.sidebar = null
+
+    onFilterSelected = (id)->
+      console.log id
+    filterConfig =
+      room:
+        title: 'Spcaces'
+        any:
+          id: 0
+          en: 'All spaces'
+      style:
+        title: 'Style'
+        any:
+          id: 0
+          en: 'Any'
+      location:
+        title: 'Area'
+        any:
+          id: 0
+          en: 'Any'
+
+    $scope.toggleFilter = (type)->
+
+      if !filterConfig[type]
+        console.log "not found", type
+        return
+
+      if $scope.filterBar
+        $scope.filterBar.end()
+        $scope.filterBar = null
+      else
+        locals =
+          title: filterConfig[type].title
+          items: [filterConfig[type].any].concat $scope.meta[type]
+
+        template = "<side-pane position='right' on-hide='$dismiss()'></side-pane>"
+        $scope.filterBar = Popup.modal "modal/filterBar.tpl.html", locals, template
+        $scope.filterBar.promise.then(onFilterSelected).finally -> $scope.filterBar = null
+
+    $scope.onSearch = ->
+
+      if $scope.searchBar
+        $scope.searchBar.end()
+        $scope.searchBar = null
+      else
+        locals = {}
+
+        template = "<side-pane position='right' on-hide='$dismiss()'></side-pane>"
+        $scope.searchBar = Popup.modal "modal/searchBar.tpl.html", locals, template
+        $scope.searchBar.promise.then(onItemSelected).finally -> $scope.searchBar = null
 
   )
 

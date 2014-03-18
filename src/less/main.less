@@ -17,7 +17,7 @@ body{
   overflow: auto;
 }
 
-.side-menu-backdrop{
+.side-pane-backdrop{
   position: fixed;
   left: 0;
   top: @headerHeight;
@@ -26,20 +26,26 @@ body{
   z-index: 10;
 }
 
-.side-menu{
-  background: rgba(0,0,0,0.7);
-  .opacity(50);
+.side-pane{
+  background: white;
+//  .opacity(90);
   position: absolute;
-  left: 0;
   top: 0;
   bottom: 0;
   width: 30%;
   min-width: 200px;
   z-index: 11;
+  box-shadow: -1px 0px 10px rgba(0,0,0,0.6);
+
+  &.left{
+    left: 0;
+  }
+  &.right{
+    right: 0;
+  }
 }
 .side-menu-item{
   .padding;
-  color: #ffffff;
   font-size: @icon-medium;
   &.active{
     color: #b8dcf2;

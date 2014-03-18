@@ -108,15 +108,29 @@ angular.module( 'myWidget', [])
         scope.$apply()
 
   )
-  .directive('sideMenu', ($ionicGesture, $timeout)->
+  .directive('verticalEqual', ()->
+    (scope, element) ->
+      element.ready ->
+        raw = element[0]
+        height = raw.offsetHeight
+        num = raw.children.length
+        totalOffset = 0
+        totalOffset += item.offsetHeight for item in raw.children
+        margin = (height - totalOffset)/(num+1)
+        style = marginTop:margin+'px', marginBottom: margin+'px'
+        angular.extend item.style, style for item in raw.children
+
+  )
+  .directive('sidePane', ($ionicGesture, $timeout)->
     restrict: 'E'
     replace: true
     transclude: true
     scope:
       onHide: '&'
-    template: '<div class="side-menu-backdrop popup-in-left" ng-click="onHide()">'+
-                '<ul class="side-menu" ng-transclude ng-click="$event.stopPropagation()">'+
-                '</ul>'+
+      position: '@'
+    template: '<div class="side-pane-backdrop popup-in-{{position}}" ng-click="onHide()">'+
+                '<div class="side-pane {{position}}" ng-transclude ng-click="$event.stopPropagation()">'+
+                '</div>'+
               '</div>'
     controller: ->
       
@@ -127,7 +141,7 @@ angular.module( 'myWidget', [])
         @content = content
         
       @getRatio = ->
-        @getAmount() / @content.width
+        @getAmount() / @content.getWidth()
         
       @getAmount = ->
         @content && @content.getTranslateX() || 0
@@ -143,8 +157,10 @@ angular.module( 'myWidget', [])
         velocityThreshold = 0.3
         velocityX = e.gesture.velocityX
         direction = e.gesture.direction
+        console.log velocityX, direction, ratio
         # Going left, more than half, or quickly
-        if(direction == 'left' && ratio <= 0 && (ratio <= -0.5 || velocityX > velocityThreshold))
+        if (direction == 'left' && ratio <= 0 && (ratio <= -0.5 || velocityX > velocityThreshold)) or
+           (direction == 'right' && ratio >= 0 && (ratio >= 0.5 || velocityX > velocityThreshold))
           @content.hide()
         else
           @shiftAmount(0)
@@ -175,10 +191,11 @@ angular.module( 'myWidget', [])
           
         if @_isDragging
           amount =  @_offsetX + @_lastX - @_startX
-          if amount < 0
-            @shiftAmount(amount)
-          else
+          if (@content.direction == 'left' and amount > 0) or (@content.direction == 'right' and amount < 0)
             @_startX = @_lastX
+          else
+            @shiftAmount(amount)
+
 
       this
 
@@ -188,20 +205,12 @@ angular.module( 'myWidget', [])
       defaultPrevented = false
 
       # locate verticall equally
-      elMenu = element[0].querySelector('.side-menu')
-      element.ready ->
-        height = elMenu.offsetHeight
-        num = elMenu.children.length
-        totalOffset = 0
-        totalOffset += item.offsetHeight for item in elMenu.children
-        margin = (height - totalOffset)/(num+1)
-        style = marginTop:margin+'px', marginBottom: margin+'px'
-        angular.extend item.style, style for item in elMenu.children
-
+      pane = element[0].querySelector('.side-pane')
       ctrl.setContent
 
-        width: elMenu.offsetWidth
+        direction: scope.position
 
+        getWidth: -> pane.offsetWidth
         hide: ->
           scope.onHide()
           scope.$apply()
