@@ -1,4 +1,4 @@
-angular.module( 'app', ['ionic', 'ngRoute', 'templates-app', 'templates-common',
+angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch', 'templates-app', 'templates-common',
                         'Model', 'app.home', 'app.discussion', 'myWidget', 'CachingView', 'Service', 'ui.popup',
                         'MESSAGE'
 ])

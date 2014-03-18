@@ -10,7 +10,6 @@ angular.module( 'Gallery', [])
           gallery = blueimp.Gallery links,
             container: el[0]
             carousel: true
-            fullScreen: true
 
       scope.$watch attr.moreLinks, (links)->
         if gallery and links
@@ -27,4 +26,7 @@ angular.module( 'Gallery', [])
         links = this.getElementsByTagName('a')
         blueimp.Gallery(links, options)
 
+  )
+  .directive('galleryFull', ()->
+    (scope, el, attr)->
   )

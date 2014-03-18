@@ -55,6 +55,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
 
       objects.$promise.then ->
         $scope.haveMore = objects.meta.more
+        $scope.total = objects.length + $scope.haveMore
 
     #Load more objects
     $scope.onMore = ->
