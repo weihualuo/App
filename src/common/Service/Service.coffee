@@ -52,4 +52,46 @@ angular.module( 'Service', [])
       deferred.promise
 
 
-)
+  )
+  .factory('Nav', ($route, $location)->
+
+    viewStack = []
+    current = null
+
+    Nav =
+      push: (view)-> viewStack.push view
+      pop: -> viewStack.pop()
+      set: (view)-> current = view
+
+      go: (ctrl, param, search, hash)->
+        route = _.find $route.routes, controller:ctrl
+        replace = no
+        if route
+
+          oldIndex = if current then current.data('$zIndex') or 0 else 0
+          newIndex = route.zIndex
+          #Not a forward navigation
+          if newIndex <= oldIndex
+            last = viewStack[viewStack.length-1]
+            #Already in the viewstack
+            if last and last.data('$templateUrl') is route.templateUrl
+              history.back()
+              return
+              #Should replace the current view
+            else
+              replace = yes
+
+
+          #View is not in stack
+          path = route.originalPath
+          _.each param, (value, key)->
+            re = new RegExp(':'+key)
+            path = path.replace(re, value)
+
+          $location.replace() if replace
+          $location.path path
+          $location.search search or {}
+          $location.hash hash or null
+  )
+
+

@@ -55,38 +55,22 @@ module.exports = {
        */
 
     js: [
-        'vendor/ionic-v0.9.26/js/ionic.bundle.js',
-//        'vendor/ionic-0.9.26/js/angular/angular.min.js',
-//        'vendor/ionic-0.9.26/js/angular/angular-animate.min.js',
-//        'vendor/ionic-0.9.26/js/angular/angular-touch.min.js',
-//        'vendor/ionic-0.9.26/js/angular/angular-sanitize.min.js',
-//        'vendor/ionic-0.9.26/js/angular/angular-route.min.js',
-//        'vendor/ionic-0.9.26/js/angular/angular-resource.min.js',
-//        'vendor/ionic-0.9.26/js/ionic-angular.js',
-
-//        'vendor/ionic-0.9.17-alpha/dist/js/ionic.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-animate.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-touch.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-sanitize.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-route.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-resource.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/ionic-angular.js',
+        'vendor/ionic-v0.9.26/js/ionic.js',
+        'vendor/angular-1.2.14/angular.js',
+        'vendor/angular-1.2.14/angular-animate.js',
+        'vendor/angular-1.2.14/angular-touch.js',
+        'vendor/angular-1.2.14/angular-sanitize.js',
+        'vendor/angular-1.2.14/angular-route.js',
+        'vendor/angular-ui/angular-ui-router.js',
+        'vendor/ionic-v0.9.26/js/ionic-angular.js',
 
         'vendor/lodash/lodash.js',
-        'vendor/restangular/restangular.min.js',
+        'vendor/restangular1.2.2/restangular.js',
 
         'vendor/Gallery/js/blueimp-helper.js',
         'vendor/Gallery/js/blueimp-gallery.js',
         'vendor/Gallery/js/blueimp-gallery-fullscreen.js',
-//        'vendor/bootstrap-custom/bootstrap-modal/ui-bootstrap-custom-0.7.0.min.js',
-//        'vendor/bootstrap-custom/bootstrap-custom-datepicker/ui-bootstrap-custom-tpls-0.7.0.min.js',
-//        'vendor/flat-UI/js/flatui-checkbox.js'
-//        'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
-//        'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
-//        'vendor/angular-ui-router/release/angular-ui-router.js',
-//        'vendor/angular-ui-utils/modules/route/route.js',
-//		'vendor/iscroll-4/src/iscroll.js'
+
     ],
     css: [
 

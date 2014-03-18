@@ -1,5 +1,5 @@
-angular.module( 'app', ['ionic', 'templates-app', 'templates-common',
-                        'Model', 'app.home', 'app.discussion', 'myWidget', 'Service', 'ui.popup',
+angular.module( 'app', ['ionic', 'ngRoute', 'templates-app', 'templates-common',
+                        'Model', 'app.home', 'app.discussion', 'myWidget', 'CachingView', 'Service', 'ui.popup',
                         'MESSAGE'
 ])
   .config( ($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) ->
