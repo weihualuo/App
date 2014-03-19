@@ -14,24 +14,32 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       controller: 'ListCtrl'
       templateUrl: 'home/photos.tpl.html'
       zIndex: 1
+      resolve:
+        listFilters: -> ['style', 'room', 'location']
     )
     .when( '/products'
       name: '/products'
       controller: 'ListCtrl'
       templateUrl: 'home/products.tpl.html'
       zIndex: 1
+      resolve:
+        listFilters: -> ['style', 'room']
     )
     .when( '/pros'
       name: '/pros'
       controller: 'ListCtrl'
       templateUrl: 'home/pros.tpl.html'
       zIndex: 1
-    )
+      resolve:
+        listFilters: -> ['location']
+      )
     .when( '/ideabooks'
       name: '/ideabooks'
       controller: 'ListCtrl'
       templateUrl: 'home/ideabooks.tpl.html'
       zIndex: 1
+      resolve:
+        listFilters: -> ['style', 'room', ]
     )
     .when( '/advice'
       name: '/advice'
@@ -52,9 +60,6 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
   .controller('AppCtrl', ($scope, Single, Popup, Nav, $timeout, $location) ->
 
-    #Load meta info first
-    $scope.meta = Single('meta').get()
-
     #Set the app title to a specific name or default value
     $scope.setTitle = (title)->
       $scope.title = title or $scope.appTitle
@@ -62,7 +67,6 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     #Set page title
     $scope.setPageTitle = (title)->
       $scope.pageTitle = title or $scope.appTitle
-
 
     filterConfig =
       room:
@@ -81,14 +85,21 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
           id: 0
           en: 'Any Area'
 
-    filterParam = {}
+    #Load meta info first
+    $scope.meta = Single('meta').get()
+    $scope.meta.$promise.then ->
+      $scope.paramUpdateFlag++
+
+    $scope.filterParam = {}
+    $scope.paramUpdateFlag = 0
     $scope.updateFilters = (path, type, value)->
-      pathParam = filterParam[path]
+      pathParam = $scope.filterParam[path]
       #init if not exist
       if !angular.isObject(pathParam)
-        pathParam = filterParam[path] = {}
+        pathParam = $scope.filterParam[path] = {}
       #update
       if angular.isString(type)
+        $scope.paramUpdateFlag++
         if value
           pathParam[type] = value
         else
@@ -96,6 +107,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
       else if angular.isObject(type)
         angular.copy(type, pathParam)
+        $scope.paramUpdateFlag++
 
       #return
       pathParam
@@ -140,6 +152,16 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
           Nav.go path, null, param
         ).finally -> filterBar = null
 
+    $scope.getFilterTitle = (type)->
+      path = $location.path()
+      console.log path
+      selected = $scope.updateFilters(path)[type] or 0
+      console.log selected, type
+      item = _.find $scope.meta[type], id:parseInt(selected)
+      if !item
+        item = filterConfig[type].any
+      item.en
+
     $scope.onSearch = ->
 
       if $scope.searchBar
@@ -153,12 +175,14 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         $scope.searchBar.promise.then().finally -> $scope.searchBar = null
 
   )
-  .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE) ->
+  .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE, listFilters) ->
 
     console.log 'ListCtrl'
 
+    $scope.filters =  listFilters
+
     path = $location.path()
-    $scope.updateFilters(path, $routeParams)
+    $timeout -> $scope.updateFilters(path, $routeParams)
 
     uri = path.match(/\/(\w+)/)[1]
 
@@ -202,5 +226,14 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
           scrollResize()
 
   )
-
+  .directive('listFilter', ()->
+    restrict: 'E'
+    replace: true
+    scope: true
+    template: '<a class="pull-right padding" ng-click="toggleFilter(id)">{{value}} <i class="icon ion-arrow-down-b"></i></a>'
+    link: (scope, element, attr, ctrl) ->
+      scope.id = attr.id
+      scope.$watch 'paramUpdateFlag', (value)->
+        scope.value = scope.getFilterTitle(scope.id)
+  )
 

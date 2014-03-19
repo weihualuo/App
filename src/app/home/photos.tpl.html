@@ -7,20 +7,20 @@
 </header>
 
 <div class="bar bar-subheader">
-    <a class="pull-right padding" ng-click="toggleFilter('room')">Rooms <i class="icon ion-arrow-down-b"></i></a>
-    <a class="pull-right padding" ng-click="toggleFilter('style')">Style <i class="icon ion-arrow-down-b"></i></a>
-    <a class="pull-right padding" ng-click="toggleFilter('location')">Area <i class="icon ion-arrow-down-b"></i></a>
+    <list-filter id='{{filter}}' ng-repeat="filter in filters"></list-filter>
 </div>
 
 <ion-content has-header='true' has-subheader='true' on-refresh='onRefresh()'>
     <ion-refresher></ion-refresher>
 
+    <div gallery-links>
         <a class="thumb-list"
            ng-repeat="obj in objects track by obj.id"
            ng-href="{{obj | fullImagePath:0}}"
            title="{{obj.title}}">
             <img ng-src="{{obj | fullImagePath:6}}" alt="{{obj.title}}">
         </a>
+    </div>
 
 </ion-content>
 
