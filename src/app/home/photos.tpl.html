@@ -10,8 +10,9 @@
     <list-filter id='{{filter}}' ng-repeat="filter in filters"></list-filter>
 </div>
 
-<ion-content has-header='true' has-subheader='true' on-refresh='onRefresh()'>
-    <ion-refresher></ion-refresher>
+<ion-content has-header='true' has-subheader='true' on-refresh='onRefresh()' on-scroll='onScroll(scrollTop)'>
+
+    <refresher></refresher>
 
     <div gallery-links>
         <a class="thumb-list"
