@@ -10,38 +10,38 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 #    $locationProvider.html5Mode(true)
 
     $routeProvider.when( '/photos',
-      name: 'photos'
+      name: '/photos'
       controller: 'ListCtrl'
       templateUrl: 'home/photos.tpl.html'
       zIndex: 1
     )
     .when( '/products'
-      name: 'products'
+      name: '/products'
       controller: 'ListCtrl'
       templateUrl: 'home/products.tpl.html'
       zIndex: 1
     )
     .when( '/pros'
-      name: 'pros'
+      name: '/pros'
       controller: 'ListCtrl'
       templateUrl: 'home/pros.tpl.html'
       zIndex: 1
     )
     .when( '/ideabooks'
-      name: 'ideabooks'
+      name: '/ideabooks'
       controller: 'ListCtrl'
       templateUrl: 'home/ideabooks.tpl.html'
       zIndex: 1
     )
     .when( '/advice'
-      name: 'advice'
-      controller: 'ListCtrl'
+      name: '/advice'
+      controller: 'AdviceCtrl'
       templateUrl: 'home/advice.tpl.html'
       zIndex: 1
     )
     .when( '/my'
-      name: 'my'
-      controller: 'ListCtrl'
+      name: '/my'
+      controller: 'MyCtrl'
       templateUrl: 'home/my.tpl.html'
       zIndex: 1
     )
@@ -63,20 +63,6 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     $scope.setPageTitle = (title)->
       $scope.pageTitle = title or $scope.appTitle
 
-    sidebar = null
-    $scope.toggleSideMenu = (pos)->
-      if sidebar
-        sidebar.end()
-        sidebar = null
-      else
-        locals = pos:pos
-        template = "<side-pane position='left' on-hide='$close()'></side-pane>"
-        sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template, 'sidemenu'
-        sidebar.promise.then( (name)->
-          console.log "goto", name
-          Nav.go name
-        ).finally -> sidebar = null
-
 
     filterConfig =
       room:
@@ -95,25 +81,61 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
           id: 0
           en: 'Any'
 
+    filterParam = {}
+    updateFilters = (path, type, value)->
+      pathParam = filterParam[path]
+      #init if not exist
+      if !angular.isObject(pathParam)
+        pathParam = filterParam[path] = {}
+      #update
+      if angular.isString(type)
+        if value
+          pathParam[type] = value
+        else
+          delete pathParam[type]
+      #return
+      pathParam
+
+    sidebar = null
+    $scope.toggleSideMenu = ()->
+      if sidebar
+        sidebar.end()
+        sidebar = null
+      else
+        pos = $location.path()
+        locals = pos:pos
+        template = "<side-pane position='left' on-hide='$close()'></side-pane>"
+        sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template, 'sidemenu'
+        sidebar.promise.then( (name)->
+          Nav.go name, null, updateFilters(name)
+        ).finally -> sidebar = null
+
+
+
+    filterBar = null
     $scope.toggleFilter = (type)->
 
       if !filterConfig[type]
         console.log "not found", type
         return
 
-      if $scope.filterBar
-        $scope.filterBar.end()
-        $scope.filterBar = null
+      if filterBar
+        filterBar.end()
+        filterBar = null
       else
+        path = $location.path()
         locals =
           title: filterConfig[type].title
           items: [filterConfig[type].any].concat $scope.meta[type]
+          selected: updateFilters(path)[type] or 0
 
         template = "<side-pane position='right' on-hide='$close()'></side-pane>"
-        $scope.filterBar = Popup.modal "modal/filterBar.tpl.html", locals, template
-        $scope.filterBar.promise.then((id)->
-
-        ).finally -> $scope.filterBar = null
+        filterBar = Popup.modal "modal/filterBar.tpl.html", locals, template
+        filterBar.promise.then((id)->
+          param = updateFilters(path, type, id)
+          console.log 'id=',id
+          Nav.go path, null, param
+        ).finally -> filterBar = null
 
     $scope.onSearch = ->
 
@@ -143,7 +165,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       $timeout (->$scope.$broadcast('scroll.resize')), 300
 
     reloadObjects = ->
-      $scope.objects = objects = collection.list({num:3})
+      $scope.objects = objects = collection.list($routeParams)
       if !objects.$resolved
         Popup.loading objects.$promise, null, MESSAGE.LOAD_FAILED
 

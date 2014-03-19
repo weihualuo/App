@@ -132,7 +132,7 @@ angular.module( 'ui.popup', [])
 
         $animate.leave element, ->
           scope.$destroy()
-          if param
+          if param?
             deferred.resolve(param)
           else
             deferred.reject()

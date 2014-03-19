@@ -57,6 +57,7 @@ angular.module( 'Service', [])
 
     viewStack = []
     current = null
+    currentName = null
 
     Nav =
       push: (view)-> viewStack.push view
@@ -64,10 +65,11 @@ angular.module( 'Service', [])
       set: (view)-> current = view
 
       go: (name, param, search, hash)->
+        name ?= currentName
         route = _.find $route.routes, name:name
         replace = no
         if route
-
+          currentName = name
           oldIndex = if current then current.data('$zIndex') or 0 else 0
           newIndex = route.zIndex
           #Not a forward navigation
