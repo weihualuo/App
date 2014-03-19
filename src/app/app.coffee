@@ -63,20 +63,18 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     $scope.setPageTitle = (title)->
       $scope.pageTitle = title or $scope.appTitle
 
-    pos = 'photos'
     sidebar = null
-    $scope.toggleSideMenu = ->
+    $scope.toggleSideMenu = (pos)->
       if sidebar
         sidebar.end()
         sidebar = null
       else
         locals = pos:pos
         template = "<side-pane position='left' on-hide='$close()'></side-pane>"
-        sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template
+        sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template, 'sidemenu'
         sidebar.promise.then( (name)->
           console.log "goto", name
-          pos = name
-          $timeout (->Nav.go name), 200
+          Nav.go name
         ).finally -> sidebar = null
 
 
@@ -111,7 +109,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
           title: filterConfig[type].title
           items: [filterConfig[type].any].concat $scope.meta[type]
 
-        template = "<side-pane position='right' on-hide='$dismiss()'></side-pane>"
+        template = "<side-pane position='right' on-hide='$close()'></side-pane>"
         $scope.filterBar = Popup.modal "modal/filterBar.tpl.html", locals, template
         $scope.filterBar.promise.then((id)->
 
@@ -125,9 +123,9 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       else
         locals = {}
 
-        template = "<side-pane position='right' on-hide='$dismiss()'></side-pane>"
-        $scope.searchBar = Popup.modal "modal/searchBar.tpl.html", locals, template
-        $scope.searchBar.promise.then(onItemSelected).finally -> $scope.searchBar = null
+        template = "<side-pane position='right' on-hide='$close()'></side-pane>"
+        $scope.searchBar = Popup.modal "modal/searchBar.tpl.html", locals, template, 'search'
+        $scope.searchBar.promise.then().finally -> $scope.searchBar = null
 
   )
   .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE) ->

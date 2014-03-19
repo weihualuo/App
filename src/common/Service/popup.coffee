@@ -114,7 +114,7 @@ angular.module( 'ui.popup', [])
       end: hidePopup
 
 
-    modal : (templateUrl, locals, template)->
+    modal : (templateUrl, locals, template, hash)->
 
       deferred = $q.defer()
       scope = $rootScope.$new(true)
@@ -130,11 +130,8 @@ angular.module( 'ui.popup', [])
 
       hidePopup = ()->
 
-        console.log 'hide',param
         $animate.leave element, ->
-          console.log "callback hide", param
           scope.$destroy()
-          window.onpopstate = null
           if param
             deferred.resolve(param)
           else
@@ -152,9 +149,11 @@ angular.module( 'ui.popup', [])
           element = $compile(angularDomEl)(scope)
           $animate.enter(element, parent)
           #To be compatible with browser and android back button
-          $location.hash('modal')
+          $location.hash(hash or 'modal')
+          savedState = window.onpopstate
           window.onpopstate = ->
             hidePopup()
+            window.onpopstate = savedState
             scope.$apply()
 
         ()->
