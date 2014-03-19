@@ -63,8 +63,8 @@ angular.module( 'Service', [])
       pop: -> viewStack.pop()
       set: (view)-> current = view
 
-      go: (ctrl, param, search, hash)->
-        route = _.find $route.routes, controller:ctrl
+      go: (name, param, search, hash)->
+        route = _.find $route.routes, name:name
         replace = no
         if route
 

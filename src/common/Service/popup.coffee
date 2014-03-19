@@ -119,23 +119,28 @@ angular.module( 'ui.popup', [])
       deferred = $q.defer()
       scope = $rootScope.$new(true)
       angular.extend scope, locals
+      param = undefined
       scope.$close = (ret)->
         #popup hash history
+        param = ret
         history.back()
-        hidePopup()
-        deferred.resolve(ret)
-      scope.$dismiss = (ret)->
-        #popup hash history
-        history.back()
-        hidePopup()
-        deferred.reject(ret)
 
       parent = angular.element(document.body)
       element = null
-      hidePopup = ->
-        $animate.leave(element)
-        scope.$destroy()
-        window.onpopstate = null
+
+      hidePopup = ()->
+
+        console.log 'hide',param
+        $animate.leave element, ->
+          console.log "callback hide", param
+          scope.$destroy()
+          window.onpopstate = null
+          if param
+            deferred.resolve(param)
+          else
+            deferred.reject()
+          scope.$apply()
+
 
       template ?= '<div class="popup-modal popup-in-up"></div>'
       angularDomEl = angular.element(template)
@@ -151,6 +156,7 @@ angular.module( 'ui.popup', [])
           window.onpopstate = ->
             hidePopup()
             scope.$apply()
+
         ()->
           deferred.reject()
           console.log "Failed to load", templateUrl
@@ -159,7 +165,7 @@ angular.module( 'ui.popup', [])
       #Return
       ret =
         promise: deferred.promise
-        end: scope.$dismiss
+        end: scope.$close
   )
 
 

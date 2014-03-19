@@ -22,6 +22,8 @@ angular.module('app.home', ['Gallery', 'restangular'])
     (obj, seq)->
       return meta.imgbase + obj.paths[parseInt seq]
   )
+
+
   .controller( 'HomeCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
 
     console.log 'HomeListCtrl'

@@ -8,7 +8,7 @@
       <meta content=”yes” name=”apple-mobile-web-app-capable” />
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
-    <title ng-bind="pageTitle">MyHouzz</title>
+    <title ng-bind="pageTitle" ng-init='pageTitle="大美家居"'>大美家居</title>
 
     <% styles.forEach( function ( file ) { %>
     <link rel="stylesheet" type="text/css" href="<%= file %>" />
@@ -22,20 +22,11 @@
 	<% }); %>
 
   </head>
-  <body ng-init='appTitle="MyHouzz"'>
+  <body ng-init='appTitle=pageTitle'>
     <div ng-if="false" style="position: absolute;top: 48%; width: 100%; text-align: center;z-index: 2">
         Page Loading...
     </div>
-
-    <div>
-        <!--<ion-nav-bar animation="nav-title-slide-ios7"-->
-                     <!--type="bar-calm"-->
-                     <!--class="translucent"-->
-                     <!--back-button-type="button-icon"-->
-                     <!--back-button-label=" Back"-->
-                     <!--back-button-icon="ion-arrow-left-c"></ion-nav-bar>-->
-        <ion-nav-view animation="slide-left-right"></ion-nav-view>
-    </div>
+    <div ng-caching-view class="view popup-in-right"></div>
   <script>
       console.log(new Date());
   </script>

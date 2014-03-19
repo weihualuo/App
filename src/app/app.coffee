@@ -1,73 +1,85 @@
-angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch', 'templates-app', 'templates-common',
-                        'Model', 'app.home', 'app.discussion', 'myWidget', 'CachingView', 'Service', 'ui.popup',
+angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
+                        'templates-app', 'templates-common',
+                        'Model', 'app.home', 'app.discussion',
+                        'myWidget', 'ngCachingView', 'Service', 'ui.popup',
                         'MESSAGE'
 ])
-  .config( ($stateProvider, $urlRouterProvider, $compileProvider, $locationProvider) ->
+  .config( ($routeProvider, $compileProvider, $locationProvider) ->
 #    // Needed for phonegap routing
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/)
 #    $locationProvider.html5Mode(true)
 
-    $stateProvider.state( 'home',
-      url: "/",
-      templateUrl: "home/home.tpl.html",
-      controller: 'HomeCtrl'
+    $routeProvider.when( '/photos',
+      name: 'photos'
+      controller: 'ListCtrl'
+      templateUrl: 'home/photos.tpl.html'
+      zIndex: 1
     )
-    .state( 'discussion',
-      url: "/dis",
-        templateUrl: "discussion/discussion.tpl.html",
-        controller: 'DiscussionCtrl'
+    .when( '/products'
+      name: 'products'
+      controller: 'ListCtrl'
+      templateUrl: 'home/products.tpl.html'
+      zIndex: 1
     )
-
-
-    $urlRouterProvider.otherwise("/")
+    .when( '/pros'
+      name: 'pros'
+      controller: 'ListCtrl'
+      templateUrl: 'home/pros.tpl.html'
+      zIndex: 1
+    )
+    .when( '/ideabooks'
+      name: 'ideabooks'
+      controller: 'ListCtrl'
+      templateUrl: 'home/ideabooks.tpl.html'
+      zIndex: 1
+    )
+    .when( '/advice'
+      name: 'advice'
+      controller: 'ListCtrl'
+      templateUrl: 'home/advice.tpl.html'
+      zIndex: 1
+    )
+    .when( '/my'
+      name: 'my'
+      controller: 'ListCtrl'
+      templateUrl: 'home/my.tpl.html'
+      zIndex: 1
+    )
+    .otherwise(
+      redirectTo: '/photos'
+    )
   )
 
-  .controller('AppCtrl', ($scope, Single, Popup, $timeout, $state) ->
-
-    console.log $state
+  .controller('AppCtrl', ($scope, Single, Popup, Nav, $timeout, $location) ->
 
     #Load meta info first
     $scope.meta = Single('meta').get()
 
-    $scope.sideItems = [
-                        {icon: 'ion-ios7-photos', content: 'Photos', value: 'photos', view: 'home'}
-                        {icon: 'ion-ios7-cart', content: 'Products', value: 'products', view: 'home'}
-                        {icon: 'ion-social-designernews', content: 'Professionals', value: 'pros', view: 'home'}
-                        {icon: 'ion-ios7-bookmarks', content: 'Ideabooks', value: 'ideabooks', view: 'home'}
-                        {icon: 'ion-chatboxes', content: 'Discussions', value: 'discussions', view: 'discussion'}
-                        {icon: 'ion-person', content: 'My Houzz', value: 'my', view: 'my'}
-                        ]
+    #Set the app title to a specific name or default value
+    $scope.setTitle = (title)->
+      $scope.title = title or $scope.appTitle
 
+    #Set page title
+    $scope.setPageTitle = (title)->
+      $scope.pageTitle = title or $scope.appTitle
 
-
-    onItemSelected = (item)->
-      $scope.selected = item
-      console.log 'view', item.view, $state.current.name
-      $scope.$broadcast('item.changed', item)
-#      if item.view != $state.current.name
-#        $state.go item.view
-#      #defaut route to home viewe
-#      else
-#        $scope.$broadcast('item.changed', item)
-
-    $timeout -> onItemSelected($scope.sideItems[0])
-
+    pos = 'photos'
+    sidebar = null
     $scope.toggleSideMenu = ->
-
-      if $scope.sidebar
-        $scope.sidebar.end()
-        $scope.sidebar = null
+      if sidebar
+        sidebar.end()
+        sidebar = null
       else
-        locals =
-          items: $scope.sideItems
-          selected: $scope.selected
+        locals = pos:pos
+        template = "<side-pane position='left' on-hide='$close()'></side-pane>"
+        sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template
+        sidebar.promise.then( (name)->
+          console.log "goto", name
+          pos = name
+          $timeout (->Nav.go name), 200
+        ).finally -> sidebar = null
 
-        template = "<side-pane position='left' on-hide='$dismiss()'></side-pane>"
-        $scope.sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template
-        $scope.sidebar.promise.then(onItemSelected).finally -> $scope.sidebar = null
 
-    onFilterSelected = (id)->
-      console.log id
     filterConfig =
       room:
         title: 'Spcaces'
@@ -101,7 +113,9 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch', 'templates-app', 'templat
 
         template = "<side-pane position='right' on-hide='$dismiss()'></side-pane>"
         $scope.filterBar = Popup.modal "modal/filterBar.tpl.html", locals, template
-        $scope.filterBar.promise.then(onFilterSelected).finally -> $scope.filterBar = null
+        $scope.filterBar.promise.then((id)->
+
+        ).finally -> $scope.filterBar = null
 
     $scope.onSearch = ->
 
@@ -114,6 +128,52 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch', 'templates-app', 'templat
         template = "<side-pane position='right' on-hide='$dismiss()'></side-pane>"
         $scope.searchBar = Popup.modal "modal/searchBar.tpl.html", locals, template
         $scope.searchBar.promise.then(onItemSelected).finally -> $scope.searchBar = null
+
+  )
+  .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE) ->
+
+    console.log 'ListCtrl'
+
+    uri = $location.path().match(/\/(\w+)/)[1]
+
+    collection = Many(uri)
+    objects = null
+
+    scrollResize = (reset)->
+      $scope.scrollView.scrollTo(0,0) if $scope.scrollView and reset
+      #Wait for the list render progress completed
+      $timeout (->$scope.$broadcast('scroll.resize')), 300
+
+    reloadObjects = ->
+      $scope.objects = objects = collection.list({num:3})
+      if !objects.$resolved
+        Popup.loading objects.$promise, null, MESSAGE.LOAD_FAILED
+
+      objects.$promise.then ->
+        $scope.haveMore = objects.meta.more
+        $scope.total = objects.length + $scope.haveMore
+        scrollResize(true)
+
+    $scope.$on '$scopeUpdate', reloadObjects
+
+    #Load more objects
+    $scope.onMore = ->
+      if !$scope.haveMore or !collection
+        return
+      promise = collection.more()
+      if promise
+        promise.then (data)->
+          $scope.haveMore = objects.meta.more
+
+    #Refresh the list
+    $scope.onRefresh = ()->
+      promise = collection.refresh()
+      if promise
+        promise.catch(->
+          $popup.alert(MESSAGE.LOAD_FAILED)
+        ).finally ->
+          $scope.$broadcast('scroll.refreshComplete')
+          scrollResize()
 
   )
 
