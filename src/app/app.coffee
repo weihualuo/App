@@ -74,15 +74,15 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         title: 'Style'
         any:
           id: 0
-          en: 'Any'
+          en: 'Any Style'
       location:
         title: 'Area'
         any:
           id: 0
-          en: 'Any'
+          en: 'Any Area'
 
     filterParam = {}
-    updateFilters = (path, type, value)->
+    $scope.updateFilters = (path, type, value)->
       pathParam = filterParam[path]
       #init if not exist
       if !angular.isObject(pathParam)
@@ -93,6 +93,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
           pathParam[type] = value
         else
           delete pathParam[type]
+
+      else if angular.isObject(type)
+        angular.copy(type, pathParam)
+
       #return
       pathParam
 
@@ -107,7 +111,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         template = "<side-pane position='left' on-hide='$close()'></side-pane>"
         sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template, 'sidemenu'
         sidebar.promise.then( (name)->
-          Nav.go name, null, updateFilters(name)
+          Nav.go name, null, $scope.updateFilters(name)
         ).finally -> sidebar = null
 
 
@@ -127,13 +131,12 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         locals =
           title: filterConfig[type].title
           items: [filterConfig[type].any].concat $scope.meta[type]
-          selected: updateFilters(path)[type] or 0
+          selected: $scope.updateFilters(path)[type] or 0
 
         template = "<side-pane position='right' on-hide='$close()'></side-pane>"
         filterBar = Popup.modal "modal/filterBar.tpl.html", locals, template
         filterBar.promise.then((id)->
-          param = updateFilters(path, type, id)
-          console.log 'id=',id
+          param = $scope.updateFilters(path, type, id)
           Nav.go path, null, param
         ).finally -> filterBar = null
 
@@ -154,7 +157,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
     console.log 'ListCtrl'
 
-    uri = $location.path().match(/\/(\w+)/)[1]
+    path = $location.path()
+    $scope.updateFilters(path, $routeParams)
+
+    uri = path.match(/\/(\w+)/)[1]
 
     collection = Many(uri)
     objects = null
