@@ -24,6 +24,28 @@ angular.module('app.home', ['Gallery', 'restangular'])
   )
 
 
+  .controller( 'PhotoCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
+    console.log 'PhotoCtrl'
+
+    obj2Links  = (objs)->
+      _.map objs, (obj)->
+        href: $filter('fullImagePath')(obj, 0)
+        title: obj.title
+
+    $scope.onImageView = (obj)->
+      if $scope.imageView
+        $scope.imageView.end()
+        $scope.imageView = null
+      else
+        locals =
+          index: $scope.objects.indexOf(obj)
+          links: obj2Links($scope.objects)
+
+        template = "<gallery-view on-hide='$close()'></gallery-view>"
+        $scope.imageView = Popup.modal "modal/gallery.tpl.html", locals, template, 'gallery'
+        $scope.imageView.promise.then().finally -> $scope.imageView = null
+
+  )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
     console.log 'AdviceCtrl'
 

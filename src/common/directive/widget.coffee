@@ -158,14 +158,16 @@ angular.module( 'myWidget', [])
           scope.onHide()
 
       $swipe.bind angular.element(pane),
-        'start': (coords)->
+        'start': (coords, event)->
           startX = coords.x - x
           setAnimate "none"
+          event.stopPropagation()
 
         'cancel': ->
           onShiftEnd()
 
-        'move': (coords)->
+        'move': (coords, event)->
+          event.stopPropagation()
           x = coords.x - startX
           if (scope.position == 'left' and x > 0) or (scope.position == 'right' and x < 0)
             x = 0
@@ -176,5 +178,21 @@ angular.module( 'myWidget', [])
           onShiftEnd()
 
   )
+  .directive('galleryView', ()->
+    restrict: 'E'
+    replace: true
+    transclude: true
+    template: '<div class="blueimp-gallery blueimp-gallery-controls fade-in-out" ng-transclude>' +
+              '</div>'
+
+    link: (scope, element) ->
+      element.ready ->
+        gallery = blueimp.Gallery scope.links,
+          index: scope.index
+          container: element[0]
+          startSlideshow: true
+          onclose: -> scope.$close()
+  )
+
 
 

@@ -18,6 +18,7 @@ angular.module( 'Gallery', [])
   .directive('galleryLinks', ()->
     (scope, el, attr)->
 
+      console.log "blueimp sss"
       el[0].onclick = (event)->
         event = event || window.event
         target = event.target || event.srcElement

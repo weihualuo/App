@@ -10,7 +10,7 @@
     <list-filter id='{{filter}}' ng-repeat="filter in filters"></list-filter>
 </div>
 
-<content has-header='true' has-subheader='true' on-refresh='onRefresh()' on-scroll='onScroll(scrollTop)'>
+<content has-header='true' has-subheader='true' on-refresh='onRefresh()' ng-controller='PhotoCtrl'>
 
     <refresher></refresher>
 
@@ -19,23 +19,13 @@
             没有符合条件的照片！
         </div>
         <a class="thumb-list"
-           ng-repeat="obj in objects track by obj.id"
-           ng-href="{{obj | fullImagePath:0}}"
-           title="{{obj.title}}">
+           ng-click="onImageView(obj)"
+           ng-repeat="obj in objects track by obj.id">
             <img ng-src="{{obj | fullImagePath:6}}" alt="{{obj.title}}">
         </a>
     </div>
 
 </content>
-
-<div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls">
-    <div class="slides"></div>
-    <h3 class="title"></h3>
-    <a class="prev">‹</a>
-    <a class="next">›</a>
-    <a class="close">×</a>
-    <a class="play-pause"></a>
-</div>
 
 
 
