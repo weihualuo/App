@@ -187,31 +187,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     collection = Many(uri)
     objects = null
 
-    refresherHeight = 50
-    initRefresher = ->
-      if $scope.scrollView and $scope.refresher
-        $scope.onScroll = (top)->
-          if -refresherHeight < top < 0
-            $scope.refresher.setRatio -top/refresherHeight
-
-        $scope.scrollView.activatePullToRefresh(refresherHeight,
-          ->
-            $scope.refresher.activate()
-            console.log "active"
-          ->
-            $scope.refresher.deactivate()
-            console.log "deactive"
-          ->
-            $scope.refresher.start()
-            console.log "start"
-            $scope.onRefresh()
-        )
-
-
     scrollResize = (reset)->
       $scope.scrollView.scrollTo(0,0) if $scope.scrollView and reset
       #Wait for the list render progress completed
-      $timeout (->$scope.$broadcast('scroll.resize')), 300
+      $timeout (->$scope.$broadcast('scroll.resize')), 1000
 
     reloadObjects = ->
       $scope.objects = objects = collection.list($routeParams)
@@ -222,7 +201,6 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         $scope.haveMore = objects.meta.more
         $scope.total = objects.length + $scope.haveMore
         scrollResize(true)
-        initRefresher()
 
     $scope.$on '$scopeUpdate', reloadObjects
 
@@ -244,19 +222,6 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         ).finally ->
           $scope.$broadcast('scroll.refreshComplete')
           scrollResize()
-
-  )
-  .directive('refresher', ->
-    restrict: 'E'
-    replace: true,
-    template: '<div class="refresher"><div class="refresher-content"><i class="icon ion-load-d icon-refreshing"></i></div></div>',
-    link: (scope, element, attr, ctrl) ->
-      console.log 'refresher',scope
-      refresher = scope.$parent.refresher =
-        setRatio: (ratio)->
-        activate: -> console.log 'activate re'
-        deactivate: -> console.log 'deactivate re'
-        start: -> console.log 'start re'
 
   )
   .directive('listFilter', ()->

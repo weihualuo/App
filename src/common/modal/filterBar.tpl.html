@@ -3,11 +3,11 @@
     <h2 class="title">{{title}}</h2>
     <button class="button button-clear" ng-click="$close()">Done</button>
 </div>
-<ion-content has-header='true'>
+<content has-header='true'>
     <ul class="list">
         <li class="item"
             ng-class="{active: item.id==selected}"
             ng-click="$close(item.id)"
             ng-repeat="item in items">{{item.en}}</li>
     </ul>
-</ion-content>
+</content>

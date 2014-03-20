@@ -10,8 +10,8 @@
     <list-filter id='{{filter}}' ng-repeat="filter in filters"></list-filter>
 </div>
 
-<ion-content has-header='true' has-subheader='true' on-refresh='onRefresh()'>
-    <ion-refresher></ion-refresher>
+<content has-header='true' has-subheader='true' on-refresh='onRefresh()'>
+    <refresher></refresher>
 
         <a class="item item-thumbnail-left" ng-repeat="obj in objects track by obj.id" ng-click="">
             <img ng-src="{{obj.image}}">
@@ -19,7 +19,7 @@
             <p>{{obj.desc}}</p>
         </a>
 
-</ion-content>
+</content>
 
 
 

@@ -121,149 +121,60 @@ angular.module( 'myWidget', [])
         angular.extend item.style, style for item in raw.children
 
   )
-  .directive('sidePane', ($ionicGesture, $timeout)->
+  .directive('sidePane', ($swipe)->
     restrict: 'E'
     replace: true
     transclude: true
     scope:
       onHide: '&'
       position: '@'
-    template: '<div class="side-pane-backdrop popup-in-{{position}}" ng-click="onHide()">'+
+    template: '<div class="side-pane-backdrop popup-in-{{position}}" ng-click="onHide()" ng-swipe-right="onSwipe(1)" ng-swipe-left="onSwipe(-1)">'+
                 '<div class="side-pane {{position}}" ng-transclude ng-click="$event.stopPropagation()">'+
                 '</div>'+
               '</div>'
-    controller: ->
-      
-      @_isDragging = false
-      @dragThresholdX = 10
-      
-      @setContent = (content)->
-        @content = content
-        
-      @getRatio = ->
-        @getAmount() / @content.getWidth()
-        
-      @getAmount = ->
-        @content && @content.getTranslateX() || 0
 
-      @shiftAmount = (amount)->
-        @content.setTranslateX amount
+    link: (scope, element) ->
 
-      @snapToRest = (e)->
-        @content.enableAnimation()
-        @_isDragging = false
-        ratio = @getRatio()
-
-        velocityThreshold = 0.3
-        velocityX = e.gesture.velocityX
-        direction = e.gesture.direction
-        console.log velocityX, direction, ratio
-        # Going left, more than half, or quickly
-        if (direction == 'left' && ratio <= 0 && (ratio <= -0.5 || velocityX > velocityThreshold)) or
-           (direction == 'right' && ratio >= 0 && (ratio >= 0.5 || velocityX > velocityThreshold))
-          @content.hide()
-        else
-          @shiftAmount(0)
-
-      @endDrag = (e)->
-        if @._isDragging
-          @snapToRest(e)
-        @_startX = null
-        @_lastX = null
-        @_offsetX = null
-      
-      @handleDrag = (e)->
-        if(!@_startX)
-          @_startX = e.gesture.touches[0].pageX
-          @_lastX = @_startX
-        else
-          @_lastX = e.gesture.touches[0].pageX
-        # Calculate difference from the tap points
-        if(!@_isDragging && Math.abs(@_lastX - @_startX) > @dragThresholdX)
-          # if the difference is greater than threshold, start dragging using the current
-          # point as the starting point
-          @_startX = @_lastX
-  
-          @_isDragging = true
-          # Initialize dragging
-          @content.disableAnimation()
-          @_offsetX = @getAmount()
-          
-        if @_isDragging
-          amount =  @_offsetX + @_lastX - @_startX
-          if (@content.direction == 'left' and amount > 0) or (@content.direction == 'right' and amount < 0)
-            @_startX = @_lastX
-          else
-            @shiftAmount(amount)
-
-
-      this
-
-    link: (scope, element, attr, ctrl) ->
-
-      isDragging = false
-      defaultPrevented = false
-
-      # locate verticall equally
+      startX = 0
+      x = 0
       pane = element[0].querySelector('.side-pane')
-      ctrl.setContent
 
-        direction: scope.position
+      updatePosition = ->
+        pane.style["-webkit-transform"] = "translate3d(#{x}px, 0, 0)"
+      setAnimate = (prop)->
+        pane.style["-webkit-transition"] = prop
 
-        getWidth: -> pane.offsetWidth
-        hide: ->
+      onShiftEnd = ->
+        width = pane.offsetWidth
+        if Math.abs(x)*2 > width
           scope.onHide()
-          scope.$apply()
+        else
+          x = 0
+          setAnimate "all 0.3s ease-in"
+          updatePosition()
 
-        getTranslateX: ->  scope.translateX or 0
+      scope.onSwipe = (dir)->
+        if (dir < 0 and scope.position == 'left') or (dir > 0 and scope.position == 'right')
+          scope.onHide()
 
-        setTranslateX: ionic.animationFrameThrottle (amount)->
-          if amount is 0
-            element[0].style[ionic.CSS.TRANSFORM] = 'none'
+      $swipe.bind angular.element(pane),
+        'start': (coords)->
+          startX = coords.x - x
+          setAnimate "none"
+
+        'cancel': ->
+          onShiftEnd()
+
+        'move': (coords)->
+          x = coords.x - startX
+          if (scope.position == 'left' and x > 0) or (scope.position == 'right' and x < 0)
+            x = 0
           else
-            element[0].style[ionic.CSS.TRANSFORM] = 'translate3d(' + amount + 'px, 0, 0)'
-          $timeout -> scope.translateX = amount
+            updatePosition()
 
-        enableAnimation: ->
-          element[0].classList.add('menu-animated')
-        disableAnimation: ->
-          element[0].classList.remove('menu-animated')
-
-      dragFn = (e)->
-        if  defaultPrevented or e.gesture.srcEvent.defaultPrevented
-          return
-        isDragging = true
-        ctrl.handleDrag(e)
-        e.gesture.srcEvent.preventDefault()
-
-      dragVertFn = (e)->
-        if isDragging
-          e.gesture.srcEvent.preventDefault()
-
-      dragReleaseFn = (e)->
-        isDragging = false
-        if !defaultPrevented
-          ctrl.endDrag(e)
-        defaultPrevented = false
-        
-      swipeFn = (e)->
-        scope.onHide()
-        scope.$apply()
-
-      dragRightGesture = $ionicGesture.on('dragright', dragFn, element)
-      dragLeftGesture = $ionicGesture.on('dragleft', dragFn, element)
-      dragUpGesture = $ionicGesture.on('dragup', dragVertFn, element)
-      dragDownGesture = $ionicGesture.on('dragdown', dragVertFn, element)
-      swipeLeftGesture = $ionicGesture.on('swipeleft', swipeFn, element)
-      releaseGesture = $ionicGesture.on('release', dragReleaseFn, element)
-
-      scope.$on '$destroy', ->
-        $ionicGesture.off(dragLeftGesture, 'dragleft', dragFn)
-        $ionicGesture.off(swipeLeftGesture, 'swipeleft', swipeFn)
-        $ionicGesture.off(dragRightGesture, 'dragright', dragFn)
-        $ionicGesture.off(dragUpGesture, 'dragup', dragFn)
-        $ionicGesture.off(dragDownGesture, 'dragdown', dragFn)
-        $ionicGesture.off(releaseGesture, 'release', dragReleaseFn)
+        'end': ->
+          onShiftEnd()
 
   )
+
 

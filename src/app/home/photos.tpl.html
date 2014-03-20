@@ -10,11 +10,14 @@
     <list-filter id='{{filter}}' ng-repeat="filter in filters"></list-filter>
 </div>
 
-<ion-content has-header='true' has-subheader='true' on-refresh='onRefresh()' on-scroll='onScroll(scrollTop)'>
+<content has-header='true' has-subheader='true' on-refresh='onRefresh()' on-scroll='onScroll(scrollTop)'>
 
     <refresher></refresher>
 
-    <div gallery-links>
+    <div ng-if="objects.$resolved">
+        <div style="text-align: center;margin-top: 10%" ng-if="!objects.length">
+            没有符合条件的照片！
+        </div>
         <a class="thumb-list"
            ng-repeat="obj in objects track by obj.id"
            ng-href="{{obj | fullImagePath:0}}"
@@ -23,7 +26,7 @@
         </a>
     </div>
 
-</ion-content>
+</content>
 
 <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls">
     <div class="slides"></div>
