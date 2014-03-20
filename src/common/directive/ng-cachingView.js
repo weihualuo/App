@@ -91,11 +91,13 @@ function ngCachingViewFactory( $cacheFactory,  $route,   $animate, Nav) {
                 if (backView !== view){
                     Nav.push(backView);
                     backView.after(view);
+                    currentElement.addClass('replaced');
                 }
                 //Remove current view and pop up stacked view
                 else{
                     $animate.removeClass(view, 'stacked');
                     view.scope().$broadcast('enterForeground');
+                    currentElement.removeClass('replaced');
                 }
                 //Always remove current view
                 cleanupLastView();
