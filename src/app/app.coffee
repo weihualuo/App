@@ -109,6 +109,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         angular.copy(type, pathParam)
         $scope.paramUpdateFlag++
 
+      else if type is 0
+        angular.copy({}, pathParam)
+        $scope.paramUpdateFlag++
+
       #return
       pathParam
 
@@ -155,6 +159,18 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
           param = $scope.updateFilters(path, type, id)
           Nav.go path, null, param
 
+    $scope.onAll = ->
+      path = $location.path()
+      param = $scope.updateFilters(path, 0)
+      Nav.go path, null, param
+
+
+    $scope.onSearch = (se, e)->
+      path = $location.path()
+      param = $scope.updateFilters(path, 'se', se)
+      Nav.go path, null, param
+      document.activeElement.blur()
+
     $scope.getFilterTitle = (type)->
       path = $location.path()
       selected = $scope.updateFilters(path)[type] or 0
@@ -162,20 +178,6 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       if !item
         item = filterConfig[type].any
       item.en
-
-    #TODO
-    searchBar = null
-    $scope.onSearch = ->
-
-      if searchBar
-        searchBar.end()
-        searchBar = null
-      else
-        locals = {}
-
-        template = "<side-pane position='right' on-hide='$close()'></side-pane>"
-        searchBar = Popup.modal "modal/searchBar.tpl.html", locals, template, 'search'
-        searchBar.promise.then().finally -> searchBar = null
 
   )
   .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE, listFilters) ->
@@ -185,7 +187,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     $scope.filters =  listFilters
 
     path = $location.path()
-    $timeout -> $scope.updateFilters(path, $routeParams)
+    $timeout ->
+      param = $scope.updateFilters(path, $routeParams)
+      $scope.$watch 'paramUpdateFlag', ->
+        $scope.se = param.se
 
     uri = path.match(/\/(\w+)/)[1]
 
@@ -198,6 +203,9 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       $timeout (->$scope.$broadcast('scroll.resize')), 1000
 
     reloadObjects = ->
+
+      $scope.cleared = angular.equals($routeParams, {})
+
       $scope.objects = objects = collection.list($routeParams)
       if !objects.$resolved
         Popup.loading objects.$promise, null, MESSAGE.LOAD_FAILED
@@ -236,7 +244,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     template: '<a class="pull-right padding" ng-click="toggleFilter(id)">{{value}} <i class="icon ion-arrow-down-b"></i></a>'
     link: (scope, element, attr, ctrl) ->
       scope.id = attr.id
-      scope.$watch 'paramUpdateFlag', (value)->
+      scope.$watch 'paramUpdateFlag', ->
         scope.value = scope.getFilterTitle(scope.id)
   )
 

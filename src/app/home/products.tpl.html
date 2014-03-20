@@ -7,6 +7,16 @@
 </header>
 
 <div class="bar bar-subheader">
+    <form ng-submit="onSearch(se, $event)">
+        <label class="item-input-wrapper">
+            <i class="icon ion-ios7-search placeholder-icon"></i>
+            <input type="search" ng-model="se" placeholder="搜索">
+        </label>
+    </form>
+
+    <a class="pull-right padding" ng-class="{active:cleared}" ng-click="onAll()" style="margin: 0 5px">
+        全部
+    </a>
     <list-filter id='{{filter}}' ng-repeat="filter in filters"></list-filter>
 </div>
 

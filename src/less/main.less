@@ -73,10 +73,6 @@ body{
 //    display: none;
 //}
 
-button.ng-click-active{
-  background: @bg-active;
-}
-
 .tab-item{
   &.active{
     background: darkgray;
@@ -90,6 +86,27 @@ button.ng-click-active{
     background: @bg-active;
   }
 }
+
+button{
+  &.ng-click-active{
+    background: #f5f5f5;
+  }
+  &.active{
+    background: #f5f5f5;
+  }
+}
+
+a{
+  font-size: 18px;
+  &.ng-click-active{
+    background: @bg-active-click;
+  }
+  &.active{
+    background: @bg-active-state;
+  }
+
+}
+
 //a:active{
 //  background: @bg-active;
 //}
