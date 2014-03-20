@@ -28,6 +28,12 @@ body{
   bottom: 0;
   width: 100%;
   z-index: 10;
+
+  &.image-info{
+    top: 0;
+    z-index: 9999999;
+    .opacity(80);
+  }
 }
 
 .side-pane{
@@ -66,18 +72,6 @@ body{
 //    height: 60px;
 //    display: none;
 //}
-
-.blueimp-gallery > .description {
-  position: absolute;
-  top: 30px;
-  left: 15px;
-  color: #fff;
-  display: none;
-}
-.blueimp-gallery-controls > .description {
-  display: block;
-}
-
 
 button.ng-click-active{
   background: @bg-active;

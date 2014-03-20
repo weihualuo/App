@@ -186,12 +186,18 @@ angular.module( 'myWidget', [])
               '</div>'
 
     link: (scope, element) ->
+
+      gallery = null
       element.ready ->
         gallery = blueimp.Gallery scope.links,
           index: scope.index
           container: element[0]
           startSlideshow: true
           onclose: -> scope.$close()
+
+      scope.onInfo = ->
+        gallery.pause()
+        scope.onImageInfo(gallery.getIndex())
   )
 
 

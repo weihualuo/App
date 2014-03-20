@@ -112,45 +112,48 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       #return
       pathParam
 
-    sidebar = null
+    panes = {}
+    $scope.togglePane = (param)->
+      {id, locals, template, url, hash, success, fail, always} = param
+      if panes[id]
+        panes[id].end()
+        panes[id] = null
+      else if id
+        panes[id] = Popup.modal url, locals, template, hash
+        panes[id].promise.then(success, fail).finally ->
+          panes[id] = null
+          if always then always()
+
+
     $scope.toggleSideMenu = ()->
-      if sidebar
-        sidebar.end()
-        sidebar = null
-      else
-        pos = $location.path()
-        locals = pos:pos
-        template = "<side-pane position='left' on-hide='$close()'></side-pane>"
-        sidebar = Popup.modal "modal/sideMenu.tpl.html", locals, template, 'sidemenu'
-        sidebar.promise.then( (name)->
+      $scope.togglePane
+        id: 'sidebar'
+        template: "<side-pane position='left' on-hide='$close()'></side-pane>"
+        url: "modal/sideMenu.tpl.html"
+        hash: 'sidemenu'
+        locals: pos:$location.path()
+        success: (name)->
           Nav.go name, null, $scope.updateFilters(name)
-        ).finally -> sidebar = null
 
-
-
-    filterBar = null
     $scope.toggleFilter = (type)->
 
       if !filterConfig[type]
         console.log "not found", type
         return
 
-      if filterBar
-        filterBar.end()
-        filterBar = null
-      else
-        path = $location.path()
-        locals =
+      path = $location.path()
+      $scope.togglePane
+        id: 'filters'
+        template: "<side-pane position='right' on-hide='$close()'></side-pane>"
+        url: "modal/filterBar.tpl.html"
+        hash: 'filters'
+        locals:
           title: filterConfig[type].title
           items: [filterConfig[type].any].concat $scope.meta[type]
           selected: $scope.updateFilters(path)[type] or 0
-
-        template = "<side-pane position='right' on-hide='$close()'></side-pane>"
-        filterBar = Popup.modal "modal/filterBar.tpl.html", locals, template
-        filterBar.promise.then((id)->
+        success: (id)->
           param = $scope.updateFilters(path, type, id)
           Nav.go path, null, param
-        ).finally -> filterBar = null
 
     $scope.getFilterTitle = (type)->
       path = $location.path()
@@ -160,17 +163,19 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         item = filterConfig[type].any
       item.en
 
+    #TODO
+    searchBar = null
     $scope.onSearch = ->
 
-      if $scope.searchBar
-        $scope.searchBar.end()
-        $scope.searchBar = null
+      if searchBar
+        searchBar.end()
+        searchBar = null
       else
         locals = {}
 
         template = "<side-pane position='right' on-hide='$close()'></side-pane>"
-        $scope.searchBar = Popup.modal "modal/searchBar.tpl.html", locals, template, 'search'
-        $scope.searchBar.promise.then().finally -> $scope.searchBar = null
+        searchBar = Popup.modal "modal/searchBar.tpl.html", locals, template, 'search'
+        searchBar.promise.then().finally -> searchBar = null
 
   )
   .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE, listFilters) ->

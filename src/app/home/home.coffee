@@ -32,18 +32,25 @@ angular.module('app.home', ['Gallery', 'restangular'])
         href: $filter('fullImagePath')(obj, 0)
         title: obj.title
 
+    $scope.onImageInfo = (index)->
+      $scope.togglePane
+        id: 'infoView'
+        template: "<side-pane position='left' class='image-info' on-hide='$close()'></side-pane>"
+        url: "modal/imageInfo.tpl.html"
+        hash: 'info'
+        locals:
+          image: $scope.objects[index]
+
     $scope.onImageView = (obj)->
-      if $scope.imageView
-        $scope.imageView.end()
-        $scope.imageView = null
-      else
-        locals =
+      $scope.togglePane
+        id: 'imageView'
+        template: "<gallery-view on-hide='$close()'></gallery-view>"
+        url: "modal/gallery.tpl.html"
+        hash: 'gallery'
+        locals:
           index: $scope.objects.indexOf(obj)
           links: obj2Links($scope.objects)
-
-        template = "<gallery-view on-hide='$close()'></gallery-view>"
-        $scope.imageView = Popup.modal "modal/gallery.tpl.html", locals, template, 'gallery'
-        $scope.imageView.promise.then().finally -> $scope.imageView = null
+          onImageInfo: $scope.onImageInfo
 
   )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
