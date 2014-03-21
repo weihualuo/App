@@ -61,17 +61,30 @@
   .rotateY(180deg);
 }
 
+.flex1{
+  .flex(1);
+}
+.flex2{
+  .flex(2);
+}
+
 .box-center {
-  .display-box;
-  .box-orient(horizontal);
+  .flex-box;
   .box-pack(center);
   .box-align(center);
 }
-.vbox-justify{
-  .display-box;
-  .box-orient(vertical);
-  .box-pack(justify)
+box-align-center{
+  .flex-box;
+  .box-align(center);
 }
+.vbox-justify{
+  .flex-box;
+  .box-orient(vertical);
+  .box-pack(justify);
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 
 //
 //.face-container{

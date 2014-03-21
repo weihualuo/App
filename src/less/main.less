@@ -9,6 +9,7 @@
 @import "mixinx";
 @import "utilities";
 @import "popup";
+@import "responsive";
 
 @import "../app/home/home";
 @import "../app/detail/detail";
@@ -24,7 +25,7 @@ body{
 .side-pane-backdrop{
   position: fixed;
   left: 0;
-  top: @headerHeight;
+  top: 0;
   bottom: 0;
   width: 100%;
   z-index: 10;
@@ -42,7 +43,7 @@ body{
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 30%;
+  width: @side-pane-width;
   min-width: 200px;
   z-index: 11;
   box-shadow: -1px 0px 10px rgba(0,0,0,0.6);

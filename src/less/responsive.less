@@ -1,0 +1,49 @@
+@import "variables";
+
+.res-has-header{
+  top: @headerHeight*2;
+}
+.res-subheader{
+  top: @headerHeight;
+}
+
+.res-content{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #fff;
+}
+
+
+.res-side-pane{
+  display: none !important;
+}
+
+@media (min-width: 850px){
+  .res-header{
+    display: none !important;
+  }
+  .res-has-header{
+    top: @headerHeight;
+  }
+  .res-subheader {
+    top: 0;
+  }
+  .res-side-pane {
+    display: inherit !important;
+  }
+  .res-content{
+    left : @side-pane-width !important;
+  }
+}
+
+@media (max-width: 640px){
+  .res-subheader{
+    display: none;
+  }
+  .res-has-header{
+    top: @headerHeight;
+  }
+}

@@ -60,6 +60,9 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
   .controller('AppCtrl', ($scope, Single, Popup, Nav, $timeout, $location) ->
 
+    $scope.onTestDevice = ->
+      alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
+
     #Set the app title to a specific name or default value
     $scope.setTitle = (title)->
       $scope.title = title or $scope.appTitle
@@ -67,6 +70,9 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     #Set page title
     $scope.setPageTitle = (title)->
       $scope.pageTitle = title or $scope.appTitle
+
+    $scope.setFilters = (filters)->
+      $scope.filters =  filters
 
     filterConfig =
       room:
@@ -129,15 +135,25 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
           if always then always()
 
 
+
+
+    $scope.$on '$viewContentLoaded', ->
+      $scope.pos = $location.path()
+
+    $scope.onSideMenu = (name)->
+      Nav.go name, null, $scope.updateFilters(name)
+
+
     $scope.toggleSideMenu = ()->
       $scope.togglePane
         id: 'sidebar'
         template: "<side-pane position='left' on-hide='$close()'></side-pane>"
         url: "modal/sideMenu.tpl.html"
         hash: 'sidemenu'
-        locals: pos:$location.path()
-        success: (name)->
-          Nav.go name, null, $scope.updateFilters(name)
+        locals:
+          pos:$location.path()
+          onSideMenu: (name)-> @$close(name)
+        success: $scope.onSideMenu
 
     $scope.toggleFilter = (type)->
 
@@ -165,7 +181,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       Nav.go path, null, param
 
 
-    $scope.onSearch = (se, e)->
+    $scope.onSearch = (se)->
       path = $location.path()
       param = $scope.updateFilters(path, 'se', se)
       Nav.go path, null, param
@@ -184,8 +200,6 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
     console.log 'ListCtrl'
 
-    $scope.filters =  listFilters
-
     path = $location.path()
     $timeout ->
       param = $scope.updateFilters(path, $routeParams)
@@ -202,6 +216,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       #Wait for the list render progress completed
       $timeout (->$scope.$broadcast('scroll.resize')), 1000
 
+    resetState = ->
+      $scope.setFilters(listFilters)
+
+
     reloadObjects = ->
 
       $scope.cleared = angular.equals($routeParams, {})
@@ -216,6 +234,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         scrollResize(true)
 
     $scope.$on '$scopeUpdate', reloadObjects
+    $scope.$on '$viewContentLoaded', resetState
 
     #Load more objects
     $scope.onMore = ->

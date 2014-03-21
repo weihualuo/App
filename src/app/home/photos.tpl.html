@@ -1,31 +1,6 @@
 
 
-<header class="bar bar-header bar-dark">
-    <button class="button button-clear icon ion-navicon" ng-click="toggleSideMenu('photos')"> MyHouzz </button>
-    <h1 class="title">照片</h1>
-    <button class="button button-clear icon ion-ios7-search" ng-click="onSearch()">  {{total}} 个</button>
-</header>
-
-<div class="bar bar-subheader item-input-inset">
-    <a class="pull-left padding flex2">
-        缩略图 <i class="icon ion-arrow-down-b"></i>
-    </a>
-
-    <form ng-submit="onSearch(se, $event)">
-        <label class="item-input-wrapper">
-            <i class="icon ion-ios7-search placeholder-icon"></i>
-            <input type="search" ng-model="se" placeholder="搜索">
-        </label>
-    </form>
-
-    <a class="pull-right padding" ng-class="{active:cleared}" ng-click="onAll()" style="margin: 0 5px">
-        全部
-    </a>
-    <list-filter id='{{filter}}' ng-repeat="filter in filters"></list-filter>
-
-</div>
-
-<content has-header='true' has-subheader='true' on-refresh='onRefresh()' ng-controller='PhotoCtrl'>
+<content class="res-has-header" on-refresh='onRefresh()' ng-controller='PhotoCtrl'>
 
     <refresher></refresher>
 
