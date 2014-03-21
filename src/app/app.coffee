@@ -100,6 +100,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     $scope.$watch 'paramUpdateFlag', ->
       param = $scope.updateFilters $location.path()
       $scope.cleared = angular.equals(param, {})
+      $scope.se = param.se
 
     $scope.filterParam = {}
     $scope.paramUpdateFlag = 0
@@ -112,7 +113,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       if angular.isString(type)
         $scope.paramUpdateFlag++
         if value
-          pathParam[type] = value
+          pathParam[type] = String value
         else
           delete pathParam[type]
 
@@ -195,7 +196,8 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       path = $location.path()
       param = $scope.updateFilters(path, 'se', se)
       Nav.go path, null, param
-      document.activeElement.blur()
+      $timeout -> document.activeElement.blur()
+
 
     $scope.getFilterTitle = (type)->
       path = $location.path()
@@ -211,10 +213,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     console.log 'ListCtrl'
 
     path = $location.path()
-    $timeout ->
-      param = $scope.updateFilters(path, $routeParams)
-      $scope.$watch 'paramUpdateFlag', ->
-        $scope.se = param.se
+    $scope.updateFilters(path, $routeParams)
 
     uri = path.match(/\/(\w+)/)[1]
 

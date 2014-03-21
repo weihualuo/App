@@ -39,9 +39,14 @@
         </header>
 
         <div class="bar res-subheader box-align-center">
-            <a class="padding flex1">
-                <i class="icon ion-arrow-down-b"></i>
+            <a class="flex1">
             </a>
+            <form ng-submit="onSearch(se)" ng-class="{focused:inFocus}">
+                <label class="box-align-center">
+                    <i class="icon ion-ios7-search placeholder-icon"></i>
+                    <input type="search" ng-model="se" ng-focus="inFocus=1" ng-blur="inFocus=0" placeholder="搜索">
+                </label>
+            </form>
 
             <a class="padding" ng-show="filters" ng-class="{active:cleared}" ng-click="onAll()" style="margin: 0 5px">
                 全部
