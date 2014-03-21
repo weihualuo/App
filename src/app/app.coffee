@@ -14,32 +14,24 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       controller: 'ListCtrl'
       templateUrl: 'home/photos.tpl.html'
       zIndex: 1
-      resolve:
-        listFilters: -> ['style', 'room', 'location']
     )
     .when( '/products'
       name: '/products'
       controller: 'ListCtrl'
       templateUrl: 'home/products.tpl.html'
       zIndex: 1
-      resolve:
-        listFilters: -> ['style', 'room']
     )
     .when( '/pros'
       name: '/pros'
       controller: 'ListCtrl'
       templateUrl: 'home/pros.tpl.html'
       zIndex: 1
-      resolve:
-        listFilters: -> ['location']
       )
     .when( '/ideabooks'
       name: '/ideabooks'
       controller: 'ListCtrl'
       templateUrl: 'home/ideabooks.tpl.html'
       zIndex: 1
-      resolve:
-        listFilters: -> ['style', 'room', ]
     )
     .when( '/advice'
       name: '/advice'
@@ -57,24 +49,8 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       redirectTo: '/photos'
     )
   )
-
-  .controller('AppCtrl', ($scope, Single, Popup, Nav, $timeout, $location) ->
-
-    $scope.onTestDevice = ->
-      alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
-
-    #Set the app title to a specific name or default value
-    $scope.setTitle = (title)->
-      $scope.title = title or $scope.appTitle
-
-    #Set page title
-    $scope.setPageTitle = (title)->
-      $scope.pageTitle = title or $scope.appTitle
-
-    $scope.setFilters = (filters)->
-      $scope.filters =  filters
-
-    filterConfig =
+  .constant('FilterConfig',
+    meta:
       room:
         title: 'Spcaces'
         any:
@@ -90,11 +66,40 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         any:
           id: 0
           en: 'Any Area'
+    filters:
+      '/photos': ['style', 'room', 'location']
+      '/products': ['style', 'room']
+      '/pros': ['location']
+      '/ideabooks': ['style', 'room']
+    
+  )
+  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, $timeout, $location, FilterConfig) ->
+
+    $scope.onTestDevice = ->
+      alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
+
+    #Set the app title to a specific name or default value
+    $scope.setTitle = (title)->
+      $scope.title = title or $scope.appTitle
+
+    #Set page title
+    $scope.setPageTitle = (title)->
+      $scope.pageTitle = title or $scope.appTitle
+
+    filterMeta = FilterConfig.meta
+
+    $scope.setFilters = (filters)->
+      $scope.filters =  filters
+      $scope.paramUpdateFlag++
 
     #Load meta info first
     $scope.meta = Single('meta').get()
     $scope.meta.$promise.then ->
       $scope.paramUpdateFlag++
+
+    $scope.$watch 'paramUpdateFlag', ->
+      param = $scope.updateFilters $location.path()
+      $scope.cleared = angular.equals(param, {})
 
     $scope.filterParam = {}
     $scope.paramUpdateFlag = 0
@@ -134,17 +139,19 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
           panes[id] = null
           if always then always()
 
-
-
-
     $scope.$on '$viewContentLoaded', ->
-      $scope.pos = $location.path()
+      path = $location.path()
+      $scope.pos = path
+      $scope.filters = FilterConfig.filters[path]
 
     $scope.onSideMenu = (name)->
       Nav.go name, null, $scope.updateFilters(name)
 
 
     $scope.toggleSideMenu = ()->
+      if !Service.noRepeat('toggleSideMenu',2000)
+        return
+
       $scope.togglePane
         id: 'sidebar'
         template: "<side-pane position='left' on-hide='$close()'></side-pane>"
@@ -157,7 +164,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
     $scope.toggleFilter = (type)->
 
-      if !filterConfig[type]
+      if !Service.noRepeat('toggleFilter',2000)
+        return
+
+      if !filterMeta[type]
         console.log "not found", type
         return
 
@@ -168,8 +178,8 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         url: "modal/filterBar.tpl.html"
         hash: 'filters'
         locals:
-          title: filterConfig[type].title
-          items: [filterConfig[type].any].concat $scope.meta[type]
+          title: filterMeta[type].title
+          items: [filterMeta[type].any].concat $scope.meta[type]
           selected: $scope.updateFilters(path)[type] or 0
         success: (id)->
           param = $scope.updateFilters(path, type, id)
@@ -192,11 +202,11 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       selected = $scope.updateFilters(path)[type] or 0
       item = _.find $scope.meta[type], id:parseInt(selected)
       if !item
-        item = filterConfig[type].any
+        item = filterMeta[type].any
       item.en
 
   )
-  .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE, listFilters) ->
+  .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE) ->
 
     console.log 'ListCtrl'
 
@@ -216,13 +226,9 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       #Wait for the list render progress completed
       $timeout (->$scope.$broadcast('scroll.resize')), 1000
 
-    resetState = ->
-      $scope.setFilters(listFilters)
-
+    resetState = -> no
 
     reloadObjects = ->
-
-      $scope.cleared = angular.equals($routeParams, {})
 
       $scope.objects = objects = collection.list($routeParams)
       if !objects.$resolved

@@ -136,7 +136,6 @@ angular.module( 'ui.popup', [])
             deferred.resolve(param)
           else
             deferred.reject()
-          scope.$apply()
 
 
       template ?= '<div class="popup-modal popup-in-up"></div>'
@@ -152,9 +151,8 @@ angular.module( 'ui.popup', [])
           $location.hash(hash or 'modal')
           savedState = window.onpopstate
           window.onpopstate = ->
-            hidePopup()
+            $timeout hidePopup
             window.onpopstate = savedState
-            scope.$apply()
 
         ()->
           deferred.reject()

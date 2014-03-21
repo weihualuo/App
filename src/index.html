@@ -30,7 +30,7 @@
 
     <div class="side-pane left res-side-pane" ng-include="'modal/sideMenu.tpl.html'"></div>
 
-    <div class="res-content">
+    <div class="res-main-pane">
 
         <header class="bar bar-header bar-dark res-header">
             <button class="button button-clear icon ion-navicon" ng-click="toggleSideMenu('photos')"> MyHouzz </button>
@@ -39,11 +39,11 @@
         </header>
 
         <div class="bar res-subheader box-align-center">
-            <a class="padding flex1" ng-click="onTestDevice()">
+            <a class="padding flex1">
                 <i class="icon ion-arrow-down-b"></i>
             </a>
 
-            <a class="padding" ng-class="{active:cleared}" ng-click="onAll()" style="margin: 0 5px">
+            <a class="padding" ng-show="filters" ng-class="{active:cleared}" ng-click="onAll()" style="margin: 0 5px">
                 全部
             </a>
 

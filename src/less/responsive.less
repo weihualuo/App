@@ -1,13 +1,13 @@
 @import "variables";
 
-.res-has-header{
+.res-content{
   top: @headerHeight*2;
 }
 .res-subheader{
   top: @headerHeight;
 }
 
-.res-content{
+.res-main-pane{
   position: absolute;
   left: 0;
   right: 0;
@@ -25,7 +25,7 @@
   .res-header{
     display: none !important;
   }
-  .res-has-header{
+  .res-content{
     top: @headerHeight;
   }
   .res-subheader {
@@ -33,8 +33,11 @@
   }
   .res-side-pane {
     display: inherit !important;
+    box-shadow: none !important;
+    z-index: 9 !important;
+    border-right: 1px solid gray;
   }
-  .res-content{
+  .res-main-pane{
     left : @side-pane-width !important;
   }
 }
@@ -43,7 +46,7 @@
   .res-subheader{
     display: none;
   }
-  .res-has-header{
+  .res-content{
     top: @headerHeight;
   }
 }
