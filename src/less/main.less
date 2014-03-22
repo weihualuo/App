@@ -69,8 +69,12 @@ body{
 .side-menu-item{
   .padding;
   font-size: @icon-medium;
+  text-align: center;
   &.active{
     color: #b8dcf2;
+  }
+  > span{
+    display: block;
   }
 }
 
@@ -129,7 +133,7 @@ button[disabled], input[disabled]{
 }
 
 .icon-large{
-  font-size: @icon-medium;
+  font-size: @icon-large;
 }
 
 form.focused{
