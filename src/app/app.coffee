@@ -49,7 +49,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       redirectTo: '/photos'
     )
   )
-  .constant('FilterConfig',
+  .constant('AppConfig',
     meta:
       room:
         title: '空间'
@@ -74,10 +74,22 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       '/products': ['style', 'room']
       '/pros': ['location']
       '/ideabooks': ['style', 'room']
-    
-  )
-  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, $location, FilterConfig) ->
+    titles:
+      '/photos': '照片'
+      '/products': '产品'
+      '/pros': '设计师'
+      '/ideabooks': '灵感集'
+      '/advice': '建议'
+      '/my': '我的家居'
 
+  )
+  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, $location, AppConfig) ->
+
+    filterMeta = AppConfig.meta
+    pathFilters = AppConfig.filters
+    pathTitles = AppConfig.titles
+    rightTexts = {}
+    
     $scope.onTestDevice = ->
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
 
@@ -89,7 +101,12 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     $scope.setPageTitle = (title)->
       $scope.pageTitle = title or $scope.appTitle
 
-    filterMeta = FilterConfig.meta
+    
+    $scope.setRightButton = (title)->
+      path = $location.path()
+      rightTexts[path] = title
+      $scope.rightText = title
+    
 
     #Load meta info first
     $scope.meta = Single('meta').get()
@@ -130,7 +147,9 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     $scope.$on '$viewContentLoaded', ->
       path = $location.path()
       $scope.pos = path
-      $scope.filters = FilterConfig.filters[path]
+      $scope.filters = pathFilters[path]
+      $scope.rightText = rightTexts[path]
+      $scope.title = pathTitles[path]
       $scope.paramUpdateFlag++
 
     $scope.onSideMenu = (name)->
@@ -226,7 +245,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
       objects.$promise.then ->
         $scope.haveMore = objects.meta.more
-        $scope.total = objects.length + $scope.haveMore
+        $scope.setRightButton(objects.length + $scope.haveMore + '张')
         scrollResize(true)
 
     $scope.$on '$scopeUpdate', reloadObjects
