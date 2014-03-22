@@ -52,19 +52,19 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
   .constant('FilterConfig',
     meta:
       room:
-        title: 'Spcaces'
+        title: '空间'
         any:
           id: 0
           en: 'All spaces'
           cn: '所有空间'
       style:
-        title: 'Style'
+        title: '风格'
         any:
           id: 0
           en: 'Any Style'
           cn: '所有风格'
       location:
-        title: 'Area'
+        title: '地点'
         any:
           id: 0
           en: 'Any Area'
@@ -76,7 +76,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       '/ideabooks': ['style', 'room']
     
   )
-  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, $timeout, $location, FilterConfig) ->
+  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, $location, FilterConfig) ->
 
     $scope.onTestDevice = ->
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
@@ -127,18 +127,6 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       #return
       pathParam
 
-    panes = {}
-    $scope.togglePane = (param)->
-      {id, locals, template, url, hash, success, fail, always} = param
-      if panes[id]
-        panes[id].end()
-        panes[id] = null
-      else if id
-        panes[id] = Popup.modal url, locals, template, hash
-        panes[id].promise.then(success, fail).finally ->
-          panes[id] = null
-          if always then always()
-
     $scope.$on '$viewContentLoaded', ->
       path = $location.path()
       $scope.pos = path
@@ -153,7 +141,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       if !Service.noRepeat('toggleSideMenu',2000)
         return
 
-      $scope.togglePane
+      TogglePane
         id: 'sidebar'
         template: "<side-pane position='left' pane='pane-side-menu' on-hide='$close()'></side-pane>"
         url: "modal/sideMenu.tpl.html"
@@ -173,7 +161,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         return
 
       path = $location.path()
-      $scope.togglePane
+      TogglePane
         id: 'filters'
         template: "<side-pane position='right' pane='res-pane-filter-bar' on-hide='$close()'></side-pane>"
         url: "modal/filterBar.tpl.html"
@@ -205,7 +193,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       item = _.find $scope.meta[type], id:parseInt(selected)
       if !item
         item = filterMeta[type].any
-      item.cn
+      item.cn or item.en
 
   )
   .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE) ->

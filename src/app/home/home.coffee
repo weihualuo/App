@@ -24,7 +24,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
   )
 
 
-  .controller( 'PhotoCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
+  .controller( 'PhotoCtrl', ($scope, $timeout, $filter, Many, Popup, TogglePane, MESSAGE) ->
     console.log 'PhotoCtrl'
 
     obj2Links  = (objs)->
@@ -33,7 +33,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
         title: obj.title
 
     $scope.onImageInfo = (index)->
-      $scope.togglePane
+      TogglePane
         id: 'infoView'
         template: "<side-pane position='left' pane='pane-image-info' class='backdrop-image-info' on-hide='$close()'></side-pane>"
         url: "modal/imageInfo.tpl.html"

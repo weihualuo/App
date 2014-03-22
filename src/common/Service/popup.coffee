@@ -164,5 +164,18 @@ angular.module( 'ui.popup', [])
         promise: deferred.promise
         end: scope.$close
   )
+  .factory('TogglePane', (Popup)->
+    panes = {}
+    (param)->
+      {id, locals, template, url, hash, success, fail, always} = param
+      if panes[id]
+        panes[id].end()
+        panes[id] = null
+      else if id
+        panes[id] = Popup.modal url, locals, template, hash
+        panes[id].promise.then(success, fail).finally ->
+          panes[id] = null
+          if always then always()
+  )
 
 
