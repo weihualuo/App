@@ -270,16 +270,43 @@
   -ms-box-orient: @orient;
   box-orient: @orient;
 }
+
+//new
+//column == vertical, row == horizontal
+.flex-direction(@dir){
+  -webkit-flex-direction: @dir;
+  -moz-flex-direction: @dir;
+  -ms-flex-direction: @dir;
+  flex-direction: @dir;
+}
+
 .box-pack(@pack){
   -webkit-box-pack: @pack;
   -moz-box-pack: @pack;
   -ms-box-pack: @pack;
   box-pack: @pack;
 }
+
+//new
+.flex-pack(@value){
+  -webkit-justify-content: @value;
+  -mos-justify-content: @value;
+  -ms-justify-content: @value;
+  justify-content: @value
+}
+
 .box-align(@align){
   -webkit-box-align: @align;
   -moz-box-align: @align;
   -ms-box-align: @align;
   box-align: @align;
+}
+
+//ew
+.flex-align(@value){
+  -webkit-align-items: @value;
+  -moz-align-items: @value;
+  -ms-align-items: @value;
+  align-items: @value;
 }
 

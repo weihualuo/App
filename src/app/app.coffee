@@ -88,10 +88,6 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
     filterMeta = FilterConfig.meta
 
-    $scope.setFilters = (filters)->
-      $scope.filters =  filters
-      $scope.paramUpdateFlag++
-
     #Load meta info first
     $scope.meta = Single('meta').get()
     $scope.meta.$promise.then ->
@@ -144,6 +140,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       path = $location.path()
       $scope.pos = path
       $scope.filters = FilterConfig.filters[path]
+      $scope.paramUpdateFlag++
 
     $scope.onSideMenu = (name)->
       Nav.go name, null, $scope.updateFilters(name)
@@ -264,11 +261,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
   .directive('listFilter', ()->
     restrict: 'E'
     replace: true
-    scope: true
-    template: '<a class="pull-right padding" ng-click="toggleFilter(id)">{{value}} <i class="icon ion-arrow-down-b"></i></a>'
+    template: '<a class="padding" ng-click="toggleFilter(filter)">{{value}} <i class="icon ion-arrow-down-b"></i></a>'
     link: (scope, element, attr, ctrl) ->
-      scope.id = attr.id
+      #Should use with ng-repeat
       scope.$watch 'paramUpdateFlag', ->
-        scope.value = scope.getFilterTitle(scope.id)
+        scope.value = scope.getFilterTitle(scope.filter)
   )
 
