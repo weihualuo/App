@@ -140,6 +140,9 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     $scope.toggleSideMenu = ()->
       if !Service.noRepeat('toggleSideMenu',2000)
         return
+      menu = document.querySelector('.res-side-pane')
+      if menu and menu.offsetHeight
+        return
 
       TogglePane
         id: 'sidebar'
@@ -163,7 +166,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       path = $location.path()
       TogglePane
         id: 'filters'
-        template: "<side-pane position='right' pane='res-pane-filter-bar' on-hide='$close()'></side-pane>"
+        template: "<side-pane position='right' pane='pane-filter-bar' on-hide='$close()'></side-pane>"
         url: "modal/filterBar.tpl.html"
         hash: 'filters'
         locals:

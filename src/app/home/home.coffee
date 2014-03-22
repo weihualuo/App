@@ -42,7 +42,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
           image: $scope.objects[index]
 
     $scope.onImageView = (obj)->
-      $scope.togglePane
+      TogglePane
         id: 'imageView'
         template: "<gallery-view on-hide='$close()'></gallery-view>"
         url: "modal/gallery.tpl.html"

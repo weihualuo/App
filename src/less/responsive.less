@@ -1,17 +1,17 @@
 @import "variables";
 
 .res-content{
-  top: @headerHeight*2;
+  top: @headerHeight;
 }
 .res-subheader{
-  top: @headerHeight;
+  top: 0;
 }
 
 .res-main-pane{
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
+  top: @headerHeight;
   bottom: 0;
   background-color: #fff;
 }
@@ -23,26 +23,19 @@
 
 @media (min-width: 850px){
   .res-header{
-    display: none !important;
   }
   .res-content{
-    top: @headerHeight;
   }
   .res-subheader {
-    top: 0;
   }
   .res-side-pane {
     display: inherit !important;
     box-shadow: none !important;
     z-index: 9 !important;
-    top: 0 !important;
     border-right: 1px solid gray;
   }
   .res-main-pane{
     left : @side-pane-width !important;
-  }
-  .res-pane-filter-bar{
-    top: 0 !important;
   }
 }
 
@@ -51,6 +44,6 @@
     display: none;
   }
   .res-content{
-    top: @headerHeight;
+    top: 0;
   }
 }
