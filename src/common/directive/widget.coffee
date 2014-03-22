@@ -126,18 +126,14 @@ angular.module( 'myWidget', [])
     replace: true
     transclude: true
     scope:
-      onHide: '&'
       position: '@'
       pane: '@'
-      animation: '@'
-    template: '<div class="side-pane-backdrop {{animation}}" ng-click="onHide()" ng-swipe-right="onSwipe(1)" ng-swipe-left="onSwipe(-1)">'+
+    template: '<div class="side-pane-backdrop popup-in-{{position}}" ng-click="onLeave()" ng-swipe-right="onSwipe(1)" ng-swipe-left="onSwipe(-1)">'+
                 '<div class="side-pane {{pane}}" ng-transclude ng-click="$event.stopPropagation()">'+
                 '</div>'+
               '</div>'
 
     link: (scope, element) ->
-
-      scope.animation ?= 'popup-in-'+scope.position
 
       startX = 0
       x = 0
@@ -151,15 +147,18 @@ angular.module( 'myWidget', [])
       onShiftEnd = ->
         width = pane.offsetWidth
         if Math.abs(x)*2 > width
-          scope.onHide()
+          scope.onLeave()
         else
           x = 0
           setAnimate "all 0.3s ease-in"
           updatePosition()
 
+      scope.onLeave = ->
+        scope.$parent.$close()
+
       scope.onSwipe = (dir)->
         if (dir < 0 and scope.position == 'left') or (dir > 0 and scope.position == 'right')
-          scope.onHide()
+          scope.onLeave()
 
       $swipe.bind angular.element(pane),
         'start': (coords, event)->

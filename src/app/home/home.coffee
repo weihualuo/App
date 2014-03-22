@@ -35,7 +35,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
     $scope.onImageInfo = (index)->
       TogglePane
         id: 'infoView'
-        template: "<side-pane position='left' pane='pane-image-info' class='backdrop-image-info' on-hide='$close()'></side-pane>"
+        template: "<side-pane position='left' pane='pane-image-info'></side-pane>"
         url: "modal/imageInfo.tpl.html"
         hash: 'info'
         locals:

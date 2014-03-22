@@ -3,7 +3,7 @@
 
 @import  "../../vendor/ionic-0.9.17-alpha/dist/css/ionic";
 @import "../../vendor/ionic-0.9.17-alpha/dist/css/themes/ionic-ios7";
-
+@import "../../vendor/Gallery/css/blueimp-gallery";
 
 @import "variables";
 @import "mixinx";
@@ -28,18 +28,12 @@ body{
   top: 0;
   bottom: 0;
   width: 100%;
-  z-index: 10;
-
-  &.backdrop-image-info{
-    top: 0;
-    z-index: 9999999;
-  }
+  z-index: 30;
 }
 
 .side-pane{
   background: white;
   position: absolute;
-  z-index: 11;
   box-shadow: -1px 0px 10px rgba(0,0,0,0.6);
 
   &.pane-side-menu{
