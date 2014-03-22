@@ -128,12 +128,16 @@ angular.module( 'myWidget', [])
     scope:
       onHide: '&'
       position: '@'
-    template: '<div class="side-pane-backdrop popup-in-{{position}}" ng-click="onHide()" ng-swipe-right="onSwipe(1)" ng-swipe-left="onSwipe(-1)">'+
-                '<div class="side-pane {{position}}" ng-transclude ng-click="$event.stopPropagation()">'+
+      pane: '@'
+      animation: '@'
+    template: '<div class="side-pane-backdrop {{animation}}" ng-click="onHide()" ng-swipe-right="onSwipe(1)" ng-swipe-left="onSwipe(-1)">'+
+                '<div class="side-pane {{pane}}" ng-transclude ng-click="$event.stopPropagation()">'+
                 '</div>'+
               '</div>'
 
     link: (scope, element) ->
+
+      scope.animation ?= 'popup-in-'+scope.position
 
       startX = 0
       x = 0

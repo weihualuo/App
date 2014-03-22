@@ -30,10 +30,10 @@ body{
   width: 100%;
   z-index: 10;
 
-  &.image-info{
+  &.backdrop-image-info{
     top: 0;
     z-index: 9999999;
-    .opacity(80);
+    .opacity(95);
   }
 }
 
@@ -41,20 +41,31 @@ body{
   background: white;
 //  .opacity(90);
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: @side-pane-width;
-  min-width: 200px;
   z-index: 11;
   box-shadow: -1px 0px 10px rgba(0,0,0,0.6);
 
-  &.left{
+  &.pane-side-menu{
     left: 0;
+    top: @headerHeight;
+    bottom: 0;
+    width: @side-pane-width;
   }
-  &.right{
+  &.res-pane-filter-bar{
     right: 0;
+    top: @headerHeight;
+    bottom: 0;
+    width: @pane-filter-bar-width;
+  }
+  &.pane-image-info{
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: @pane-image-info-width;
   }
 }
+
+
+
 .side-menu-item{
   .padding;
   font-size: @icon-medium;

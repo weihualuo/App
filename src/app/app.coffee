@@ -56,16 +56,19 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
         any:
           id: 0
           en: 'All spaces'
+          cn: '所有空间'
       style:
         title: 'Style'
         any:
           id: 0
           en: 'Any Style'
+          cn: '所有风格'
       location:
         title: 'Area'
         any:
           id: 0
           en: 'Any Area'
+          cn: '全部地点'
     filters:
       '/photos': ['style', 'room', 'location']
       '/products': ['style', 'room']
@@ -152,7 +155,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
       $scope.togglePane
         id: 'sidebar'
-        template: "<side-pane position='left' on-hide='$close()'></side-pane>"
+        template: "<side-pane position='left' pane='pane-side-menu' on-hide='$close()'></side-pane>"
         url: "modal/sideMenu.tpl.html"
         hash: 'sidemenu'
         locals:
@@ -172,7 +175,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       path = $location.path()
       $scope.togglePane
         id: 'filters'
-        template: "<side-pane position='right' on-hide='$close()'></side-pane>"
+        template: "<side-pane position='right' pane='res-pane-filter-bar' on-hide='$close()'></side-pane>"
         url: "modal/filterBar.tpl.html"
         hash: 'filters'
         locals:
@@ -202,7 +205,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       item = _.find $scope.meta[type], id:parseInt(selected)
       if !item
         item = filterMeta[type].any
-      item.en
+      item.cn
 
   )
   .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE) ->

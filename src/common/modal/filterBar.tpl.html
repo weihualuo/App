@@ -8,6 +8,6 @@
         <li class="item"
             ng-class="{active: item.id==selected}"
             ng-click="$close(item.id)"
-            ng-repeat="item in items">{{item.en}}</li>
+            ng-repeat="item in items">{{item.cn || item.en}}</li>
     </ul>
 </content>
