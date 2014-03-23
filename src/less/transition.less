@@ -1,67 +1,134 @@
 
+.fade-in-out{
 
-
-
-@-webkit-keyframes turn2front {
-  0% { -webkit-transform: rotate3d(0,1,0,180deg); }
-  100% { -webkit-transform: rotate3d(0,0,0,0deg); }
-}
-@-webkit-keyframes turn2back {
-  0% { -webkit-transform: rotateY(-180deg); }
-  100% { -webkit-transform: rotateY(0deg); }
-}
-
-.turnfront{
-  -webkit-animation: turn2front 0.5s linear;
-}
-.turnback{
-  -webkit-animation: turn2back 0.5s linear;
-}
-
-
-/*
- * Slide
- * slide pages horizontally
- */
-@-webkit-keyframes slideInFromRight {
-  0% { -webkit-transform: translate3d(100%, 0, 0); }
-  100% { -webkit-transform: translate3d(0, 0, 0); }
-}
-@-webkit-keyframes slideOutToRight {
-  0% { -webkit-transform: translate3d(0, 0, 0); }
-  100% { -webkit-transform: translate3d(100%, 0, 0); }
-}
-@-webkit-keyframes slideInFromLeft {
-  0% { -webkit-transform: translate3d(-100%,0,0); }
-  100% { -webkit-transform: translate3d(0, 0, 0); }
-}
-@-webkit-keyframes slideOutToLeft {
-  0% { -webkit-transform: translate3d(0,0,0); }
-  100% { -webkit-transform: translate3d(-100%, 0, 0); }
-}
-.mb-slide {
-  -webkit-animation-duration: 0.3s;
-  -webkit-animation-timing-function: ease;
-  .mb-in{
-    -webkit-animation-name: slideInFromRight;
-    .mb-reverse {
-      -webkit-animation-name: slideOutToRight;
-      -webkit-transform: translate3d(100%, 0, 0);
-    }
+  opacity: 1;
+  &.ng-enter, &.ng-leave{
+    .transition(all ease-in-out 300ms);
   }
-  .mb-out {
-    -webkit-animation-name: slideOutToLeft;
-    -webkit-transform: translate3d(-100%, 0, 0);
-    .mb-reverse {
-      -webkit-animation-name: slideInFromLeft;
+
+  &.ng-enter, &.ng-leave-active{
+    // Start it at ...
+    .transform(scale3d(0,0,0));
+    // Start hidden
+    opacity: 0;
+  }
+
+  &.ng-enter-active{
+    .transform(scale3d(1,1,1));
+    opacity: 1;
+  }
+
+  &.replaced{
+    &.ng-leave-active{
+      .transform(scale3d(0,0,0));
+      opacity: 0;
     }
   }
 
+  &.stacked-add, &.stacked-remove{
+    .transition(all ease-in-out 300ms);
+  }
+  &.stacked-add-active, &.stacked{
+    //    .translate3d(-100%, 0, 0);
+    .transform(scale3d(0,0,0));
+    opacity: 0;
+  }
 }
 
-.active-page-add{
-  .mb-slide.mb-in;
+.popup-in-up {
+  opacity: 1;
+  &.ng-enter, &.ng-leave{
+    .transition(all ease-in-out 300ms)
+  }
+
+  &.ng-enter, &.ng-leave-active{
+    // Start it down low
+    .translate3d(0, 100%, 0);
+    // Start hidden
+    opacity: 0;
+  }
+
+  &.ng-enter-active{
+    .translate3d(0, 0, 0);
+    opacity: 1;
+  }
 }
-.active-page-remove{
-  .mb-slide.mb-out;
+
+.pane-slide-right{
+
+  .transition(all ease-in-out 9000ms);
+
+  &.ng-enter, &.ng-leave{
+    .transition(none);
+    > .side-pane{
+      .transition(all ease-in-out 1000ms)
+    }
+  }
+  &.ng-enter, &.ng-leave-active{
+    > .side-pane{
+      // Start it down low
+      .translate3d(100%,0, 0);
+    }
+  }
+
+  &.ng-enter-active{
+    > .side-pane{
+      .translate3d(0, 0, 0);
+    }
+  }
 }
+
+.popup-in-left {
+  opacity: 1;
+  &.ng-enter, &.ng-leave{
+    .transition(all ease-in-out 300ms)
+  }
+
+  &.ng-enter, &.ng-leave-active{
+    // Start it down low
+    .translate3d(-100%,0, 0);
+    // Start hidden
+    opacity: 0;
+  }
+
+  &.ng-enter-active{
+    .translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+.popup-in-right {
+  opacity: 1;
+  &.ng-enter, &.ng-leave{
+    .transition(all ease-in-out 300ms);
+  }
+
+  &.ng-enter, &.ng-leave-active{
+    // Start it at right
+    .translate3d(100%, 0, 0);
+    // Start hidden
+    opacity: 0;
+  }
+
+  &.ng-enter-active{
+    .translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  &.replaced{
+    &.ng-leave-active{
+      .translate3d(-100%, 0, 0);
+    }
+  }
+
+  &.stacked-add, &.stacked-remove{
+    .transition(all ease-in-out 300ms);
+  }
+  &.stacked-add-active, &.stacked{
+    .translate3d(-100%, 0, 0);
+    //.transform(scale3d(0.8,0.8,1));
+    opacity: 0;
+  }
+}
+
+

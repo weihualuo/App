@@ -112,10 +112,13 @@ angular.module( 'ui.popup', [])
 
       #return a end function to manully hide the view
       end: hidePopup
+  )
+  .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $document, $window)->
+    (templateUrl, locals, template, hash, full)->
 
-
-    modal : (templateUrl, locals, template, hash)->
-
+      parentTpl = """
+                  <div class="popup-backdrop"></div>
+                 """
       deferred = $q.defer()
       scope = $rootScope.$new(true)
       angular.extend scope, locals
@@ -125,12 +128,22 @@ angular.module( 'ui.popup', [])
         param = ret
         history.back()
 
-      parent = angular.element(document.body)
+      body = $document[0].body
+      if full
+        parent = angular.element(body)
+      else
+        parent = $compile(parentTpl)(scope)
+        body.appendChild(parent[0])
+        parent.on 'click', (e)->
+          if e.target == parent[0]
+            scope.$close()
+
       element = null
 
       hidePopup = ()->
 
         $animate.leave element, ->
+          body.removeChild(parent[0]) if !full
           scope.$destroy()
           if param?
             deferred.resolve(param)
@@ -142,37 +155,40 @@ angular.module( 'ui.popup', [])
       angularDomEl = angular.element(template)
 
       $http.get(templateUrl, cache: $templateCache)
-      .then(
-        (result)->
-          angularDomEl.html(result.data)
-          element = $compile(angularDomEl)(scope)
-          $animate.enter(element, parent)
-          #To be compatible with browser and android back button
-          $location.hash(hash or 'modal')
-          savedState = window.onpopstate
-          window.onpopstate = ->
-            $timeout hidePopup
-            window.onpopstate = savedState
+        .then(
+          (result)->
+            angularDomEl.html(result.data)
+            element = $compile(angularDomEl)(scope)
+            $animate.enter element, parent, null, ->
+              console.log "element ready"
 
-        ()->
-          deferred.reject()
-          console.log "Failed to load", templateUrl
-      )
+            #To be compatible with browser and android back button
+            $location.hash(hash or 'modal')
+            savedState = $window.onpopstate
+            $window.onpopstate = ->
+              $timeout hidePopup
+              $window.onpopstate = savedState
+
+          ()->
+            deferred.reject()
+            console.log "Failed to load", templateUrl
+        )
 
       #Return
       ret =
         promise: deferred.promise
         end: scope.$close
+
   )
-  .factory('TogglePane', (Popup)->
+  .factory('TogglePane', (Modal)->
     panes = {}
     (param)->
-      {id, locals, template, url, hash, success, fail, always} = param
+      {id, locals, template, url, hash, full, success, fail, always} = param
       if panes[id]
         panes[id].end()
         panes[id] = null
       else if id
-        panes[id] = Popup.modal url, locals, template, hash
+        panes[id] = Modal url, locals, template, hash, full
         panes[id].promise.then(success, fail).finally ->
           panes[id] = null
           if always then always()

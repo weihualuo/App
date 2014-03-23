@@ -125,19 +125,16 @@ angular.module( 'myWidget', [])
     restrict: 'E'
     replace: true
     transclude: true
-    scope:
-      position: '@'
-      pane: '@'
-    template: '<div class="side-pane-backdrop popup-in-{{position}}" ng-click="onLeave()" ng-swipe-right="onSwipe(1)" ng-swipe-left="onSwipe(-1)">'+
-                '<div class="side-pane {{pane}}" ng-transclude ng-click="$event.stopPropagation()">'+
-                '</div>'+
-              '</div>'
-
-    link: (scope, element) ->
+    template:  """
+               <div class="side-pane" ng-transclude></div>
+               """
+    link: (scope, element, attr) ->
+      
+      position = attr.position
 
       startX = 0
       x = 0
-      pane = element[0].querySelector('.side-pane')
+      pane = element[0]
 
       updatePosition = ->
         pane.style["-webkit-transform"] = "translate3d(#{x}px, 0, 0)"
@@ -147,18 +144,18 @@ angular.module( 'myWidget', [])
       onShiftEnd = ->
         width = pane.offsetWidth
         if Math.abs(x)*2 > width
-          scope.onLeave()
+          scope.$close()
         else
           x = 0
           setAnimate "all 0.3s ease-in"
           updatePosition()
 
-      scope.onLeave = ->
-        scope.$parent.$close()
+#      scope.onLeave = ->
+#        scope.$close()
 
-      scope.onSwipe = (dir)->
-        if (dir < 0 and scope.position == 'left') or (dir > 0 and scope.position == 'right')
-          scope.onLeave()
+#      scope.onSwipe = (dir)->
+#        if (dir < 0 and position == 'left') or (dir > 0 and position == 'right')
+#          scope.onLeave()
 
       $swipe.bind angular.element(pane),
         'start': (coords, event)->
@@ -172,7 +169,7 @@ angular.module( 'myWidget', [])
         'move': (coords, event)->
           event.stopPropagation()
           x = coords.x - startX
-          if (scope.position == 'left' and x > 0) or (scope.position == 'right' and x < 0)
+          if (position == 'left' and x > 0) or (position == 'right' and x < 0)
             x = 0
           else
             updatePosition()

@@ -165,7 +165,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
       TogglePane
         id: 'sidebar'
-        template: "<side-pane position='left' pane='pane-side-menu'></side-pane>"
+        template: "<side-pane position='left' class='pane-side-menu'></side-pane>"
         url: "modal/sideMenu.tpl.html"
         hash: 'sidemenu'
         locals:
@@ -185,7 +185,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       path = $location.path()
       TogglePane
         id: 'filters'
-        template: "<side-pane position='right' pane='pane-filter-bar'></side-pane>"
+        template: "<side-pane position='right' class='pane-filter-bar'></side-pane>"
         url: "modal/filterBar.tpl.html"
         hash: 'filters'
         locals:

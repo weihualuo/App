@@ -9,11 +9,10 @@
 @import "mixinx";
 @import "utilities";
 @import "popup";
+@import "transition";
 @import "responsive";
 
 @import "../app/home/home";
-@import "../app/detail/detail";
-@import "../app/edit/edit";
 
 
 // fix soft keyboard bug:
@@ -76,22 +75,12 @@ body{
   > span{
     display: block;
     > .icon{
-      font-size: 40px;
+      font-size: @icon-xl;
       color: #f5f5f5;
     }
   }
 }
 
-//.refresher{
-//    position: absolute;
-//    top: -60px;
-//    right: 0;
-//    left: 0;
-//    overflow: hidden;
-//    margin: auto;
-//    height: 60px;
-//    display: none;
-//}
 
 .tab-item{
   &.active{
