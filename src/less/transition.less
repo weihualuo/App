@@ -53,30 +53,6 @@
   }
 }
 
-.pane-slide-right{
-
-  .transition(all ease-in-out 9000ms);
-
-  &.ng-enter, &.ng-leave{
-    .transition(none);
-    > .side-pane{
-      .transition(all ease-in-out 1000ms)
-    }
-  }
-  &.ng-enter, &.ng-leave-active{
-    > .side-pane{
-      // Start it down low
-      .translate3d(100%,0, 0);
-    }
-  }
-
-  &.ng-enter-active{
-    > .side-pane{
-      .translate3d(0, 0, 0);
-    }
-  }
-}
-
 .popup-in-left {
   opacity: 1;
   &.ng-enter, &.ng-leave{

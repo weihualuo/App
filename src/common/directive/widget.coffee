@@ -139,7 +139,7 @@ angular.module( 'myWidget', [])
       moving = false
       snaping = false
 
-      PrefixedEvent pane, "TransitionEnd", ->
+      PrefixedEvent element, "TransitionEnd", ->
         if snaping
           snaping = false
           if x is 0
@@ -164,7 +164,7 @@ angular.module( 'myWidget', [])
             if x < 0 then x = -width else x = width
           else
             x = 0
-          setAnimate "all "+time+"s ease-in"
+          setAnimate "all "+time.toFixed(2)+"s ease-in"
           updatePosition(x)
           moving = false
 
