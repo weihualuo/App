@@ -121,7 +121,7 @@ angular.module( 'myWidget', [])
         angular.extend item.style, style for item in raw.children
 
   )
-  .directive('sidePane', ($swipe, PrefixedEvent)->
+  .directive('sidePane', ($swipe, PrefixedEvent, PrefixedStyle)->
     restrict: 'E'
     replace: true
     transclude: true
@@ -143,34 +143,30 @@ angular.module( 'myWidget', [])
         if snaping
           snaping = false
           if x is 0
-            setAnimate()
+            setAnimate(null)
           else
             scope.$close()
 
       updatePosition = (offset)->
         if offset
-          pane.style["-webkit-transform"] = "translate3d(#{offset}px, 0, 0)"
+          PrefixedStyle pane, 'transform', "translate3d(#{offset}px, 0, 0)"
         else
-          pane.style["-webkit-transform"] = null
+          PrefixedStyle pane, 'transform', null
       setAnimate = (prop)->
-        if prop
-          pane.style["-webkit-transition"] = prop
-        else
-          pane.style["-webkit-transition"] = null
+        PrefixedStyle pane, 'transition', prop
 
       onShiftEnd = ->
         if moving
           snaping = true
           width = pane.offsetWidth
+          time = Math.abs(x)/width * 0.3
           if Math.abs(x)*3 > width
             if x < 0 then x = -width else x = width
           else
             x = 0
-          setAnimate "all 0.2s ease-in"
+          setAnimate "all "+time+"s ease-in"
           updatePosition(x)
           moving = false
-        else
-          x = 0
 
       $swipe.bind element,
         'start': (coords, event)->
@@ -183,17 +179,18 @@ angular.module( 'myWidget', [])
         'move': (coords, event)->
           event.stopPropagation()
           if snaping then return
-          x = coords.x - startX
-          if (!moving and Math.abs(x) < threshold)
+          offset = coords.x - startX
+          if (!moving and Math.abs(offset) < threshold)
             return
 
+          x = offset
           if (position == 'left' and x > 0) or
              (position == 'right' and x < 0)
             x = 0
           else
             if !moving
               moving = true
-              setAnimate()
+              setAnimate(null)
             updatePosition(x)
 
         'end': ->

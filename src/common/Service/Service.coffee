@@ -101,7 +101,12 @@ angular.module( 'Service', [])
       for p in pfx
         type = type.toLowerCase() if !p
         element.addEventListener(p+type, callback, false)
-        console.log "add listener", p+type
+  )
+  .factory('PrefixedStyle', ->
+    pfx = ["-webkit-", "-moz-", "o", ""]
+    (element, type, value)->
+      for p in pfx
+        element.style[p+type]= value
   )
 
 
