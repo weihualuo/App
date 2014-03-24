@@ -121,7 +121,7 @@ angular.module( 'myWidget', [])
         angular.extend item.style, style for item in raw.children
 
   )
-  .directive('sidePane', ($swipe)->
+  .directive('sidePane', ($swipe, PrefixedEvent)->
     restrict: 'E'
     replace: true
     transclude: true
@@ -135,24 +135,46 @@ angular.module( 'myWidget', [])
       startX = 0
       x = 0
       pane = element[0]
+      threshold = 5
+      moving = false
+      snaping = false
 
-      updatePosition = ->
-        pane.style["-webkit-transform"] = "translate3d(#{x}px, 0, 0)"
+      PrefixedEvent pane, "TransitionEnd", ->
+        if snaping
+          snaping = false
+          if x is 0
+            setAnimate()
+          else
+            scope.$close()
+
+      updatePosition = (offset)->
+        if offset
+          pane.style["-webkit-transform"] = "translate3d(#{offset}px, 0, 0)"
+        else
+          pane.style["-webkit-transform"] = null
       setAnimate = (prop)->
-        pane.style["-webkit-transition"] = prop
+        if prop
+          pane.style["-webkit-transition"] = prop
+        else
+          pane.style["-webkit-transition"] = null
 
       onShiftEnd = ->
-        width = pane.offsetWidth
-        if Math.abs(x)*2 > width
-          scope.$close()
+        if moving
+          snaping = true
+          width = pane.offsetWidth
+          if Math.abs(x)*3 > width
+            if x < 0 then x = -width else x = width
+          else
+            x = 0
+          setAnimate "all 0.2s ease-in"
+          updatePosition(x)
+          moving = false
         else
           x = 0
-          updatePosition()
 
       $swipe.bind element,
         'start': (coords, event)->
           startX = coords.x - x
-          setAnimate "none"
           event.stopPropagation()
 
         'cancel': ->
@@ -160,14 +182,21 @@ angular.module( 'myWidget', [])
 
         'move': (coords, event)->
           event.stopPropagation()
+          if snaping then return
           x = coords.x - startX
-          if (position == 'left' and x > 0) or (position == 'right' and x < 0)
+          if (!moving and Math.abs(x) < threshold)
+            return
+
+          if (position == 'left' and x > 0) or
+             (position == 'right' and x < 0)
             x = 0
           else
-            updatePosition()
+            if !moving
+              moving = true
+              setAnimate()
+            updatePosition(x)
 
         'end': ->
-          setAnimate "all 0.3s ease-in"
           onShiftEnd()
 
   )

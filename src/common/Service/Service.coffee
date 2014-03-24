@@ -95,5 +95,13 @@ angular.module( 'Service', [])
           $location.search search or {}
           $location.hash hash or null
   )
+  .factory('PrefixedEvent', ->
+    pfx = ["webkit", "moz", "MS", "o", ""]
+    (element, type, callback)->
+      for p in pfx
+        type = type.toLowerCase() if !p
+        element.addEventListener(p+type, callback, false)
+        console.log "add listener", p+type
+  )
 
 
