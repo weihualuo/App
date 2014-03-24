@@ -8,7 +8,7 @@
 
   &.ng-enter, &.ng-leave-active{
     // Start it at ...
-    .transform(scale3d(0,0,0));
+    .transform(scale3d(0.5,0.5,0.5));
     // Start hidden
     opacity: 0;
   }
@@ -20,7 +20,7 @@
 
   &.replaced{
     &.ng-leave-active{
-      .transform(scale3d(0,0,0));
+      .transform(scale3d(0.5,0.5,0.5));
       opacity: 0;
     }
   }
@@ -29,8 +29,7 @@
     .transition(all ease-in-out 300ms);
   }
   &.stacked-add-active, &.stacked{
-    //    .translate3d(-100%, 0, 0);
-    .transform(scale3d(0,0,0));
+    .transform(scale3d(0.5,0.5,0.5));
     opacity: 0;
   }
 }

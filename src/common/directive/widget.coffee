@@ -175,8 +175,21 @@ angular.module( 'myWidget', [])
     restrict: 'E'
     replace: true
     transclude: true
-    template: '<div class="blueimp-gallery blueimp-gallery-controls fade-in-out" ng-transclude>' +
-              '</div>'
+    template: """
+              <div class="blueimp-gallery blueimp-gallery-controls fade-in-out">
+                <div class="slides"></div>
+                <h3 class="title">
+                <i class="icon ion-ios7-information-outline"></i>
+                </h3>
+                <span class="prev">‹</span>
+                <span class="next">›</span>
+                <span class="close" ng-click="onClose()"><i class="icon ion-ios7-close-outline"></i></span>
+                <span class="play-pause"></span>
+                <span class="info" ng-click="onInfo()">
+                <i class="icon ion-ios7-information-outline"></i>
+                </span>
+              </div>
+              """
 
     link: (scope, element) ->
 
@@ -188,6 +201,8 @@ angular.module( 'myWidget', [])
           startSlideshow: true
           onclose: -> scope.$close()
 
+      scope.onClose = ->
+        scope.$close()
       scope.onInfo = ->
         gallery.pause()
         scope.onImageInfo(gallery.getIndex())

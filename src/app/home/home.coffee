@@ -45,7 +45,6 @@ angular.module('app.home', ['Gallery', 'restangular'])
       TogglePane
         id: 'imageView'
         template: "<gallery-view></gallery-view>"
-        url: "modal/gallery.tpl.html"
         hash: 'gallery'
         backdrop: false
         locals:
