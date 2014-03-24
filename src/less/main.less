@@ -23,14 +23,14 @@ body{
 
 .side-pane{
   position: absolute;
-  box-shadow: -1px 0px 10px rgba(0,0,0,0.6);
+  box-shadow: -1px 5px 10px rgba(0,0,0,0.6);
 
   &.pane-side-menu{
     left: 0;
     top: @headerHeight;
     bottom: 0;
     width: @side-pane-width;
-    background: @gray;
+    background: rgba(0,0,0,0.7);
   }
   &.pane-filter-bar{
     .opacity(95);
@@ -91,11 +91,6 @@ a{
   }
 
 }
-
-//a:active{
-//  background: @bg-active;
-//}
-
 
 button[disabled], input[disabled]{
   color: gray !important;

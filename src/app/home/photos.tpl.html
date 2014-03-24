@@ -4,15 +4,15 @@
 
     <refresher></refresher>
 
-    <div ng-if="objects.$resolved">
-        <div style="text-align: center;margin-top: 10%" ng-if="!objects.length">
-            没有符合条件的照片！
-        </div>
-        <a class="thumb-list"
+    <div class="box-center" ng-show="objects.$resolved && !objects.length">
+        没有符合条件的照片！
+    </div>
+    <div class="image-container" ng-if="objects.$resolved">
+        <div class="image-thumb"
            ng-click="onImageView(obj)"
            ng-repeat="obj in objects track by obj.id">
             <img ng-src="{{obj | fullImagePath:6}}" alt="{{obj.title}}">
-        </a>
+        </div>
     </div>
 
 </content>

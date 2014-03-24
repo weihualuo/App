@@ -120,6 +120,7 @@ angular.module( 'ui.popup', [])
       ready = false
       scope.$close = (ret)->
         #popup hash history
+        ready = false
         param = ret
         history.back()
 
@@ -136,14 +137,13 @@ angular.module( 'ui.popup', [])
       element = null
 
       removeModal = ->
-        ready = false
         if param?
           deferred.resolve(param)
         else
           deferred.reject()
         $animate.leave element, ->
           parent.remove() if backdrop
-          ready = true
+          #ready = true
           scope.$destroy()
 
       angularDomEl = angular.element(template)
