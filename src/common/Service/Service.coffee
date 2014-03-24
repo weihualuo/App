@@ -4,7 +4,7 @@ angular.module( 'Service', [])
 
   _objs={}
   Service =
-    noRepeat : (name, time=2000)->
+    noRepeat : (name, time=1000)->
       _objs[name] ?= false
       if _objs[name]
         false

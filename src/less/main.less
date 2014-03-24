@@ -31,7 +31,6 @@ body{
 }
 
 .side-pane{
-  background: white;
   position: absolute;
   box-shadow: -1px 0px 10px rgba(0,0,0,0.6);
 
@@ -41,6 +40,7 @@ body{
     bottom: 0;
     width: @side-pane-width;
     background: @gray;
+    .popup-in-left;
   }
   &.pane-filter-bar{
     .opacity(95);
@@ -48,6 +48,7 @@ body{
     top: @headerHeight;
     bottom: 0;
     width: @pane-filter-bar-width;
+    background: white;
   }
   &.pane-image-info{
     .opacity(98);
@@ -55,6 +56,8 @@ body{
     top: 0;
     bottom: 0;
     width: @pane-image-info-width;
+    background: white;
+    .popup-in-left;
   }
 }
 

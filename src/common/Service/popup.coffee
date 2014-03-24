@@ -114,65 +114,69 @@ angular.module( 'ui.popup', [])
       end: hidePopup
   )
   .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $document, $window)->
-    (templateUrl, locals, template, hash, full)->
+    (locals, template, hash, url, backdrop)->
 
-      parentTpl = """
-                  <div class="popup-backdrop"></div>
+      backdrop ?= """
+                  <div class="popup-backdrop" ng-click="onClose($event)"></div>
                  """
       deferred = $q.defer()
       scope = $rootScope.$new(true)
       angular.extend scope, locals
       param = undefined
+      ready = false
       scope.$close = (ret)->
         #popup hash history
         param = ret
         history.back()
 
       body = $document[0].body
-      if full
+      if !backdrop
         parent = angular.element(body)
       else
-        parent = $compile(parentTpl)(scope)
+        parent = $compile(backdrop)(scope)
         body.appendChild(parent[0])
-        parent.on 'click', (e)->
-          if e.target == parent[0]
+        scope.onClose = (e)->
+          if ready and e.target is parent[0]
             scope.$close()
 
       element = null
 
-      hidePopup = ()->
-
+      removeModal = ->
+        ready = false
+        if param?
+          deferred.resolve(param)
+        else
+          deferred.reject()
         $animate.leave element, ->
-          body.removeChild(parent[0]) if !full
+          parent.remove() if backdrop
+          ready = true
           scope.$destroy()
-          if param?
-            deferred.resolve(param)
-          else
-            deferred.reject()
 
-
-      template ?= '<div class="popup-modal popup-in-up"></div>'
       angularDomEl = angular.element(template)
 
-      $http.get(templateUrl, cache: $templateCache)
-        .then(
+      enterModal = ->
+        element = $compile(angularDomEl)(scope)
+        $animate.enter element, parent, null, ->
+          ready = true
+        #To be compatible with browser and android back button
+        $location.hash(hash or 'modal')
+        savedState = $window.onpopstate
+        $window.onpopstate = ->
+          $timeout removeModal
+          $window.onpopstate = savedState
+
+      if url
+        $http.get(url, cache: $templateCache).then(
           (result)->
             angularDomEl.html(result.data)
-            element = $compile(angularDomEl)(scope)
-            $animate.enter element, parent, null, ->
-              console.log "element ready"
-
-            #To be compatible with browser and android back button
-            $location.hash(hash or 'modal')
-            savedState = $window.onpopstate
-            $window.onpopstate = ->
-              $timeout hidePopup
-              $window.onpopstate = savedState
-
+            enterModal()
           ()->
             deferred.reject()
-            console.log "Failed to load", templateUrl
-        )
+            parent.remove() if backdrop
+            console.log "Failed to load", url
+          )
+      else
+        enterModal()
 
       #Return
       ret =
@@ -183,12 +187,12 @@ angular.module( 'ui.popup', [])
   .factory('TogglePane', (Modal)->
     panes = {}
     (param)->
-      {id, locals, template, url, hash, full, success, fail, always} = param
+      {id, locals, template, url, hash, backdrop, success, fail, always} = param
       if panes[id]
         panes[id].end()
         panes[id] = null
       else if id
-        panes[id] = Modal url, locals, template, hash, full
+        panes[id] = Modal locals, template, hash, url, backdrop
         panes[id].promise.then(success, fail).finally ->
           panes[id] = null
           if always then always()

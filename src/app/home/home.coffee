@@ -47,7 +47,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
         template: "<gallery-view></gallery-view>"
         url: "modal/gallery.tpl.html"
         hash: 'gallery'
-        full: true
+        backdrop: false
         locals:
           index: $scope.objects.indexOf(obj)
           links: obj2Links($scope.objects)

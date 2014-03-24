@@ -147,17 +147,9 @@ angular.module( 'myWidget', [])
           scope.$close()
         else
           x = 0
-          setAnimate "all 0.3s ease-in"
           updatePosition()
 
-#      scope.onLeave = ->
-#        scope.$close()
-
-#      scope.onSwipe = (dir)->
-#        if (dir < 0 and position == 'left') or (dir > 0 and position == 'right')
-#          scope.onLeave()
-
-      $swipe.bind angular.element(pane),
+      $swipe.bind element,
         'start': (coords, event)->
           startX = coords.x - x
           setAnimate "none"
@@ -175,6 +167,7 @@ angular.module( 'myWidget', [])
             updatePosition()
 
         'end': ->
+          setAnimate "all 0.3s ease-in"
           onShiftEnd()
 
   )
@@ -189,7 +182,7 @@ angular.module( 'myWidget', [])
 
       gallery = null
       element.ready ->
-        gallery = blueimp.Gallery scope.links,
+        gallery = scope.gallery = blueimp.Gallery scope.links,
           index: scope.index
           container: element[0]
           startSlideshow: true

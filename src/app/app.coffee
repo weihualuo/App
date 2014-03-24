@@ -157,7 +157,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
 
     $scope.toggleSideMenu = ()->
-      if !Service.noRepeat('toggleSideMenu',2000)
+      if !Service.noRepeat('toggleSideMenu')
         return
       menu = document.querySelector('.res-side-pane')
       if menu and menu.offsetHeight
@@ -175,7 +175,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
     $scope.toggleFilter = (type)->
 
-      if !Service.noRepeat('toggleFilter',2000)
+      if !Service.noRepeat('toggleFilter')
         return
 
       if !filterMeta[type]
@@ -185,7 +185,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       path = $location.path()
       TogglePane
         id: 'filters'
-        template: "<side-pane position='right' class='pane-filter-bar'></side-pane>"
+        template: "<side-pane position='right' class='pane-filter-bar popup-in-right'></side-pane>"
         url: "modal/filterBar.tpl.html"
         hash: 'filters'
         locals:
