@@ -1,29 +1,25 @@
 
 angular.module( 'ui.popup', [])
 
-  .factory('Popup', ($rootScope, $location, $compile, $animate, $timeout, $q, $http, $templateCache)->
+  .factory('Popup', ($rootScope, $location, $compile, $animate, $timeout, $q, $document, MESSAGE)->
 
     alert : (message)->
+      template =
+                 '<div class="popup-backdrop box-center" ng-click="onClose()">' +
+                    '<div class="popup-win-msg box-center">'+message+'</div>'+
+                 '</div>'
 
-      template = '<div class="popup-backdrop"><div class="popup-win">' +
-                    message +
-                  '</div></div>'
-      element = angular.element(template)
-      popWin = element[0].firstChild
+      scope = $rootScope.$new(true)
+      angularDomEl = angular.element(template)
+      element = $compile(angularDomEl)(scope)
 
       hidePopup = ->
-        #$animate.leave(element)
-        element.remove()
+        $animate.leave(element)
+        scope.$destroy()
 
-
-      parent = angular.element(document.body)
-      document.body.appendChild(element[0])
-      #TODO can not bind on click ?
-      #$animate.enter(element, parent)
-      element.on('click', hidePopup)
-
-      popWin.style.marginLeft = (-popWin.offsetWidth) / 2 + 'px'
-      popWin.style.marginTop = (-popWin.offsetHeight) / 2 + 'px'
+      parent = angular.element($document[0].body)
+      $animate.enter element, parent
+      scope.onClose = -> hidePopup()
 
       #Hide the popup after 2second
       $timeout (->hidePopup()), 2000
@@ -90,24 +86,22 @@ angular.module( 'ui.popup', [])
       #Return a promise
       deferred.promise
 
-    loading : (promise, title, failedMsg)->
-      title ?= ''
-      template = '<div class="popup-backdrop"><div class="popup-win"><h5>' +
-                    title +
-                 '</h5><i class="icon icon-large ion-load-c loading-rotate"></i></div></div>'
+    loading : (promise, silent)->
 
+      template = """
+                 <div class="popup-backdrop box-center">
+                  <div><i class="icon icon-large ion-loading-d"></i></div>
+                 </div>
+                 """
       element = angular.element(template)
-      popWin = element[0].firstChild
-
-      hidePopup = -> element.remove()
-
-      document.body.appendChild(element[0])
-      popWin.style.marginLeft = (-popWin.offsetWidth) / 2 + 'px'
-      popWin.style.marginTop = (-popWin.offsetHeight) / 2 + 'px'
+      hidePopup = ->
+        $animate.leave(element)
+      parent = angular.element($document[0].body)
+      $animate.enter element, parent
 
       if promise
-        if failedMsg
-          promise.catch => @alert failedMsg
+        if !silent
+          promise.catch => @alert MESSAGE.LOAD_FAILED
         promise.finally hidePopup
 
       #return a end function to manully hide the view
@@ -117,7 +111,7 @@ angular.module( 'ui.popup', [])
     (locals, template, hash, url, backdrop)->
 
       backdrop ?= """
-                  <div class="popup-backdrop" ng-click="onClose($event)"></div>
+                  <div class="popup-backdrop enabled" ng-click="onClose($event)"></div>
                  """
       deferred = $q.defer()
       scope = $rootScope.$new(true)

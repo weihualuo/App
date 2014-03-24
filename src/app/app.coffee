@@ -241,7 +241,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
 
       $scope.objects = objects = collection.list($routeParams)
       if !objects.$resolved
-        Popup.loading objects.$promise, null, MESSAGE.LOAD_FAILED
+        Popup.loading objects.$promise
 
       objects.$promise.then ->
         $scope.haveMore = objects.meta.more

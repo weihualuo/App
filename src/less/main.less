@@ -21,15 +21,6 @@ body{
   overflow: auto;
 }
 
-.side-pane-backdrop{
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  z-index: 30;
-}
-
 .side-pane{
   position: absolute;
   box-shadow: -1px 0px 10px rgba(0,0,0,0.6);
@@ -61,8 +52,6 @@ body{
   }
 }
 
-
-
 .side-menu-item{
   .padding;
   font-size: @icon-medium;
@@ -84,20 +73,6 @@ body{
   }
 }
 
-
-.tab-item{
-  &.active{
-    background: darkgray;
-//    -webkit-filter: invert(100%);
-  }
-}
-
-//:active is not work for a.item:active on mobile browser
-.item{
-  &.ng-click-active{
-    background: @bg-active;
-  }
-}
 
 button{
   &.ng-click-active{
