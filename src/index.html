@@ -31,8 +31,6 @@
         <button class="button button-clear"> {{rightText}} </button>
     </header>
 
-    <div class="side-pane pane-side-menu res-side-pane" ng-include="'modal/sideMenu.tpl.html'"></div>
-
     <div class="res-main-pane">
 
         <div class="bar res-subheader box-align-center">
@@ -45,7 +43,7 @@
                 </label>
             </form>
 
-            <a class="padding" ng-show="filters" ng-class="{active:cleared}" ng-click="onAll()" style="margin: 0 5px">
+            <a class="filter-menu" ng-show="filters" ng-class="{active:cleared}" ng-click="onAll()">
                 全部
             </a>
 
@@ -55,6 +53,7 @@
         <div ng-caching-view class="view popup-in-right"></div>
     </div>
 
+    <ul class="side-pane res-side-pane" ng-include="'modal/sideMenu.tpl.html'"></ul>
 
   <script>
       console.log(new Date());

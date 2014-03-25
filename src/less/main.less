@@ -10,10 +10,6 @@
 @import "utilities";
 @import "popup";
 @import "transition";
-@import "responsive";
-
-@import "../app/home/home";
-
 
 // fix soft keyboard bug:
 body{
@@ -51,26 +47,25 @@ body{
 }
 
 .side-menu-item{
-  .padding;
-  font-size: @icon-medium;
   text-align: center;
   color: white;
+  min-height: @side-menu-item-height;
   &.active{
-    color: darkgray;
-    background: @bg-active-state;
-    >span>.icon{
-      color: @firm;
-    }
+    color: @color-active;
   }
   > span{
     display: block;
     > .icon{
-      font-size: @icon-xl;
-      color: #f5f5f5;
+      font-size: @icon-large;
     }
   }
 }
 
+.filter-menu{
+  padding: 5px 10px;
+  margin: 0 5px;
+  border-radius: 10px;
+}
 
 button{
   &.ng-click-active{
@@ -82,11 +77,12 @@ button{
 }
 
 a{
-  font-size: 18px;
+//  font-size: 18px;
   &.ng-click-active{
     background: @bg-active-click;
   }
   &.active{
+    color: @color-active;
     background: @bg-active-state;
   }
 
@@ -105,3 +101,6 @@ form.focused{
   .transition(all ease-in-out 300ms);
 }
 
+
+@import "../app/home/home";
+@import "responsive";

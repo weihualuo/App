@@ -209,13 +209,13 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       $timeout -> document.activeElement.blur()
 
 
-    $scope.getFilterTitle = (type)->
+    $scope.getFilterItem = (type)->
       path = $location.path()
       selected = $scope.updateFilters(path)[type] or 0
       item = _.find $scope.meta[type], id:parseInt(selected)
       if !item
         item = filterMeta[type].any
-      item.cn or item.en
+      item
 
   )
   .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE) ->
@@ -274,10 +274,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
   .directive('listFilter', ()->
     restrict: 'E'
     replace: true
-    template: '<a class="padding" ng-click="toggleFilter(filter)">{{value}} <i class="icon ion-arrow-down-b"></i></a>'
+    template: '<a class="filter-menu" ng-class="{active:item.id}" ng-click="toggleFilter(filter)">{{item.cn || item.en}} <i class="icon ion-arrow-down-b"></i></a>'
     link: (scope, element, attr, ctrl) ->
       #Should use with ng-repeat
       scope.$watch 'paramUpdateFlag', ->
-        scope.value = scope.getFilterTitle(scope.filter)
+        scope.item = scope.getFilterItem(scope.filter)
   )
 
