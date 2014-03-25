@@ -208,6 +208,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       Nav.go path, null, param
       $timeout -> document.activeElement.blur()
 
+    $scope.onKeyPress = (e, se)->
+      if e.keyCode is 13
+        $scope.onSearch(se)
+
 
     $scope.getFilterItem = (type)->
       path = $location.path()

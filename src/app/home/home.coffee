@@ -4,7 +4,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
     RestangularProvider.addElementTransformer 'photos', false, (obj) ->
       obj.paths = []
       reg = new RegExp(/\d+\/(.+?)-\d+\.(\w+)/)
-      used = [0, 1, 2, 6]
+      used = [0, 1, 2, 3, 4, 5, 6]
       for seq in used
         replaceReg = seq + '/$1-' + seq + '.$2'
         obj.paths[seq] = obj.image.replace(reg, replaceReg)
@@ -24,15 +24,35 @@ angular.module('app.home', ['Gallery', 'restangular'])
   )
   .directive('imagePath', ($filter, $timeout)->
 
-    width = null
-    getSeq = (width)-> 6
+    imageTable = 3:188, 4:175, 5:155, 6:105
+    cal = (wid)->
+      n = 6
+      if wid <= 1024 then n = 5
+      if wid <= 800 then n = 4
+      if wid <= 630 then n = 3
+      if wid <= 420 then n = 2
+      if wid >= 850 then wid -= 60
+      wid -= 4
+      wid/n*0.98
+
+    getIndex = (wid)->
+      console.log wid
+      seq = 0
+      match = 2000
+      for s, w of imageTable
+        dif = Math.abs(w-wid)
+        if dif < match
+          match = dif
+          seq = s
+      seq
+
+    index = getIndex cal window.innerWidth
+    console.log index, imageTable[index]
 
     (scope, element, attr)->
 
       element.ready ->
-        width ?= element[0].clientWidth
-        seq = getSeq(width)
-        path = $filter('fullImagePath')(scope.obj, seq)
+        path = $filter('fullImagePath')(scope.obj, index)
         $timeout (->attr.$set 'src', path), 1000
   )
 
