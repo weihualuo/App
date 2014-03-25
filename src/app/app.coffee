@@ -274,7 +274,7 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
   .directive('listFilter', ()->
     restrict: 'E'
     replace: true
-    template: '<a class="filter-menu" ng-class="{active:item.id}" ng-click="toggleFilter(filter)">{{item.cn || item.en}} <i class="icon ion-arrow-down-b"></i></a>'
+    template: '<a class="filter-menu res-display-l" ng-class="{active:item.id}" ng-click="toggleFilter(filter)">{{item.cn || item.en}} <i class="icon ion-arrow-down-b"></i></a>'
     link: (scope, element, attr, ctrl) ->
       #Should use with ng-repeat
       scope.$watch 'paramUpdateFlag', ->
