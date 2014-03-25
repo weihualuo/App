@@ -22,6 +22,19 @@ angular.module('app.home', ['Gallery', 'restangular'])
     (obj, seq)->
       return meta.imgbase + obj.paths[parseInt seq]
   )
+  .directive('imagePath', ($filter, $timeout)->
+
+    width = null
+    getSeq = (width)-> 6
+
+    (scope, element, attr)->
+
+      element.ready ->
+        width ?= element[0].clientWidth
+        seq = getSeq(width)
+        path = $filter('fullImagePath')(scope.obj, seq)
+        $timeout (->attr.$set 'src', path), 1000
+  )
 
 
   .controller( 'PhotoCtrl', ($scope, $timeout, $filter, Many, Popup, TogglePane, MESSAGE) ->

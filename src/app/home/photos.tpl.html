@@ -7,13 +7,13 @@
     <div class="box-center" ng-show="objects.$resolved && !objects.length">
         没有符合条件的照片！
     </div>
-    <div class="image-container" ng-if="objects.$resolved">
-        <div class="image-thumb"
+    <ul class="image-container" ng-if="objects.$resolved">
+        <li class="image-thumb"
            ng-click="onImageView(obj)"
            ng-repeat="obj in objects track by obj.id">
-            <img ng-src="{{obj | fullImagePath:6}}" alt="{{obj.title}}">
-        </div>
-    </div>
+            <img image-path alt="{{obj.title}}">
+        </li>
+    </ul>
 
 </content>
 
