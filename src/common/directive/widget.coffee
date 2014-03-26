@@ -224,14 +224,20 @@ angular.module( 'myWidget', [])
         gallery = scope.gallery = blueimp.Gallery scope.links,
           index: scope.index
           container: element[0]
-          startSlideshow: true
+#          startSlideshow: true
           displayTransition: false
+          emulateTouchEvents: true
           closeOnSlideClick: false
-          onclosed: -> scope.$close()
+
+        gallery.handleClose = ->
+          this.destroyEventListeners()
+          this.pause()
+          scope.$close()
 
       scope.onClick = (e)->
         e.stopPropagation()
-        gallery.handleClick(e)
+        if gallery.support.touch
+          gallery.handleClick(e)
 
       scope.onInfo = (e)->
         e.stopPropagation()
