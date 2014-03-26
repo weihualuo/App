@@ -1,4 +1,18 @@
 
+.fade-out{
+  opacity: 1;
+  &.ng-leave{
+    .transition(all ease-in-out 300ms);
+  }
+
+  &.ng-leave-active{
+    // Start it at ...
+    .transform(scale3d(0.8,0.8,1));
+    // Start hidden
+    opacity: 0;
+  }
+}
+
 .fade-in-out{
 
   opacity: 1;

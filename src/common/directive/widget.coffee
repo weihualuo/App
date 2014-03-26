@@ -129,7 +129,7 @@ angular.module( 'myWidget', [])
                <div class="side-pane" ng-transclude></div>
                """
     link: (scope, element, attr) ->
-      
+
       position = attr.position
 
       startX = 0
@@ -202,16 +202,16 @@ angular.module( 'myWidget', [])
     replace: true
     transclude: true
     template: """
-              <div class="blueimp-gallery blueimp-gallery-controls fade-in-out">
+              <div class="blueimp-gallery blueimp-gallery-controls fade-in-out" ng-click="onClick($event)">
                 <div class="slides"></div>
                 <h3 class="title">
                 <i class="icon ion-ios7-information-outline"></i>
                 </h3>
                 <span class="prev">‹</span>
                 <span class="next">›</span>
-                <span class="close" ng-click="onClose()"><i class="icon ion-ios7-close-outline"></i></span>
+                <span class="close"><i class="icon ion-ios7-close-outline"></i></span>
                 <span class="play-pause"></span>
-                <span class="info" ng-click="onInfo()">
+                <span class="info" ng-click="onInfo($event)">
                 <i class="icon ion-ios7-information-outline"></i>
                 </span>
               </div>
@@ -225,11 +225,16 @@ angular.module( 'myWidget', [])
           index: scope.index
           container: element[0]
           startSlideshow: true
-          onclose: -> scope.$close()
+          displayTransition: false
+          closeOnSlideClick: false
+          onclosed: -> scope.$close()
 
-      scope.onClose = ->
-        scope.$close()
-      scope.onInfo = ->
+      scope.onClick = (e)->
+        e.stopPropagation()
+        gallery.handleClick(e)
+
+      scope.onInfo = (e)->
+        e.stopPropagation()
         gallery.pause()
         scope.onImageInfo(gallery.getIndex())
   )

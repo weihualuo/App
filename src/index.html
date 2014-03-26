@@ -34,7 +34,7 @@
     <div class="res-main-pane">
 
         <div class="bar res-subheader box-align-center">
-            <form class="flex1" ng-submit="" ng-keypress="onKeyPress($event, se)" ng-class="{focused:inFocus}">
+            <form class="flex1" ng-submit="onSearch(se)" ng-class="{focused:inFocus}">
                 <label class="box-align-center">
                     <i class="icon ion-ios7-search placeholder-icon"></i>
                     <input type="search" ng-model="se" ng-focus="inFocus=1" ng-blur="inFocus=0" placeholder="搜索">
@@ -52,7 +52,7 @@
             <list-filter id='{{filter}}' ng-repeat="filter in filters"></list-filter>
 
         </div>
-        <div ng-caching-view class="view popup-in-right"></div>
+        <div ng-caching-view class="view fade-out"></div>
     </div>
 
     <ul class="side-pane res-side-pane" ng-include="'modal/sideMenu.tpl.html'"></ul>

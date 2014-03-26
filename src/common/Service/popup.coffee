@@ -131,7 +131,8 @@ angular.module( 'ui.popup', [])
         parent = $compile(backdrop)(scope)
         body.appendChild(parent[0])
         scope.onClose = (e)->
-          if ready and e.target is parent[0]
+          target = e.target || e.srcElement
+          if ready and target is parent[0]
             scope.$close()
 
       element = null
