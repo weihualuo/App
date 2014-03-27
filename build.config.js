@@ -55,21 +55,22 @@ module.exports = {
        */
 
     js: [
-//        'vendor/ionic-v0.9.26/js/ionic.js',
-//        'vendor/angular-1.2.14/angular.js',
-//        'vendor/angular-1.2.14/angular-animate.js',
-//        'vendor/angular-1.2.14/angular-touch.js',
-//        'vendor/angular-1.2.14/angular-sanitize.js',
-//        'vendor/angular-1.2.14/angular-route.js',
-//        'vendor/angular-ui/angular-ui-router.js',
-//        'vendor/ionic-v0.9.26/js/ionic-angular.js',
 
+//        'vendor/ionic-v0.9.26/js/ionic.js',
         'vendor/ionic-0.9.17-alpha/dist/js/ionic.js',
-        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular.min.js',
-        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-animate.min.js',
-        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-touch.min.js',
-        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-sanitize.min.js',
-        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-route.min.js',
+
+        'vendor/angular-1.2.14/angular.js',
+        'vendor/angular-1.2.14/angular-animate.js',
+        'vendor/angular-1.2.14/angular-touch.js',
+        'vendor/angular-1.2.14/angular-sanitize.js',
+        'vendor/angular-1.2.14/angular-route.js',
+//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular.min.js',
+//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-animate.min.js',
+//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-touch.min.js',
+//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-sanitize.min.js',
+//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-route.min.js',
+
+//        'vendor/ionic-v0.9.26/js/ionic-angular.js',
         'vendor/ionic-0.9.17-alpha/dist/js/ionic-angular.js',
 
         'vendor/lodash/lodash.js',
