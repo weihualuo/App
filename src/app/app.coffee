@@ -4,10 +4,10 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
                         'myWidget', 'ngCachingView', 'Service', 'ui.popup',
                         'MESSAGE'
 ])
-  .config( ($routeProvider, $compileProvider, $locationProvider) ->
+  .config( ($routeProvider, $compileProvider) ->
 #    // Needed for phonegap routing
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/)
-#    $locationProvider.html5Mode(true)
+    #$locationProvider.html5Mode(true)
 
     $routeProvider.when( '/photos',
       name: '/photos'
@@ -83,7 +83,14 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
       '/my': '我的家居'
 
   )
+  .run( ($location)->
+    # simulate html5Mode
+    if !location.hash
+      $location.path(location.pathname)
+  )
   .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, $location, AppConfig) ->
+
+    console.log 'path',$location.path()
 
     filterMeta = AppConfig.meta
     pathFilters = AppConfig.filters

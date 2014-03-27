@@ -145,7 +145,8 @@ angular.module( 'myWidget', [])
           if x is 0
             setAnimate(null)
           else
-            scope.$close()
+            setAnimate('none')
+            scope.$emit 'destroyed'
 
       updatePosition = (offset)->
         if offset
@@ -197,7 +198,7 @@ angular.module( 'myWidget', [])
           onShiftEnd()
 
   )
-  .directive('galleryView', ()->
+  .directive('galleryView', ($timeout)->
     restrict: 'E'
     replace: true
     transclude: true
@@ -221,23 +222,23 @@ angular.module( 'myWidget', [])
 
       gallery = null
       element.ready ->
-        gallery = scope.gallery = blueimp.Gallery scope.links,
+        gallery = blueimp.Gallery scope.links,
           index: scope.index
           container: element[0]
 #          startSlideshow: true
           displayTransition: false
           emulateTouchEvents: true
           closeOnSlideClick: false
+          onclosed: ->
+            gallery = null
+            scope.$emit 'destroyed'
 
-        gallery.handleClose = ->
-          this.destroyEventListeners()
-          this.pause()
-          scope.$close()
+        scope.$on '$destroy', ->
+          gallery.close() if gallery
 
       scope.onClick = (e)->
         e.stopPropagation()
-        if gallery.support.touch
-          gallery.handleClick(e)
+        gallery.handleClick(e)
 
       scope.onInfo = (e)->
         e.stopPropagation()

@@ -75,11 +75,6 @@ module.exports = {
 
         'vendor/lodash/lodash.js',
         'vendor/restangular1.2.2/restangular.js',
-
-        'vendor/Gallery/js/blueimp-helper.js',
-        'vendor/Gallery/js/blueimp-gallery.js',
-        'vendor/Gallery/js/blueimp-gallery-fullscreen.js',
-
     ],
     css: [
 

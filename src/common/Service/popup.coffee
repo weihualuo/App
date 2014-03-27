@@ -124,6 +124,9 @@ angular.module( 'ui.popup', [])
         param = ret
         history.back()
 
+      scope.$on 'destroyed', ->
+        scope.$close() if ready
+
       body = $document[0].body
       if !backdrop
         parent = angular.element(body)
@@ -142,10 +145,11 @@ angular.module( 'ui.popup', [])
           deferred.resolve(param)
         else
           deferred.reject()
+        ready = false
+        scope.$destroy()
         $animate.leave element, ->
           parent.remove() if backdrop
-          #ready = true
-          scope.$destroy()
+
 
       angularDomEl = angular.element(template)
 
