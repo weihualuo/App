@@ -53,7 +53,11 @@ angular.module('app.home', ['Gallery', 'restangular'])
 
       element.ready ->
         path = $filter('fullImagePath')(scope.obj, index)
-        $timeout (->attr.$set 'src', path), 1000
+        attr.$set 'src', path
+
+      element.on 'error', ->
+        element.off 'error'
+        attr.$set 'src', "/m/assets/img/default.jpeg"
   )
 
 
