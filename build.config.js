@@ -64,14 +64,11 @@ module.exports = {
         'vendor/angular-1.2.14/angular-touch.js',
         'vendor/angular-1.2.14/angular-sanitize.js',
         'vendor/angular-1.2.14/angular-route.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-animate.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-touch.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-sanitize.min.js',
-//        'vendor/ionic-0.9.17-alpha/dist/js/angular/angular-route.min.js',
 
 //        'vendor/ionic-v0.9.26/js/ionic-angular.js',
         'vendor/ionic-0.9.17-alpha/dist/js/ionic-angular.js',
+
+        'vendor/Iscroll5/iscroll-probe.js',
 
         'vendor/lodash/lodash.js',
         'vendor/restangular1.2.2/restangular.js',

@@ -1,13 +1,13 @@
 
 
-<content class="res-content" on-refresh='onRefresh()' ng-controller='PhotoCtrl'>
+<content class="res-content" on-refresh='onRefresh()'>
 
     <refresher></refresher>
 
     <div class="box-center" ng-show="objects.$resolved && !objects.length">
         没有符合条件的照片！
     </div>
-    <ul class="image-container" ng-if="objects.$resolved">
+    <ul class="image-container" ng-if="objects.$resolved" ng-controller='PhotoCtrl'>
         <li class="image-thumb"
            ng-click="onImageView(obj)"
            ng-repeat="obj in objects track by obj.id">

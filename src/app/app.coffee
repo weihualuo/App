@@ -1,8 +1,8 @@
-angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
-                        'templates-app', 'templates-common',
-                        'Model', 'app.home', 'app.discussion',
-                        'myWidget', 'ngCachingView', 'Service', 'ui.popup',
-                        'MESSAGE'
+angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
+                         'templates-app', 'templates-common',
+                         'Model', 'app.home', 'app.discussion',
+                         'myWidget', 'ngCachingView', 'Service', 'ui.popup', 'Iscroll'
+                         'MESSAGE'
 ])
   .config( ($routeProvider, $compileProvider) ->
 #    // Needed for phonegap routing
@@ -242,9 +242,8 @@ angular.module( 'app', ['ionic', 'ngRoute', 'ngTouch',
     objects = null
 
     scrollResize = (reset)->
-      $scope.scrollView.scrollTo(0,0) if $scope.scrollView and reset
       #Wait for the list render progress completed
-      $timeout (->$scope.$broadcast('scroll.resize')), 1000
+      $scope.$broadcast('scroll.resize')
 
     resetState = -> no
 
