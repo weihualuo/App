@@ -3,6 +3,7 @@ angular.module( 'Model', ['restangular'])
   .config( (RestangularProvider) ->
 
     RestangularProvider.setBaseUrl '/api/'
+    RestangularProvider.setDefaultHttpFields({cache: true})
 #    RestangularProvider.setRequestSuffix '/'
     RestangularProvider.setResponseExtractor (response, operation, what, url)->
       if operation is 'getList' and !(response instanceof Array)
@@ -17,6 +18,7 @@ angular.module( 'Model', ['restangular'])
 
   .factory('Many', (Restangular, $timeout)->
     _objects = {}
+    flag = 0
     Factory = (name)->
       #make objects to be a Array and an restangular object
       @name = name
@@ -58,7 +60,8 @@ angular.module( 'Model', ['restangular'])
       #Only perform a refresh is list requested before
       if objs.$resolved
         param = if objs.length then first:objs[0].id else {}
-        angular.extend param, @param
+        #disable cache
+        angular.extend param, @param, _flag_:flag++
         promise = objs.getList(param)
         promise.then (data)=>
           objs.meta = data.meta
