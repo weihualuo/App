@@ -40,12 +40,13 @@ angular.module( 'Iscroll', [])
 
       raw = element[0]
       scroll = scope.$iscroll
-      ready = false
-
+      #0: init, 1: ready , 2: refreshing
+      state = 0
+      height = 40
       updatePosition = (pos)->
         if pos != null
-          y = -((40-pos)/2).toFixed(2)
-          ratio = (pos/40).toFixed(1)
+          y = -((height-pos)/2).toFixed(2)
+          ratio = (pos/height).toFixed(1)
           console.log ratio, y
           PrefixedStyle raw, 'transform', "translate3d(0, #{y}px, 0) scale3d(#{ratio}, #{ratio}, 0)"
         else
@@ -55,20 +56,33 @@ angular.module( 'Iscroll', [])
       setAnimate = (prop)->
         PrefixedStyle raw, 'animation', prop
 
-      height = 40
+      updatePosition(0)
+
       scroll.on 'scroll', ->
         if 0 < @y <= height
-          ready = false
           updatePosition @y
+          if state is 1
+            state = 0
+            @offset = 0
+
         if @y > height
-          ready = true
-          scroll.scrollTo(0, 40)
+          if state is 0
+            state = 1
+            @offset = height
 
       scroll.on 'scrollEnd', ->
-        console.log "scrollEnd", @y
+        console.log "scrollEnd", state
         updatePosition null
-        if ready
+        if state is 1
+          state = 2
           setAnimate('shrinking 1s linear 0 infinite')
+          scope.$emit 'refreshStart'
 
+      scope.$on 'scroll.refreshComplete', ->
+        console.log "scroll.refreshComplete"
+        if state is 2
+          setAnimate(null)
+          state = 0
+          scroll.offset = 0
 
   )

@@ -68,7 +68,7 @@ module.exports = {
 //        'vendor/ionic-v0.9.26/js/ionic-angular.js',
         'vendor/ionic-0.9.17-alpha/dist/js/ionic-angular.js',
 
-//        'vendor/Iscroll5/iscroll-probe.js',
+        'vendor/Iscroll5/iscroll-probe.js',
 
         'vendor/lodash/lodash.js',
         'vendor/restangular1.2.2/restangular.js',

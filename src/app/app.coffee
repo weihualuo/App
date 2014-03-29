@@ -260,6 +260,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
 
     $scope.$on '$scopeUpdate', reloadObjects
     $scope.$on '$viewContentLoaded', resetState
+    $scope.$on 'refreshStart', ->
+      console.log "on refresh"
+      $scope.onRefresh()
 
     #Load more objects
     $scope.onMore = ->
