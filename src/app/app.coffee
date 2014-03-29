@@ -11,7 +11,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
 
     $routeProvider.when( '/photos',
       name: '/photos'
-      controller: 'ListCtrl'
+      controller: 'PhotoCtrl'
       templateUrl: 'home/photos.tpl.html'
       zIndex: 1
     )
@@ -229,7 +229,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       item
 
   )
-  .controller( 'ListCtrl', ($scope, $timeout, $filter, $location, $routeParams, Many, Popup, MESSAGE) ->
+  .controller( 'ListCtrl', ($scope, $timeout, $location, $routeParams, Many, Popup, MESSAGE) ->
 
     console.log 'ListCtrl'
 
@@ -263,7 +263,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
 
     #Load more objects
     $scope.onMore = ->
-      if !$scope.haveMore or !collection
+      if !$scope.haveMore
         return
       promise = collection.more()
       if promise

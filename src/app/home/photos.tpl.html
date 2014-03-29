@@ -1,21 +1,17 @@
 
+<content class="image-container">
 
-<content class="res-content" on-refresh='onRefresh()'>
-
-    <refresher></refresher>
-
-    <div class="box-center" ng-show="objects.$resolved && !objects.length">
-        没有符合条件的照片！
-    </div>
-    <ul class="image-container" ng-if="objects.$resolved" ng-controller='PhotoCtrl'>
-        <li class="image-thumb"
-           ng-click="onImageView(obj)"
-           ng-repeat="obj in objects track by obj.id">
-            <img image-path src="/m/assets/img/default.jpeg">
-        </li>
-    </ul>
+    <a class="image-thumb"
+       ng-click="onImageView(obj)"
+       ng-repeat="obj in objects track by obj.id">
+        <img image-path src="/m/assets/img/default.jpeg">
+    </a>
 
 </content>
+
+<div class="box-center fill" ng-show="objects.$resolved && !objects.length">
+    没有符合条件的照片！
+</div>
 
 
 

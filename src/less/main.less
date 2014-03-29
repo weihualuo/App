@@ -3,6 +3,10 @@
 
 @import  "../../vendor/ionic-0.9.17-alpha/dist/css/ionic";
 @import "../../vendor/ionic-0.9.17-alpha/dist/css/themes/ionic-ios7";
+//ionic used note:
+//bar bar-header icon
+//scroll
+
 @import "../../vendor/Gallery/css/blueimp-gallery";
 
 @import "variables";
@@ -15,6 +19,15 @@
 body{
   position: static;
   overflow: auto;
+}
+
+.content-view{
+  position: absolute;
+  top: @headerHeight;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #fff;
 }
 
 .side-pane{
@@ -34,7 +47,7 @@ body{
     top: @headerHeight;
     bottom: 0;
     width: @pane-filter-bar-width;
-    background: white;
+    background: @bodyBackground;
   }
   &.pane-image-info{
     .opacity(98);
@@ -42,7 +55,7 @@ body{
     top: 0;
     bottom: 0;
     width: @pane-image-info-width;
-    background: white;
+    background: @bodyBackground;
   }
 }
 
@@ -67,12 +80,24 @@ body{
   border-radius: 10px;
 }
 
+.scroll{
+  background: @bodyBackground;
+}
+.refresher{
+  position: absolute;
+  left: 50%;
+  margin-left: -20px;
+  top: 0;
+  width: 40px;
+  height: 40px
+}
+
 button{
   &.ng-click-active{
-    background: #f5f5f5;
+    background: @bg-active-click;
   }
   &.active{
-    background: #f5f5f5;
+    background: @bg-active-state;
   }
 }
 

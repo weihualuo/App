@@ -1,12 +1,5 @@
 @import "variables";
 
-.res-content{
-  top: @headerHeight;
-}
-.res-subheader{
-  top: 0;
-}
-
 .res-main-pane{
   position: absolute;
   left: 0;
@@ -32,12 +25,7 @@
 
 // >= 850
 @media (min-width: 850px){
-  .res-header{
-  }
-  .res-content{
-  }
-  .res-subheader {
-  }
+
   .res-main-pane{
     left : @side-pane-width !important;
   }
@@ -58,12 +46,7 @@
 
 //  <= 640
 @media (max-width: 640px){
-  .res-subheader{
-//    display: none;
-  }
-  .res-content{
-//    top: 0;
-  }
+
 }
 
 //   <=400

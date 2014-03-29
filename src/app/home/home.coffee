@@ -61,8 +61,11 @@ angular.module('app.home', ['Gallery', 'restangular'])
   )
 
 
-  .controller( 'PhotoCtrl', ($scope, $timeout, $filter, Many, Popup, TogglePane, MESSAGE) ->
+  .controller( 'PhotoCtrl', ($scope, $controller, $timeout, $filter, Many, Popup, TogglePane, MESSAGE) ->
     console.log 'PhotoCtrl'
+
+    #extend from ListCtrl
+    $controller('ListCtrl', $scope:$scope)
 
     obj2Links  = (objs)->
       _.map objs, (obj)->
