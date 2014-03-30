@@ -4,7 +4,6 @@ angular.module( 'Iscroll', [])
     restrict: 'E'
     replace: true
     transclude: true
-#    scope: {},
     template: """
               <div class="fill">
                 <div class="scroll clearfix" ng-transclude></div>
@@ -21,14 +20,15 @@ angular.module( 'Iscroll', [])
         window.scroll = scroll = new IScroll dom, options
         scope.$iscroll = scroll
 
-        refresher = $compile('<refresher></refresher>')(scope)
-        dom.insertBefore(refresher[0], dom.children[0])
+        if attr.refresh? and attr.refresh != 'false'
+          refresher = $compile('<refresher></refresher>')(scope)
+          dom.insertBefore(refresher[0], dom.children[0])
 
       scope.$on 'scroll.resize', ->
         console.log "scroll.resize"
         $timeout (->scroll.refresh()), 500
   )
-  .directive('refresher', (PrefixedStyle)->
+  .directive('refresher', ($timeout, PrefixedStyle)->
     restrict: 'E'
     replace: true
     template: """
@@ -43,14 +43,14 @@ angular.module( 'Iscroll', [])
       #0: init, 1: ready , 2: refreshing
       state = 0
       height = 40
+      position = 0
       updatePosition = (pos)->
         if pos != null
+          position = pos
           y = -((height-pos)/2).toFixed(2)
           ratio = (pos/height).toFixed(1)
-          console.log ratio, y
           PrefixedStyle raw, 'transform', "translate3d(0, #{y}px, 0) scale3d(#{ratio}, #{ratio}, 0)"
         else
-          console.log 'clear'
           PrefixedStyle raw, 'transform', null
 
       setAnimate = (prop)->
@@ -59,30 +59,37 @@ angular.module( 'Iscroll', [])
       updatePosition(0)
 
       scroll.on 'scroll', ->
-        if 0 < @y <= height
-          updatePosition @y
+        if @y <= 0 then return
+        if @y <= height
+          updatePosition(@y)
           if state is 1
             state = 0
             @offset = 0
-
-        if @y > height
+        else
+          if position is not height
+            updatePosition(height)
           if state is 0
             state = 1
             @offset = height
 
       scroll.on 'scrollEnd', ->
-        console.log "scrollEnd", state
-        updatePosition null
+        if position is 0 then return
         if state is 1
           state = 2
-          setAnimate('shrinking 1s linear 0 infinite')
-          scope.$emit 'refreshStart'
+          setAnimate('shrinking 0.5s linear 0 infinite alternate')
+          scope.$emit 'scroll.refreshStart'
+        else
+          updatePosition 0
 
       scope.$on 'scroll.refreshComplete', ->
-        console.log "scroll.refreshComplete"
         if state is 2
-          setAnimate(null)
-          state = 0
-          scroll.offset = 0
+          $timeout (->
+            setAnimate(null)
+            scroll.refresh(false)
+            updatePosition(0)
+            state = 0
+            scroll.offset = 0
+            scroll.resetPosition(scroll.options.bounceTime)
+          ), 1500
 
   )

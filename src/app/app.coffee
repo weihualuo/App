@@ -260,7 +260,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
 
     $scope.$on '$scopeUpdate', reloadObjects
     $scope.$on '$viewContentLoaded', resetState
-    $scope.$on 'refreshStart', ->
+    $scope.$on 'scroll.refreshStart', ->
       console.log "on refresh"
       $scope.onRefresh()
 
@@ -281,7 +281,6 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
           $popup.alert(MESSAGE.LOAD_FAILED)
         ).finally ->
           $scope.$broadcast('scroll.refreshComplete')
-          scrollResize()
 
   )
   .directive('listFilter', ()->
