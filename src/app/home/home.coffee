@@ -82,11 +82,14 @@ angular.module('app.home', ['Gallery', 'restangular'])
           image: $scope.objects[index]
 
     $scope.onImageView = (obj)->
+      $scope.index = $scope.objects.indexOf(obj)
       TogglePane
         id: 'imageView'
         template: "<gallery-view></gallery-view>"
+#        url: "modal/gallery.tpl.html"
         hash: 'gallery'
         backdrop: false
+#        scope: $scope
         locals:
           index: $scope.objects.indexOf(obj)
           links: obj2Links($scope.objects)

@@ -5,16 +5,22 @@ angular.module( 'Scroll', [])
       scroll = null
       element.ready ->
         raw = element[0]
+        scrollable = attr.scrollable
         options =
-          scrollingX: false
+          scrollingX: scrollable is 'true' or scrollable is 'x'
+          scrollingY: scrollable isnt 'x'
+          paging: attr.paging?
+
         scope.$scroll = scroll = new EasyScroller raw, options
+
         if attr.refreshable? and attr.refreshable != 'false'
           refresher = $compile('<refresher></refresher>')(scope)
           raw.parentNode.insertBefore(refresher[0], raw)
 
       scope.$on 'scroll.reload', ->
-        scroll.scroller.scrollTo(0, 0)
-        $timeout (->scroll.reflow()), 1000
+        if scroll
+          scroll.scroller.scrollTo(0, 0)
+          $timeout (->scroll.reflow()), 1000
 
   )
   .directive('refresher', ($timeout, PrefixedStyle)->
@@ -49,7 +55,7 @@ angular.module( 'Scroll', [])
         if top >= 0
           if enableMore
             max = scroller.getScrollMax().top
-            if top > max > 0
+            if top-5 > max > 0
               enableMore = false
               scope.$emit 'scroll.moreStart'
 

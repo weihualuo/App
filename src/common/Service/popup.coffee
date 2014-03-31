@@ -108,14 +108,16 @@ angular.module( 'ui.popup', [])
       end: hidePopup
   )
   .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $document, $window, PrefixedEvent)->
-    (locals, template, hash, url, backdrop)->
+    (locals, parentScope, template, hash, url, backdrop)->
+
+      deferred = $q.defer()
 
       backdrop ?= """
                   <div class="popup-backdrop enabled" ng-click="onClose($event)"></div>
                   """
       hash ?= 'modal'
-      deferred = $q.defer()
-      scope = $rootScope.$new(true)
+      parentScope ?= $rootScope
+      scope = parentScope.$new()
       angular.extend scope, locals
       param = undefined
       ready = false
@@ -198,12 +200,12 @@ angular.module( 'ui.popup', [])
   .factory('TogglePane', (Modal)->
     panes = {}
     (param)->
-      {id, locals, template, url, hash, backdrop, success, fail, always} = param
+      {id, locals, scope, template, url, hash, backdrop, success, fail, always} = param
       if panes[id]
         panes[id].end()
         panes[id] = null
       else if id
-        panes[id] = Modal locals, template, hash, url, backdrop
+        panes[id] = Modal locals, scope, template, hash, url, backdrop
         panes[id].promise.then(success, fail).finally ->
           panes[id] = null
           if always then always()
