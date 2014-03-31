@@ -4,7 +4,7 @@
 @import  "../../vendor/ionic-0.9.17-alpha/dist/css/ionic";
 @import "../../vendor/ionic-0.9.17-alpha/dist/css/themes/ionic-ios7";
 //ionic used note:
-//bar bar-header icon
+//bar bar-header icon button title list item
 //scroll
 
 @import "../../vendor/Gallery/css/blueimp-gallery";
@@ -28,12 +28,13 @@ body{
   right: 0;
   bottom: 0;
   left: 0;
+  overflow: hidden;
   background-color: #fff;
 }
 
 .side-pane{
   position: absolute;
-  box-shadow: -1px 5px 10px rgba(0,0,0,0.6);
+//  box-shadow: -1px 5px 10px rgba(0,0,0,0.6);
 
   &.pane-side-menu{
     left: 0;
@@ -43,7 +44,7 @@ body{
     background: rgba(0,0,0,0.7);
   }
   &.pane-filter-bar{
-    .opacity(95);
+    .opacity(98);
     right: 0;
     top: @headerHeight;
     bottom: 0;

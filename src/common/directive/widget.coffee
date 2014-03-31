@@ -146,7 +146,7 @@ angular.module( 'myWidget', [])
             setAnimate(null)
           else
             setAnimate('none')
-            scope.$emit 'destroyed'
+
 
       updatePosition = (offset)->
         if offset
@@ -163,6 +163,7 @@ angular.module( 'myWidget', [])
           time = Math.abs(x)/width * 0.3
           if Math.abs(x)*3 > width
             if x < 0 then x = -width else x = width
+            scope.$emit 'destroyed', true
           else
             x = 0
           setAnimate "all "+time.toFixed(2)+"s ease-in"

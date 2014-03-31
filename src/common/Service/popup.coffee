@@ -107,25 +107,43 @@ angular.module( 'ui.popup', [])
       #return a end function to manully hide the view
       end: hidePopup
   )
-  .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $document, $window)->
+  .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $document, $window, PrefixedEvent)->
     (locals, template, hash, url, backdrop)->
 
       backdrop ?= """
                   <div class="popup-backdrop enabled" ng-click="onClose($event)"></div>
-                 """
+                  """
+      hash ?= 'modal'
       deferred = $q.defer()
       scope = $rootScope.$new(true)
       angular.extend scope, locals
       param = undefined
       ready = false
+      savedState = null
+      element = null
+      onPopup = ->
+        # Re-push if entering or removing
+        if !ready
+          $timeout (->$location.hash(hash))
+          return
+        ready = false
+        $window.onpopstate = savedState
+        $timeout removeModal
+
       scope.$close = (ret)->
         #popup hash history
-        ready = false
-        param = ret
-        history.back()
+        if ready and $window.onpopstate is onPopup
+          param = ret
+          history.back()
 
-      scope.$on 'destroyed', ->
-        scope.$close() if ready
+      scope.$on 'destroyed', (e, transiting)->
+        if transiting
+          ready = false
+          PrefixedEvent element, "TransitionEnd", ->
+            ready = true
+            history.back() if $window.onpopstate is onPopup
+        else
+          scope.$close()
 
       body = $document[0].body
       if !backdrop
@@ -135,21 +153,17 @@ angular.module( 'ui.popup', [])
         body.appendChild(parent[0])
         scope.onClose = (e)->
           target = e.target || e.srcElement
-          if ready and target is parent[0]
+          if target is parent[0]
             scope.$close()
-
-      element = null
 
       removeModal = ->
         if param?
           deferred.resolve(param)
         else
           deferred.reject()
-        ready = false
         scope.$destroy()
         $animate.leave element, ->
           parent.remove() if backdrop
-
 
       angularDomEl = angular.element(template)
 
@@ -157,12 +171,10 @@ angular.module( 'ui.popup', [])
         element = $compile(angularDomEl)(scope)
         $animate.enter element, parent, null, ->
           ready = true
-        #To be compatible with browser and android back button
-        $location.hash(hash or 'modal')
+          #To be compatible with browser and android back button
+        $location.hash(hash)
         savedState = $window.onpopstate
-        $window.onpopstate = ->
-          $timeout removeModal
-          $window.onpopstate = savedState
+        $window.onpopstate = onPopup
 
       if url
         $http.get(url, cache: $templateCache).then(

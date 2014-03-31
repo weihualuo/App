@@ -3,11 +3,11 @@
     <h2 class="title">{{title}}</h2>
     <button class="button button-clear" ng-click="$close()">取消</button>
 </div>
-<content has-header='true'>
-    <ul class="list">
+<div class="content-view">
+    <ul scrollable class="list">
         <li class="item"
             ng-class="{active: item.id==selected}"
             ng-click="$close(item.id)"
             ng-repeat="item in items">{{item.cn || item.en}}</li>
     </ul>
-</content>
+</div>

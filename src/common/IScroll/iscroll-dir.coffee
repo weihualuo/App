@@ -1,5 +1,18 @@
 
 angular.module( 'Iscroll', [])
+  .directive('scrollable', ($timeout, $compile)->
+    (scope, element, attr)->
+      scroll = null
+      element.ready ->
+        options =
+          scrollingX: false
+        window.scroll = scroll = new EasyScroller element[0], options
+
+      scope.$on 'scroll.resize', ->
+        console.log "scroll.resize"
+        $timeout (->scroll.reflow()), 1000
+
+  )
   .directive('content', ($timeout, $compile)->
     restrict: 'E'
     replace: true
@@ -12,12 +25,14 @@ angular.module( 'Iscroll', [])
     link: (scope, element, attr)->
 
       scroll = null
-      options =
-        mouseWheel: true
-        probeType: 2
+
       element.ready ->
+
         dom = element[0]
-        window.scroll = scroll = new IScroll dom, options
+        options =
+          scrollingX: false
+
+        window.scroll = scroll = new EasyScroller dom.firstElementChild, options
         scope.$iscroll = scroll
 
         if attr.refresh? and attr.refresh != 'false'
@@ -26,7 +41,7 @@ angular.module( 'Iscroll', [])
 
       scope.$on 'scroll.resize', ->
         console.log "scroll.resize"
-        $timeout (->scroll.refresh()), 500
+        $timeout (->scroll.reflow()), 1000
   )
   .directive('refresher', ($timeout, PrefixedStyle)->
     restrict: 'E'
@@ -56,7 +71,13 @@ angular.module( 'Iscroll', [])
       setAnimate = (prop)->
         PrefixedStyle raw, 'animation', prop
 
-      updatePosition(0)
+#      updatePosition(0)
+      scroll.on = ->
+
+      scroll.on 'beforeScrollStart', ->
+        console.log "beforeScrollStart"
+      scroll.on 'scrollStart', ->
+        console.log "scrollStart"
 
       scroll.on 'scroll', ->
         if @y <= 0 then return
@@ -85,7 +106,7 @@ angular.module( 'Iscroll', [])
         if state is 2
           $timeout (->
             setAnimate(null)
-            scroll.refresh(false)
+            scroll.refresh(true)
             updatePosition(0)
             state = 0
             scroll.offset = 0

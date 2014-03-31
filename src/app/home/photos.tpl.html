@@ -1,13 +1,13 @@
 
-<content class="image-container" refresh>
+<refresher></refresher>
 
-    <a class="image-thumb"
+<ul scrollable class="image-container" refresh ng-show="objects.$resolved">
+    <li class="image-thumb"
        ng-click="onImageView(obj)"
        ng-repeat="obj in objects track by obj.id">
         <img image-path src="/m/assets/img/default.jpeg">
-    </a>
-
-</content>
+    </li>
+</ul>
 
 <div class="box-center fill" ng-show="objects.$resolved && !objects.length">
     没有符合条件的照片！
