@@ -5,6 +5,7 @@ angular.module('MESSAGE', [])
     SHARE:       '分享活动'
     COMMENT:     '发表评论'
     LOAD_FAILED: '加载失败'
+    NO_MORE:     '没有更多了'
     SUBMITTING:   '正在提交...'
     UPLOADING:   '正在上传图片...'
     SUBMIT_FAILED: '提交失败'

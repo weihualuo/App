@@ -241,46 +241,40 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     collection = Many(uri)
     objects = null
 
-    scrollResize = (reset)->
-      #Wait for the list render progress completed
-      $scope.$broadcast('scroll.resize')
-
-    resetState = -> no
-
     reloadObjects = ->
-
       $scope.objects = objects = collection.list($routeParams)
       if !objects.$resolved
         Popup.loading objects.$promise
-
       objects.$promise.then ->
         $scope.haveMore = objects.meta.more
         $scope.setRightButton(objects.length + $scope.haveMore + '张')
-        scrollResize(true)
-
-    $scope.$on '$scopeUpdate', reloadObjects
-    $scope.$on '$viewContentLoaded', resetState
-    $scope.$on 'scroll.refreshStart', ->
-      console.log "on refresh"
-      $scope.onRefresh()
+        $scope.$broadcast('scroll.reload')
 
     #Load more objects
-    $scope.onMore = ->
+    onMore = ->
       if !$scope.haveMore
+        $scope.$broadcast('scroll.moreComplete', $scope.haveMore)
+        Popup.alert(MESSAGE.NO_MORE)
         return
       promise = collection.more()
       if promise
-        promise.then (data)->
+        promise.then( (data)->
           $scope.haveMore = objects.meta.more
+        ).finally ->
+          $scope.$broadcast('scroll.moreComplete', true)
 
     #Refresh the list
-    $scope.onRefresh = ()->
+    onRefresh = ()->
       promise = collection.refresh()
       if promise
         promise.catch(->
           $popup.alert(MESSAGE.LOAD_FAILED)
         ).finally ->
           $scope.$broadcast('scroll.refreshComplete')
+
+    $scope.$on '$scopeUpdate', reloadObjects
+    $scope.$on 'scroll.refreshStart', onRefresh
+    $scope.$on 'scroll.moreStart', onMore
 
   )
   .directive('listFilter', ()->

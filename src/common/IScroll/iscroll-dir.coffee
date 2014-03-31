@@ -7,59 +7,28 @@ angular.module( 'Scroll', [])
         raw = element[0]
         options =
           scrollingX: false
-        scroll = new EasyScroller raw, options
-        scope.$scroll = scroll
+        scope.$scroll = scroll = new EasyScroller raw, options
         if attr.refreshable? and attr.refreshable != 'false'
           refresher = $compile('<refresher></refresher>')(scope)
           raw.parentNode.insertBefore(refresher[0], raw)
 
-      scope.$on 'scroll.resize', ->
-        console.log "scroll.resize"
+      scope.$on 'scroll.reload', ->
+        scroll.scroller.scrollTo(0, 0)
         $timeout (->scroll.reflow()), 1000
 
-  )
-  .directive('content', ($timeout, $compile)->
-    restrict: 'E'
-    replace: true
-    transclude: true
-    template: """
-              <div class="fill">
-                <div class="scroll clearfix" ng-transclude></div>
-              </div>
-              """
-    link: (scope, element, attr)->
-
-      scroll = null
-
-      element.ready ->
-
-        dom = element[0]
-        options =
-          scrollingX: false
-
-        window.scroll = scroll = new EasyScroller dom.firstElementChild, options
-        scope.$iscroll = scroll
-
-        if attr.refresh? and attr.refresh != 'false'
-          refresher = $compile('<refresher></refresher>')(scope)
-          dom.insertBefore(refresher[0], dom.children[0])
-
-      scope.$on 'scroll.resize', ->
-        console.log "scroll.resize"
-        $timeout (->scroll.reflow()), 1000
   )
   .directive('refresher', ($timeout, PrefixedStyle)->
     restrict: 'E'
     replace: true
     template: """
               <svg class="refresher">
-                <circle cx="20" cy="20" r="15" fill="blue"/>
+                <circle cx="25" cy="25" r="15" fill="blue"/>
               </svg>
               """
     link: (scope, element, attr)->
 
       position = 0
-      height = 40
+      height = 50
       updatePosition = (pos)->
         if pos != null
           position = pos
@@ -75,9 +44,16 @@ angular.module( 'Scroll', [])
       raw = element[0]
       scroll = scope.$scroll
       scroller = scroll.scroller
+      enableMore = true
       scroll.onScroll (left, top)->
-        if top >= 0 then return
-        if top >= -height
+        if top >= 0
+          if enableMore
+            max = scroller.getScrollMax().top
+            if top > max > 0
+              enableMore = false
+              scope.$emit 'scroll.moreStart'
+
+        else if top >= -height
           updatePosition(-top)
         else if position != height
           updatePosition height
@@ -90,7 +66,17 @@ angular.module( 'Scroll', [])
         $timeout (->
           scroller.finishPullToRefresh()
           setAnimate(null)
+          scroll.reflow()
         ), 1000
+
+      scope.$on 'scroll.moreComplete', (e, more)->
+        $timeout (->
+          enableMore = more
+          scroll.reflow()
+        ), 1000
+
+      scope.$on 'scroll.reload', ->
+        enableMore = true
 
       updatePosition(0)
 
