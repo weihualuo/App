@@ -1,7 +1,7 @@
 angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
                          'templates-app', 'templates-common',
                          'Model', 'app.home', 'app.discussion',
-                         'myWidget', 'ngCachingView', 'Service', 'ui.popup', 'Iscroll'
+                         'myWidget', 'ngCachingView', 'Service', 'ui.popup', 'Scroll'
                          'MESSAGE'
 ])
   .config( ($routeProvider, $compileProvider) ->
