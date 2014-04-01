@@ -1,0 +1,14 @@
+
+<span class="title">
+    {{objects[index].title}}
+</span>
+<span class="prev" ng-click="onCtrl($event, 'prev')">‹</span>
+<span class="next" ng-click="onCtrl($event, 'next')">›</span>
+<span class="close" ng-click="onCtrl($event, 'close')"><i class="icon ion-ios7-close-outline"></i></span>
+<span class="play-pause" ng-click="onCtrl($event, 'play')">
+    <i class="icon ion-play" ng-class="{'ng-hide': playing}"></i>
+    <i class="icon ion-pause" ng-class="{'ng-hide': !playing}"></i>
+</span>
+<span class="info" ng-click="onCtrl($event, 'info')">
+    <i class="icon ion-ios7-information-outline"></i>
+</span>

@@ -27,7 +27,7 @@ angular.module( 'Gallery', [])
 
     #TODO avoid reflow twice
     @shiftSlides = (page)->
-      #console.log "before shift page startindex is ", start
+      #console.log "shift to #{page}, before shift startindex is #{start}"
       #case 1: 1+1>=2, need shift, case 2: 0+2>=2, do not need
       if page isnt mid and start + page >= mid
         start += page - mid
@@ -39,12 +39,38 @@ angular.module( 'Gallery', [])
         #console.log "after shift page startindex is #{start}, set page from #{page} to #{current}"
       else
         current = page
+      $scope.index = start + current
+      $scope.$digest()
 
     ctrl = this
     $scope.onScrollEnd = ->
       page = scroll.getPage()
       if page is parseInt(page) and page isnt current
         ctrl.shiftSlides(page)
+
+    auto = null
+    play = ->
+      auto = setInterval (->scroll.next()), 3000
+      $scope.playing = true
+    pause = ->
+      clearInterval(auto) if auto
+      auto = null
+      $scope.playing = false
+
+    $scope.onCtrl = (e, id)->
+      switch id
+        when 'info'
+          pause()
+          $scope.onImageInfo($scope.index)
+        when 'close'
+          pause()
+          $scope.$emit 'destroyed'
+
+        when 'prev' then scroll.prev()
+        when 'next' then scroll.next()
+        when 'slide' then $scope.hideCtrl = !$scope.hideCtrl
+        when 'play' then (if auto then pause() else play())
+      e.stopPropagation()
 
     this
   )
@@ -54,9 +80,9 @@ angular.module( 'Gallery', [])
     transclude: true
     controller: 'GalleryCtrl'
     template: """
-              <div class="gallery-view fade-in-out" ng-click="onClick($event)">
-                <div scrollable='x' complete="onScrollEnd()" paging=5 class="gallery-slides">
-                </div>
+              <div class="gallery-view fade-in-out" ng-click="onCtrl($event, 'slide')">
+                <div scrollable='x' complete="onScrollEnd()" paging=5 class="gallery-slides"></div>
+                <div class="gallery-controls" ng-class="{'ng-hide':hideCtrl}" ng-transclude></div>
               </div>
               """
     link: (scope, element, attr, ctrl) ->
@@ -64,9 +90,6 @@ angular.module( 'Gallery', [])
       element.ready ->
         ctrl.initSlides()
 
-      scope.onClick = (e)->
-        e.stopPropagation()
-        scope.$emit 'destroyed'
   )
   .directive('gallerySlides', ()->
     restrict: 'C'

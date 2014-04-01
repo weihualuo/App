@@ -82,7 +82,6 @@ angular.module('app.home', ['Gallery', 'restangular'])
           image: $scope.objects[index]
 
     $scope.onImageView = (obj)->
-      $scope.index = $scope.objects.indexOf(obj)
       TogglePane
         id: 'imageView'
         template: "<gallery-view></gallery-view>"
@@ -92,8 +91,6 @@ angular.module('app.home', ['Gallery', 'restangular'])
         scope: $scope
         locals:
           index: $scope.objects.indexOf(obj)
-          links: obj2Links($scope.objects)
-          onImageInfo: $scope.onImageInfo
 
   )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->

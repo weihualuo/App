@@ -16,11 +16,81 @@
   overflow: hidden;
 
 }
+
+.gallery-controls{
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  > span{
+    position: absolute;
+    line-height: 30px;
+    color: #fff;
+    text-shadow: 0 0 2px #000;
+    opacity: 0.8;
+    text-decoration: none;
+    cursor: pointer;
+    text-align: center;
+    &.ng-click-active{
+      color: @color-active;
+      opacity: 1;
+    }
+  }
+  > .info {
+    left: 15px;
+    bottom: 15px;
+    padding: 15px;
+    margin: -15px;
+    font-size: @icon-xl;
+  }
+  > .play-pause {
+    right: 15px;
+    bottom: 15px;
+    padding: 15px;
+    font-size: @icon-large;
+  }
+
+  >.prev, >.next{
+    top: 50%;
+    left: 15px;
+    width: 40px;
+    height: 40px;
+    margin-top: -23px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 60px;
+    font-weight: 100;
+    .box-sizing(content-box);
+    border: 3px solid #fff;
+    .border-radius(23px);
+//    background: rgba(0, 0, 0, 0.5);
+  }
+  >.next{
+    left: auto;
+    right: 15px;
+  }
+
+  >.close, >.title{
+    top: 15px;
+    left: 15px;
+    margin: 0 40px 0 0;
+    font-size: 20px;
+  }
+  > .close {
+    padding: 15px;
+    right: 15px;
+    left: auto;
+    margin: -15px;
+    font-size: @icon-xl;
+  }
+}
+
 .gallery-slide{
   position: relative;
   float: left;
   height: 100%;
   text-align: center;
+  background: #000000;
   .box-center;
 }
 .gallery-img{
