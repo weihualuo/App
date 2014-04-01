@@ -3,20 +3,26 @@ angular.module( 'Scroll', [])
   .directive('scrollable', ($timeout, $compile)->
     (scope, element, attr)->
       scroll = null
+      raw = element[0]
+      scrollable = attr.scrollable
+      complete = if attr.complete then (->scope.$eval(attr.complete)) else angular.noop
+      options =
+        scrollingX: scrollable is 'true' or scrollable is 'x'
+        scrollingY: scrollable isnt 'x'
+        paging: attr.paging?
+        bouncing: not attr.paging?
+        scrollingComplete: complete
+
+      scope.$scroll = scroll = new EasyScroller raw, options
+
+      if attr.refreshable? and attr.refreshable != 'false'
+        refresher = $compile('<refresher></refresher>')(scope)
+        raw.parentNode.insertBefore(refresher[0], raw)
+
+      #Shoud reflow on element ready
+      #No everyone send a scroll.reload
       element.ready ->
-        raw = element[0]
-        scrollable = attr.scrollable
-        options =
-          scrollingX: scrollable is 'true' or scrollable is 'x'
-          scrollingY: scrollable isnt 'x'
-          paging: attr.paging?
-          bouncing: not attr.paging?
-
-        scope.$scroll = scroll = new EasyScroller raw, options
-
-        if attr.refreshable? and attr.refreshable != 'false'
-          refresher = $compile('<refresher></refresher>')(scope)
-          raw.parentNode.insertBefore(refresher[0], raw)
+        scroll.reflow()
 
       scope.$on 'scroll.reload', ->
         if scroll
