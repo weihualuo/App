@@ -199,16 +199,7 @@ angular.module( 'myWidget', [])
           onShiftEnd()
 
   )
-  .directive('XgalleryView', ($timeout)->
-    restrict: 'E'
-    replace: true
-    transclude: true
-    template: """
-              <div class="gallery-view fade-in-out" ng-click="onClick($event)" ng-transclude>
-              </div>
-              """
-  )
-  .directive('galleryView', ($timeout)->
+  .directive('xgalleryView', ($timeout)->
     restrict: 'E'
     replace: true
     transclude: true

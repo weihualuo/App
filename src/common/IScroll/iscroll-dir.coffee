@@ -10,6 +10,7 @@ angular.module( 'Scroll', [])
           scrollingX: scrollable is 'true' or scrollable is 'x'
           scrollingY: scrollable isnt 'x'
           paging: attr.paging?
+          bouncing: not attr.paging?
 
         scope.$scroll = scroll = new EasyScroller raw, options
 

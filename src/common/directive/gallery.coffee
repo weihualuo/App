@@ -1,33 +1,77 @@
 
 
 angular.module( 'Gallery', [])
-  .directive('galleryCarousel', ()->
-    link: (scope, el, attr)->
-      gallery = null
-      scope.$watch attr.links, (links)->
+  .controller('GalleryCtrl', ($scope, $filter)->
 
-        if links and links.length
-          gallery = blueimp.Gallery links,
-            container: el[0]
-            carousel: true
+    slides = []
+    @addImage = (img)->
+      slides.push img
 
-      scope.$watch attr.moreLinks, (links)->
-        if gallery and links
-          gallery.add links
+    @initSlides = ->
+      current = Math.floor slides.length/2
+      if $scope.index < current
+        start = 0
+        current = $scope.index
+      else
+        start = $scope.index - current
+
+      console.log start, current
+      for img in slides
+        img.src = $filter('fullImagePath')($scope.objects[start++], 0)
+      current
+
+    this
   )
-  .directive('galleryLinks', ()->
-    (scope, el, attr)->
+  .directive('galleryView', ($timeout)->
+    restrict: 'E'
+    replace: true
+    transclude: true
+    controller: 'GalleryCtrl'
+    template: """
+              <div class="gallery-view fade-in-out" ng-click="onClick($event)">
+                <div scrollable='x' paging=5 class="gallery-slides">
+                </div>
+              </div>
+              """
+    link: (scope, element, attr, ctrl) ->
 
-      console.log "blueimp sss"
-      el[0].onclick = (event)->
-        event = event || window.event
-        target = event.target || event.srcElement
-        link = if target.src then target.parentNode else target
-        options = index: link, event: event
-        links = this.getElementsByTagName('a')
-        blueimp.Gallery(links, options)
+      scope.onClick = (e)->
+        e.stopPropagation()
+        scope.$emit 'destroyed'
 
   )
-  .directive('galleryFull', ()->
-    (scope, el, attr)->
+  .directive('gallerySlides', ()->
+    restrict: 'C'
+    require: '^galleryView'
+
+    compile: (element, attr)->
+
+      slide = angular.element '<div class="gallery-slide"></div>'
+      num = parseInt(attr.paging) or 5
+      ratio = 100/num
+      element.css width: "#{num}00%"
+      slide.css width: "#{ratio}%"
+      for [1..num]
+        element.append(slide.clone())
+
+      (scope, element, attr, ctrl) ->
+
+        scroll = null
+        element.ready ->
+          scroll = scope.$scroll
+          current = ctrl.initSlides()
+          scroll.toPage(current)
+
   )
+  .directive('gallerySlide', ()->
+    restrict: 'C'
+    require: '^galleryView'
+    link: (scope, element, attr, ctrl) ->
+      img = new Image()
+      img.draggable = false
+      img.className = "gallery-img"
+      element.append(img)
+      ctrl.addImage img
+
+  )
+
