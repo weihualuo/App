@@ -107,7 +107,7 @@ angular.module( 'ui.popup', [])
       #return a end function to manully hide the view
       end: hidePopup
   )
-  .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $document, $window, PrefixedEvent)->
+  .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $document, $window, PrefixedStyle)->
     (locals, parentScope, template, hash, url, backdrop)->
 
       deferred = $q.defer()
@@ -138,14 +138,7 @@ angular.module( 'ui.popup', [])
           param = ret
           history.back()
 
-      scope.$on 'destroyed', (e, transiting)->
-        if transiting
-          ready = false
-          PrefixedEvent element, "TransitionEnd", ->
-            ready = true
-            history.back() if $window.onpopstate is onPopup
-        else
-          scope.$close()
+      scope.$on 'destroyed', ->scope.$close()
 
       body = $document[0].body
       if !backdrop
@@ -164,6 +157,8 @@ angular.module( 'ui.popup', [])
         else
           deferred.reject()
         scope.$destroy()
+        # clear transition on element first
+        PrefixedStyle element[0], 'transition', null
         $animate.leave element, ->
           parent.remove() if backdrop
 

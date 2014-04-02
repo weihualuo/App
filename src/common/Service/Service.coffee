@@ -108,5 +108,74 @@ angular.module( 'Service', [])
       for p in pfx
         element.style[p+type]= value
   )
+  .factory('Swipe', ($swipe, PrefixedStyle, PrefixedEvent)->
+
+    (element, position, onHide)->
+
+      startX = 0
+      x = 0
+      pane = element[0]
+      moving = false
+      snaping = false
+
+      PrefixedEvent element, "TransitionEnd", ->
+        if snaping
+          snaping = false
+          if x is 0
+            setAnimate(null)
+          else
+            setAnimate('none')
+            onHide() if onHide
+
+
+      updatePosition = (offset)->
+        if offset
+          PrefixedStyle pane, 'transform', "translate3d(#{offset}px, 0, 0)"
+        else
+          PrefixedStyle pane, 'transform', null
+      setAnimate = (prop)->
+        PrefixedStyle pane, 'transition', prop
+
+      onShiftEnd = ->
+        if moving
+          moving = false
+          width = pane.offsetWidth
+          pos = x
+          time = Math.abs(x)/width * 0.3
+          if Math.abs(x)*2 > width
+            if x < 0 then x = -width else x = width
+          else
+            x = 0
+          if x isnt pos
+            snaping = true
+            setAnimate "all "+time.toFixed(2)+"s ease-in"
+            updatePosition(x)
+          else if x isnt 0
+            setAnimate('none')
+            onHide() if onHide
+
+      $swipe.bind element,
+        'start': (coords)->
+          startX = coords.x - x
+
+        'cancel': ->
+          onShiftEnd()
+        'end': ->
+          onShiftEnd()
+
+        'move': (coords)->
+          if snaping then return
+          x = coords.x - startX
+          if (position == 'left' and x > 0) or
+              (position == 'right' and x < 0)
+            x = 0
+          else
+            if !moving
+              moving = true
+              setAnimate(null)
+            updatePosition(x)
+
+
+  )
 
 

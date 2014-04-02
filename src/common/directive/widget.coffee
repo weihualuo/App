@@ -121,7 +121,7 @@ angular.module( 'myWidget', [])
         angular.extend item.style, style for item in raw.children
 
   )
-  .directive('sidePane', ($swipe, PrefixedEvent, PrefixedStyle)->
+  .directive('sidePane', (Swipe)->
     restrict: 'E'
     replace: true
     transclude: true
@@ -131,72 +131,8 @@ angular.module( 'myWidget', [])
     link: (scope, element, attr) ->
 
       position = attr.position
-
-      startX = 0
-      x = 0
-      pane = element[0]
-      threshold = 5
-      moving = false
-      snaping = false
-
-      PrefixedEvent element, "TransitionEnd", ->
-        if snaping
-          snaping = false
-          if x is 0
-            setAnimate(null)
-          else
-            setAnimate('none')
-
-
-      updatePosition = (offset)->
-        if offset
-          PrefixedStyle pane, 'transform', "translate3d(#{offset}px, 0, 0)"
-        else
-          PrefixedStyle pane, 'transform', null
-      setAnimate = (prop)->
-        PrefixedStyle pane, 'transition', prop
-
-      onShiftEnd = ->
-        if moving
-          snaping = true
-          width = pane.offsetWidth
-          time = Math.abs(x)/width * 0.3
-          if Math.abs(x)*3 > width
-            if x < 0 then x = -width else x = width
-            scope.$emit 'destroyed', true
-          else
-            x = 0
-          setAnimate "all "+time.toFixed(2)+"s ease-in"
-          updatePosition(x)
-          moving = false
-
-      $swipe.bind element,
-        'start': (coords, event)->
-          startX = coords.x - x
-          event.stopPropagation()
-
-        'cancel': ->
-          onShiftEnd()
-
-        'move': (coords, event)->
-          event.stopPropagation()
-          if snaping then return
-          offset = coords.x - startX
-          if (!moving and Math.abs(offset) < threshold)
-            return
-
-          x = offset
-          if (position == 'left' and x > 0) or
-             (position == 'right' and x < 0)
-            x = 0
-          else
-            if !moving
-              moving = true
-              setAnimate(null)
-            updatePosition(x)
-
-        'end': ->
-          onShiftEnd()
+      Swipe element, position, ->
+        scope.$emit 'destroyed'
 
   )
   .directive('xgalleryView', ($timeout)->
