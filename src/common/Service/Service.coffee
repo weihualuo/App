@@ -112,6 +112,7 @@ angular.module( 'Service', [])
 
     (element, position, onHide)->
 
+      startTime = 0
       startX = 0
       x = 0
       pane = element[0]
@@ -136,13 +137,13 @@ angular.module( 'Service', [])
       setAnimate = (prop)->
         PrefixedStyle pane, 'transition', prop
 
-      onShiftEnd = ->
+      onShiftEnd = (swiping)->
         if moving
           moving = false
           width = pane.offsetWidth
           pos = x
           time = Math.abs(x)/width * 0.3
-          if Math.abs(x)*2 > width
+          if Math.abs(x)*2 > width or swiping
             if x < 0 then x = -width else x = width
           else
             x = 0
@@ -155,15 +156,16 @@ angular.module( 'Service', [])
             onHide() if onHide
 
       $swipe.bind element,
-        'start': (coords)->
+        'start': (coords, event)->
           startX = coords.x - x
+          startTime = event.timeStamp
 
         'cancel': ->
           onShiftEnd()
-        'end': ->
+        'end': (cor, event)->
           onShiftEnd()
 
-        'move': (coords)->
+        'move': (coords, event)->
           if snaping then return
           x = coords.x - startX
           if (position == 'left' and x > 0) or
@@ -172,6 +174,11 @@ angular.module( 'Service', [])
           else
             if !moving
               moving = true
+              gap = event.timeStamp - startTime
+              console.log gap
+              if gap < 100
+                onShiftEnd(true)
+                return
               setAnimate(null)
             updatePosition(x)
 
