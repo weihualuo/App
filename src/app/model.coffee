@@ -103,7 +103,10 @@ angular.module( 'Model', ['restangular'])
     Factory.prototype.get = (force)->
       if !@value.$promise or force
         @value.$promise = promise = @value.get()
+        local = JSON.parse localStorage.getItem(@value.route)
+        angular.extend(@value, local)
         promise.then( (data)=>
+          localStorage.setItem(data.route, JSON.stringify(data))
           data.$promise = promise
           angular.copy data, @value
         ).finally =>

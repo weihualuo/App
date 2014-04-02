@@ -74,6 +74,46 @@ angular.module( 'Gallery', [])
 
     this
   )
+  .factory('Slide', (PrefixedStyle)->
+
+    CreateImage = (url)->
+      img = new Image()
+      img.src = url
+      img.draggable = false
+      img.className = "gallery-img"
+      img
+
+    Slide = (url, position)->
+
+      loader = angular.element '<i class="icon icon-large ion-loading-d"></i>'
+      @element = angular.element '<div class="gallery-slide gallery-loading"></div>'
+      if position is 'right'
+        PrefixedStyle @element[0], 'transform', "translate3d(100%, 0, 0)"
+      else if position is 'left'
+        PrefixedStyle @element[0], 'transform', "translate3d(-100%, 0, 0)"
+
+      @element.append loader
+      @img = CreateImage(url)
+      @img.onload = =>
+        loader.remove()
+        @element.append @img
+        @element.removeClass('gallery-loading')
+        console.log "image load", url
+      @img.onerror = =>
+        loader.remove()
+        @element.removeClass('gallery-loading')
+        @element.addClass('gallery-error')
+        console.log "image error", url
+      this
+
+    Slide.prototype.loadNeighbor = ->
+      @left = new Slide()
+      @right = new Slide()
+
+
+    Slide
+
+  )
   .directive('galleryView', ($timeout)->
     restrict: 'E'
     replace: true
@@ -81,35 +121,37 @@ angular.module( 'Gallery', [])
     controller: 'GalleryCtrl'
     template: """
               <div class="gallery-view fade-in-out" ng-click="onCtrl($event, 'slide')">
-                <div scrollable='x' complete="onScrollEnd()" paging=5 class="gallery-slides"></div>
+                <div class="gallery-slides"></div>
                 <div class="gallery-controls" ng-class="{'ng-hide':hideCtrl}" ng-transclude></div>
               </div>
               """
     link: (scope, element, attr, ctrl) ->
 
-      element.ready ->
-        ctrl.initSlides()
-
   )
-  .directive('gallerySlides', ()->
+  .directive('gallerySlides', (Slide, ImageUtil)->
     restrict: 'C'
     require: '^galleryView'
+    link: (scope, element, attr, ctrl) ->
+      objects = scope.objects
+      index = scope.index
+      url = ImageUtil.path(objects[index], 0)
+      slide = new Slide(url)
 
-    compile: (element, attr)->
+      if index > 0
+        url = ImageUtil.path(objects[index-1], 0)
+        slide.left = new Slide(url, 'left')
 
-      slide = angular.element '<div class="gallery-slide"></div>'
-      num = parseInt(attr.paging) or 5
-      ratio = 100/num
-      element.css width: "#{num}00%"
-      slide.css width: "#{ratio}%"
-      for [1..num]
-        element.append(slide.clone())
+      if index + 1 < objects.length
+        url = ImageUtil.path(objects[index+1], 0)
+        slide.right = new Slide(url, 'right')
 
-      (scope, element, attr, ctrl) ->
+      element.append(slide.left.element)
+      element.append(slide.element)
+      element.append(slide.right.element)
 
   )
-  .directive('gallerySlide', ()->
-    restrict: 'C'
+  .directive('xgallerySlide', ()->
+    restrict: 'A'
     require: '^galleryView'
     link: (scope, element, attr, ctrl) ->
       img = new Image()

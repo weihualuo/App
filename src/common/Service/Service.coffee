@@ -142,14 +142,14 @@ angular.module( 'Service', [])
           moving = false
           width = pane.offsetWidth
           pos = x
-          time = Math.abs(x)/width * 0.3
           if Math.abs(x)*2 > width or swiping
             if x < 0 then x = -width else x = width
           else
             x = 0
           if x isnt pos
             snaping = true
-            setAnimate "all "+time.toFixed(2)+"s ease-in"
+            time = (Math.abs(pos-x)/width * 0.3).toFixed(2)
+            setAnimate "all "+time+"s ease-in"
             updatePosition(x)
           else if x isnt 0
             setAnimate('none')
