@@ -110,7 +110,9 @@ angular.module( 'Service', [])
   )
   .factory('Swipe', ($swipe, PrefixedStyle, PrefixedEvent)->
 
-    (element, position, onHide)->
+    (element, options)->
+
+      {direction, onStart, onMove, onEnd} = options
 
       startTime = 0
       startX = 0
@@ -118,24 +120,6 @@ angular.module( 'Service', [])
       pane = element[0]
       moving = false
       snaping = false
-
-      PrefixedEvent element, "TransitionEnd", ->
-        if snaping
-          snaping = false
-          if x is 0
-            setAnimate(null)
-          else
-            setAnimate('none')
-            onHide() if onHide
-
-
-      updatePosition = (offset)->
-        if offset
-          PrefixedStyle pane, 'transform', "translate3d(#{offset}px, 0, 0)"
-        else
-          PrefixedStyle pane, 'transform', null
-      setAnimate = (prop)->
-        PrefixedStyle pane, 'transition', prop
 
       onShiftEnd = (swiping)->
         if moving
@@ -146,14 +130,13 @@ angular.module( 'Service', [])
             if x < 0 then x = -width else x = width
           else
             x = 0
+          ratio = null
           if x isnt pos
             snaping = true
-            time = (Math.abs(pos-x)/width * 0.3).toFixed(2)
-            setAnimate "all "+time+"s ease-in"
-            updatePosition(x)
-          else if x isnt 0
-            setAnimate('none')
-            onHide() if onHide
+            ratio = Math.abs(pos-x)/width
+            setTimeout (->snaping=false), 300
+          onEnd(x, ratio)
+
 
       $swipe.bind element,
         'start': (coords, event)->
@@ -168,8 +151,9 @@ angular.module( 'Service', [])
         'move': (coords, event)->
           if snaping then return
           x = coords.x - startX
-          if (position == 'left' and x > 0) or
-              (position == 'right' and x < 0)
+          console.log "move", x
+          if (direction == 'left' and x > 0) or
+              (direction == 'right' and x < 0)
             x = 0
           else
             if !moving
@@ -179,8 +163,8 @@ angular.module( 'Service', [])
               if gap < 100
                 onShiftEnd(true)
                 return
-              setAnimate(null)
-            updatePosition(x)
+              onStart() if onStart
+            onMove(x)
 
 
   )

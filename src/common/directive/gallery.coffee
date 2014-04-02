@@ -74,7 +74,7 @@ angular.module( 'Gallery', [])
 
     this
   )
-  .factory('Slide', (PrefixedStyle)->
+  .factory('Slide', (Swipe, PrefixedStyle)->
 
     CreateImage = (url)->
       img = new Image()
@@ -104,6 +104,14 @@ angular.module( 'Gallery', [])
         @element.removeClass('gallery-loading')
         @element.addClass('gallery-error')
         console.log "image error", url
+
+      options =
+        onStart: -> console.log "start"
+        onMove: (offset)-> console.log offset
+        onEnd: (offset, ratio)-> console.log offset, ratio
+      Swipe @element, options
+
+
       this
 
     Slide.prototype.loadNeighbor = ->
@@ -120,9 +128,21 @@ angular.module( 'Gallery', [])
     transclude: true
     controller: 'GalleryCtrl'
     template: """
-              <div class="gallery-view fade-in-out" ng-click="onCtrl($event, 'slide')">
+              <div class="gallery-view gallery-controls fade-in-out" ng-click="onCtrl($event, 'slide')">
                 <div class="gallery-slides"></div>
-                <div class="gallery-controls" ng-class="{'ng-hide':hideCtrl}" ng-transclude></div>
+                <span class="title">
+                {{objects[index].title}}
+                </span>
+                <span class="prev" ng-click="onCtrl($event, 'prev')">‹</span>
+                <span class="next" ng-click="onCtrl($event, 'next')">›</span>
+                <span class="close" ng-click="onCtrl($event, 'close')"><i class="icon ion-ios7-close-outline"></i></span>
+                <span class="play-pause" ng-click="onCtrl($event, 'play')">
+                <i class="icon ion-play" ng-class="{'ng-hide': playing}"></i>
+                <i class="icon ion-pause" ng-class="{'ng-hide': !playing}"></i>
+                </span>
+                <span class="info" ng-click="onCtrl($event, 'info')">
+                <i class="icon ion-ios7-information-outline"></i>
+                </span>
               </div>
               """
     link: (scope, element, attr, ctrl) ->

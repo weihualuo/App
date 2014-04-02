@@ -121,7 +121,7 @@ angular.module( 'myWidget', [])
         angular.extend item.style, style for item in raw.children
 
   )
-  .directive('sidePane', (Swipe)->
+  .directive('sidePane', (Swipe, PrefixedStyle, PrefixedEvent)->
     restrict: 'E'
     replace: true
     transclude: true
@@ -130,9 +130,48 @@ angular.module( 'myWidget', [])
                """
     link: (scope, element, attr) ->
 
-      position = attr.position
-      Swipe element, position, ->
-        scope.$emit 'destroyed'
+      x = 0
+      snaping = false
+      pane = element[0]
+
+      PrefixedEvent element, "TransitionEnd", ->
+        if snaping
+          snaping = false
+          resetState()
+
+      updatePosition = (offset)->
+        x = offset
+        if offset
+          PrefixedStyle pane, 'transform', "translate3d(#{offset}px, 0, 0)"
+        else
+          PrefixedStyle pane, 'transform', null
+
+      setAnimate = (prop)->
+        PrefixedStyle pane, 'transition', prop
+
+      resetState = ->
+        if x is 0
+          setAnimate(null)
+        else
+          setAnimate('none')
+          scope.$emit 'destroyed'
+
+      options =
+        direction: attr.position
+        onStart: ->
+          setAnimate('none')
+        onMove: (offset)->
+          updatePosition offset
+        onEnd: (offset, aniRatio)->
+          if aniRatio
+            snaping = true
+            time = (aniRatio * 0.3).toFixed(2)
+            setAnimate "all #{time}s ease-in"
+            updatePosition offset
+          else
+            resetState()
+
+      Swipe element, options
 
   )
   .directive('xgalleryView', ($timeout)->
