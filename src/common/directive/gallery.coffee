@@ -85,6 +85,9 @@ angular.module( 'Gallery', [])
           next = next.left
         else
           break
+      # Remove slide out of range
+      delete next.left if next.left
+
       index = slide.index
       next = slide
       for [1..range]
@@ -96,12 +99,14 @@ angular.module( 'Gallery', [])
           next = next.right
         else
           break
+      # Remove slide out of range
+      delete next.right if next.right
 
     auto = null
-    play = ->
+    @play = ->
       auto = setInterval (->current.next()), 3000
       $scope.playing = true
-    pause = ->
+    @pause = ->
       clearInterval(auto) if auto
       auto = null
       $scope.playing = false
@@ -109,16 +114,16 @@ angular.module( 'Gallery', [])
     $scope.onCtrl = (e, id)->
       switch id
         when 'info'
-          pause()
+          ctrl.pause()
           $scope.onImageInfo($scope.index)
         when 'close'
-          pause()
+          ctrl.pause()
           $scope.$emit 'destroyed'
 
         when 'prev' then current.prev()
         when 'next' then current.next()
         when 'slide' then $scope.hideCtrl = !$scope.hideCtrl
-        when 'play' then (if auto then pause() else play())
+        when 'play' then (if auto then ctrl.pause() else ctrl.play())
       e.stopPropagation()
 
     this
@@ -132,6 +137,7 @@ angular.module( 'Gallery', [])
       img.className = "gallery-img"
       img
 
+    timing = "cubic-bezier(0.645, 0.045, 0.355, 1.000)"
     protoElement = angular.element '<div class="gallery-slide gallery-loading"></div>'
     protoLoader = angular.element '<i class="icon icon-large ion-loading-d"></i>'
 
@@ -182,6 +188,7 @@ angular.module( 'Gallery', [])
         return
 
       console.log "bind swipe of #{@index}, on #{direction}"
+
       width = 0
       PrefixedEvent @element, "TransitionEnd", =>
         if @snaping
@@ -193,6 +200,7 @@ angular.module( 'Gallery', [])
         onStart: (x)=>
           width = @element[0].offsetWidth
           @setAnimate('none')
+          @ctrl.pause()
           @left.setAnimate('none') if @left
           @right.setAnimate('none') if @right
 
@@ -207,7 +215,7 @@ angular.module( 'Gallery', [])
             console.log "disable swipe of #{@index}"
             @swiper.setDisable true
             time = aniRatio * 0.4
-            prop = "all #{time}s ease-in"
+            prop = "all #{time}s #{timing}"
             @setAnimate prop
             @updatePosition offset
             console.log offset, aniRatio, width
@@ -225,7 +233,7 @@ angular.module( 'Gallery', [])
       if @right
         width = @element[0].offsetWidth
         @snaping = true
-        prop = "all 0.4s ease-in"
+        prop = "all 0.4s #{timing}"
         @setAnimate prop
         @right.setAnimate prop
         @updatePosition -width
@@ -235,7 +243,7 @@ angular.module( 'Gallery', [])
       if @left
         width = @element[0].offsetWidth
         @snaping = true
-        prop = "all 0.4s ease-in"
+        prop = "all 0.4s #{timing}"
         @setAnimate prop
         @left.setAnimate prop
         @updatePosition width
@@ -268,14 +276,10 @@ angular.module( 'Gallery', [])
   .directive('galleryView', ($timeout)->
     restrict: 'E'
     replace: true
-    transclude: true
     controller: 'GalleryCtrl'
     template: """
-              <div class="gallery-view gallery-controls fade-in-out" ng-click="onCtrl($event, 'slide')">
+              <div class="gallery-view fade-in-out" ng-class="{'gallery-controls': !hideCtrl}" ng-click="onCtrl($event, 'slide')">
                 <div class="gallery-slides"></div>
-                <span class="title">
-                {{objects[index].title}}
-                </span>
                 <span class="prev" ng-class="{'ng-hide': first}" ng-click="onCtrl($event, 'prev')">‹</span>
                 <span class="next" ng-class="{'ng-hide': last}" ng-click="onCtrl($event, 'next')">›</span>
                 <span class="close" ng-click="onCtrl($event, 'close')"><i class="icon ion-ios7-close-outline"></i></span>

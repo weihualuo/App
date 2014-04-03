@@ -135,7 +135,7 @@ angular.module( 'Service', [])
           ratio = null
           if x isnt pos
             ratio = (Math.abs(pos-x)/width).toFixed(2)
-          console.log "pos=#{pos}, x=#{x}, width=#{width}"
+          #console.log "pos=#{pos}, x=#{x}, width=#{width}"
           onEnd(x, ratio)
 
       $swipe.bind element,

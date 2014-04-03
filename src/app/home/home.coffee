@@ -1,26 +1,5 @@
 angular.module('app.home', ['Gallery', 'restangular'])
 
-  .config( (RestangularProvider) ->
-#    RestangularProvider.addElementTransformer 'photos', false, (obj) ->
-#      obj.paths = []
-#      reg = new RegExp(/\d+\/(.+?)-\d+\.(\w+)/)
-#      used = [0, 1, 2, 3, 4, 5, 6]
-#      for seq in used
-#        replaceReg = seq + '/$1-' + seq + '.$2'
-#        obj.paths[seq] = obj.image.replace(reg, replaceReg)
-#      if !(obj.array & 1)
-#        if obj.array & 2
-#          obj.paths[0] = obj.paths[1]
-#        else
-#          obj.paths[0] = obj.paths[2]
-#      obj
-  )
-  .filter('fullImagePath', (Single)->
-    meta = Single('meta').get()
-    # Keep filter as simple as possible
-    (obj, seq)->
-      return meta.imgbase + obj.paths[parseInt seq]
-  )
   .factory('ImageUtil', (Single)->
 
     imageTable = 3:188, 4:175, 5:155, 6:105
@@ -102,7 +81,6 @@ angular.module('app.home', ['Gallery', 'restangular'])
       TogglePane
         id: 'imageView'
         template: "<gallery-view></gallery-view>"
-        url: "modal/gallery.tpl.html"
         hash: 'gallery'
         backdrop: false
         scope: $scope

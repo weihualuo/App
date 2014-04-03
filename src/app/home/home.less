@@ -8,6 +8,9 @@
   overflow: hidden;
   background-color: #fff;
   z-index: @z-index-popup;
+  > span{
+    display: none;
+  }
 
 }
 .gallery-slides{
@@ -60,6 +63,7 @@
   right: 0;
   bottom: 0;
   > span{
+    display: inherit;
     position: absolute;
     z-index: 3;
     line-height: 30px;
