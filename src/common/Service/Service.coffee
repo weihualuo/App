@@ -113,6 +113,12 @@ angular.module( 'Service', [])
     (element, options)->
 
       direction = options.direction
+      switch direction
+        when 'right' then direction = 1
+        when 'left' then direction = -1
+        else direction = 0
+
+      margin = options.margin or 0
       onStart = options.onStart or angular.noop
       onMove = options.onMove or angular.noop
       onEnd = options.onEnd or angular.noop
@@ -128,10 +134,10 @@ angular.module( 'Service', [])
           moving = false
           pos = x
           width = element[0].offsetWidth
-          if Math.abs(x)*2 > width or swiping
-            if x < 0 then x = -width else x = width
-          else
-            x = 0
+          x = 0
+          if Math.abs(pos)*2 > width or swiping
+            if pos*direction >= 0
+              if pos < 0 then x = -width else x = width
           ratio = null
           if x isnt pos
             ratio = (Math.abs(pos-x)/width).toFixed(2)
@@ -148,7 +154,8 @@ angular.module( 'Service', [])
           onShiftEnd(x)
         'end': (coords, event)->
           if disabled then return
-          x = coords.x - startX
+          # Do not use this corrd, x maybe far out of range when swiping
+          # x = coords.x - startX
           gap = event.timeStamp - startTime
           swiping = if gap < 200 then true else false
           onShiftEnd(x, swiping)
@@ -156,9 +163,9 @@ angular.module( 'Service', [])
         'move': (coords)->
           if disabled then return
           x = coords.x - startX
-          if (direction == 'left' and x > 0) or
-              (direction == 'right' and x < 0)
-            x = 0
+          if (direction is -1 and x > margin) or
+              (direction is 1 and x < -margin)
+            x = direction * margin
           else
             if !moving
               moving = true
@@ -169,7 +176,10 @@ angular.module( 'Service', [])
         setDisable: (value)->
           disabled = value
         setDirection: (value)->
-          direction = value
+          switch value
+            when 'right' then direction = 1
+            when 'left' then direction = -1
+            else direction = -1
         }
 
 

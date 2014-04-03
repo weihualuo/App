@@ -62,7 +62,7 @@ angular.module( 'Scroll', [])
         if top >= 0
           if enableMore
             max = scroller.getScrollMax().top
-            if top-5 > max > 0
+            if top+100 > max > 0
               enableMore = false
               scope.$emit 'scroll.moreStart'
 

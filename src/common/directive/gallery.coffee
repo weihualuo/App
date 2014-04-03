@@ -197,6 +197,7 @@ angular.module( 'Gallery', [])
 
       options =
         direction: direction
+        margin: 50
         onStart: (x)=>
           width = @element[0].offsetWidth
           @setAnimate('none')

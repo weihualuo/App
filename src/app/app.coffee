@@ -88,9 +88,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     if !location.hash
       $location.path(location.pathname)
 
-    $document.on 'touchstart mousedown', (e)->e.preventDefault()
+    #prevent webkit drag
     $document.on 'touchmove mousemove', (e)->e.preventDefault()
-    $document.on 'touchend mouseup', (e)->e.preventDefault()
   )
   .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, $location, AppConfig) ->
 
@@ -250,18 +249,20 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       if !objects.$resolved
         Popup.loading objects.$promise
       objects.$promise.then ->
-        $scope.setRightButton(objects.length + objects.meta.more + '张')
+        $scope.haveMore = objects.meta.more
+        $scope.setRightButton(objects.length + $scope.haveMore + '张')
         $scope.$broadcast('scroll.reload')
 
     #Load more objects
     onMore = ->
-      if !objects.meta.more
+      if !$scope.haveMore
         $scope.$broadcast('scroll.moreComplete', false)
-        Popup.alert(MESSAGE.NO_MORE)
+        console.log "no more"
         return
       promise = collection.more()
       if promise
         promise.then( (data)->
+          $scope.haveMore = objects.meta.more
         ).finally ->
           $scope.$broadcast('scroll.moreComplete', true)
 
