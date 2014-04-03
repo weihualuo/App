@@ -83,10 +83,14 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       '/my': '我的家居'
 
   )
-  .run( ($location)->
+  .run( ($location, $document)->
     # simulate html5Mode
     if !location.hash
       $location.path(location.pathname)
+
+    $document.on 'touchstart mousedown', (e)->e.preventDefault()
+    $document.on 'touchmove mousemove', (e)->e.preventDefault()
+    $document.on 'touchend mouseup', (e)->e.preventDefault()
   )
   .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, $location, AppConfig) ->
 

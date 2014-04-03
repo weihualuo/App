@@ -113,13 +113,13 @@ angular.module( 'Service', [])
     (element, options)->
 
       direction = options.direction
-      width = options.width
       onStart = options.onStart or angular.noop
       onMove = options.onMove or angular.noop
       onEnd = options.onEnd or angular.noop
 
       startTime = 0
       startX = 0
+      x = 0
       moving = false
       disabled = false
 
@@ -127,6 +127,7 @@ angular.module( 'Service', [])
         if moving
           moving = false
           pos = x
+          width = element[0].offsetWidth
           if Math.abs(x)*2 > width or swiping
             if x < 0 then x = -width else x = width
           else
@@ -134,6 +135,7 @@ angular.module( 'Service', [])
           ratio = null
           if x isnt pos
             ratio = (Math.abs(pos-x)/width).toFixed(2)
+          console.log "pos=#{pos}, x=#{x}, width=#{width}"
           onEnd(x, ratio)
 
       $swipe.bind element,
@@ -142,12 +144,13 @@ angular.module( 'Service', [])
           startTime = event.timeStamp
 
         'cancel': ->
-          onShiftEnd(0)
+          console.log "cancel"
+          onShiftEnd(x)
         'end': (coords, event)->
           if disabled then return
           x = coords.x - startX
           gap = event.timeStamp - startTime
-          swiping = if gap < 100 then true else false
+          swiping = if gap < 200 then true else false
           onShiftEnd(x, swiping)
 
         'move': (coords)->
@@ -159,7 +162,7 @@ angular.module( 'Service', [])
           else
             if !moving
               moving = true
-              onStart(x) if onStart
+              onStart(x)
             onMove(x)
 
       return{
