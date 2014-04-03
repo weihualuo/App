@@ -112,19 +112,20 @@ angular.module( 'Service', [])
 
     (element, options)->
 
-      {direction, onStart, onMove, onEnd} = options
+      direction = options.direction
+      width = options.width
+      onStart = options.onStart or angular.noop
+      onMove = options.onMove or angular.noop
+      onEnd = options.onEnd or angular.noop
 
       startTime = 0
       startX = 0
-      x = 0
-      pane = element[0]
       moving = false
-      snaping = false
+      disabled = false
 
-      onShiftEnd = (swiping)->
+      onShiftEnd = (x, swiping)->
         if moving
           moving = false
-          width = pane.offsetWidth
           pos = x
           if Math.abs(x)*2 > width or swiping
             if x < 0 then x = -width else x = width
@@ -132,39 +133,41 @@ angular.module( 'Service', [])
             x = 0
           ratio = null
           if x isnt pos
-            snaping = true
-            ratio = Math.abs(pos-x)/width
-            setTimeout (->snaping=false), 300
+            ratio = (Math.abs(pos-x)/width).toFixed(2)
           onEnd(x, ratio)
-
 
       $swipe.bind element,
         'start': (coords, event)->
-          startX = coords.x - x
+          startX = coords.x
           startTime = event.timeStamp
 
         'cancel': ->
-          onShiftEnd()
-        'end': (cor, event)->
-          onShiftEnd()
-
-        'move': (coords, event)->
-          if snaping then return
+          onShiftEnd(0)
+        'end': (coords, event)->
+          if disabled then return
           x = coords.x - startX
-          console.log "move", x
+          gap = event.timeStamp - startTime
+          swiping = if gap < 100 then true else false
+          onShiftEnd(x, swiping)
+
+        'move': (coords)->
+          if disabled then return
+          x = coords.x - startX
           if (direction == 'left' and x > 0) or
               (direction == 'right' and x < 0)
             x = 0
           else
             if !moving
               moving = true
-              gap = event.timeStamp - startTime
-              console.log gap
-              if gap < 100
-                onShiftEnd(true)
-                return
-              onStart() if onStart
+              onStart(x) if onStart
             onMove(x)
+
+      return{
+        setDisable: (value)->
+          disabled = value
+        setDirection: (value)->
+          direction = value
+        }
 
 
   )

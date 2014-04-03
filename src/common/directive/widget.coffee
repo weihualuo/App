@@ -165,13 +165,15 @@ angular.module( 'myWidget', [])
         onEnd: (offset, aniRatio)->
           if aniRatio
             snaping = true
-            time = (aniRatio * 0.3).toFixed(2)
+            time = aniRatio * 0.3
             setAnimate "all #{time}s ease-in"
             updatePosition offset
           else
             resetState()
 
-      Swipe element, options
+      element.ready ->
+        options.width = pane.offsetWidth
+        Swipe element, options
 
   )
   .directive('xgalleryView', ($timeout)->

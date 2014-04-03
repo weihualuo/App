@@ -16,35 +16,12 @@ angular.module('app.home', ['Gallery', 'restangular'])
 #      obj
   )
   .filter('fullImagePath', (Single)->
-
-
     meta = Single('meta').get()
-
-
     # Keep filter as simple as possible
     (obj, seq)->
       return meta.imgbase + obj.paths[parseInt seq]
   )
   .factory('ImageUtil', (Single)->
-
-    meta = Single('meta').get()
-    reg = new RegExp(/\d+\/(.+?)-\d+\.(\w+)/)
-
-    getPath = (obj, seq)->
-      # request large image but there is not
-      # set to second large or third large
-      if seq is 0 and !(obj.array & 1)
-        if (obj.array & 2) then seq = 1 else seq =2
-      replaceReg = seq + '/$1-' + seq + '.$2'
-      meta.imgbase + obj.image.replace(reg, replaceReg)
-
-    utils =
-      path: (obj, seq)->
-        paths = obj.paths or (obj.paths = [])
-        paths[seq] or (paths[seq] = getPath(obj, seq))
-
-  )
-  .directive('imagePath', (ImageUtil)->
 
     imageTable = 3:188, 4:175, 5:155, 6:105
     cal = (wid)->
@@ -68,13 +45,31 @@ angular.module('app.home', ['Gallery', 'restangular'])
           seq = s
       seq
 
-    index = getIndex cal window.innerWidth
-    console.log index, imageTable[index]
+    thumb_index = getIndex cal window.innerWidth
+    meta = Single('meta').get()
+    reg = new RegExp(/\d+\/(.+?)-\d+\.(\w+)/)
+
+    getPath = (obj, seq)->
+      # request large image but there is not
+      # set to second large or third large
+      if seq is 0 and !(obj.array & 1)
+        if (obj.array & 2) then seq = 1 else seq =2
+      replaceReg = seq + '/$1-' + seq + '.$2'
+      meta.imgbase + obj.image.replace(reg, replaceReg)
+
+    utils =
+      path: (obj, seq)->
+        paths = obj.paths or (obj.paths = [])
+        paths[seq] or (paths[seq] = getPath(obj, seq))
+      thumb: (obj)-> @path(obj, thumb_index)
+
+  )
+  .directive('imageThumb', (ImageUtil)->
 
     (scope, element, attr)->
 
       element.ready ->
-        path = ImageUtil.path(scope.obj, index)
+        path = ImageUtil.thumb(scope.obj)
         attr.$set 'src', path
 
       element.on 'error', ->

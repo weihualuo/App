@@ -1,52 +1,97 @@
 
 
 angular.module( 'Gallery', [])
-  .controller('GalleryCtrl', ($scope, $filter)->
+  .controller('GalleryCtrl', ($scope, Slide, ImageUtil)->
 
-    start = mid = current = 0
-    slides = []
-    scroll = null
+    objects = $scope.objects
+    container = current = width = null
+    range = 2
 
-    @addImage = (img)->
-      slides.push img
+    @getCurrent = ()-> current
+    window.ctrl = this
 
-    @initSlides = ->
-      scroll = $scope.$scroll
+    @getUrl = (obj)-> ImageUtil.path(obj, 0)
 
-      mid = current = Math.floor slides.length/2
-      if $scope.index < current
-        current = $scope.index
+    @initSlides = (element)->
+      index = $scope.index
+      container = element
+      current = new Slide(this, objects[index], index)
+      container.empty()
+      container.append(current.element)
+      @loadNeighbors(current)
+      container.prepend(current.left.element) if current.left
+      container.append(current.right.element) if current.right
+
+    @startSlides = (clientWidth)->
+      width = clientWidth
+      current.bindSwipe(width)
+
+    @onSlide = (x)->
+      if x > 0
+        console.log "slide to left"
+        if ref = current.right
+          console.log "remove right", ref.index
+          # Need to rebind event
+          ref.swiper = null
+          ref.element.remove()
+
+        current = current.left
+        @loadNeighbors(current)
+
+        if ref = current.left
+          console.log "prepend", ref.index
+        container.prepend(current.left.element) if current.left
+
       else
-        start = $scope.index - current
+        console.log "slide to right"
+        if ref = current.left
+          console.log "remove left", ref.index
+          ref.swiper = null
+          ref.element.remove()
 
-      index = start
-      for img in slides
-        img.src = $filter('fullImagePath')($scope.objects[index++], 0)
+        current = current.right
+        @loadNeighbors(current)
 
-      scroll.toPage(current)
+        if current.right
+          console.log "append", current.right.index
+        container.append(current.right.element) if current.right
 
-    #TODO avoid reflow twice
-    @shiftSlides = (page)->
-      #console.log "shift to #{page}, before shift startindex is #{start}"
-      #case 1: 1+1>=2, need shift, case 2: 0+2>=2, do not need
-      if page isnt mid and start + page >= mid
-        start += page - mid
-        current = mid
-        index = start
-        for img in slides
-          img.src = $filter('fullImagePath')($scope.objects[index++], 0)
-        scroll.toPage(current)
-        #console.log "after shift page startindex is #{start}, set page from #{page} to #{current}"
-      else
-        current = page
-      $scope.index = start + current
-      $scope.$digest()
+      current.bindSwipe(width)
+      info = "current: " + current.index + " left: "
+      next = current
+      while next = next.left
+        info += " #{next.index} "
+      info += "right: "
+      next = current
+      while next = next.right
+        info += " #{next.index} "
+      console.log info
 
-    ctrl = this
-    $scope.onScrollEnd = ->
-      page = scroll.getPage()
-      if page is parseInt(page) and page isnt current
-        ctrl.shiftSlides(page)
+
+
+    @loadNeighbors = (slide)->
+      index = slide.index
+      next = slide
+      for [1..range]
+        if index-- > 0
+          if not next.left
+            next.left = new Slide(this, objects[index], index, 'left')
+            console.log "add #{index} to left of  #{next.index}"
+            next.left.right = next
+          next = next.left
+        else
+          break
+      index = slide.index
+      next = slide
+      for [1..range]
+        if ++index < objects.length
+          if not next.right
+            next.right = new Slide(this, objects[index], index, 'right')
+            console.log "add #{index} to right of  #{next.index}"
+            next.right.left = next
+          next = next.right
+        else
+          break
 
     auto = null
     play = ->
@@ -74,7 +119,7 @@ angular.module( 'Gallery', [])
 
     this
   )
-  .factory('Slide', (Swipe, PrefixedStyle)->
+  .factory('Slide', (Swipe, PrefixedStyle, PrefixedEvent)->
 
     CreateImage = (url)->
       img = new Image()
@@ -83,41 +128,115 @@ angular.module( 'Gallery', [])
       img.className = "gallery-img"
       img
 
-    Slide = (url, position)->
+    protoElement = angular.element '<div class="gallery-slide gallery-loading"></div>'
+    protoLoader = angular.element '<i class="icon icon-large ion-loading-d"></i>'
 
-      loader = angular.element '<i class="icon icon-large ion-loading-d"></i>'
-      @element = angular.element '<div class="gallery-slide gallery-loading"></div>'
+    Slide = (ctrl, data, index, position)->
+
+      console.log "new slide", index, position
+
+      @ctrl = ctrl
+      @data = data
+      @index = index
+      @element = protoElement.clone()
+
+
       if position is 'right'
         PrefixedStyle @element[0], 'transform', "translate3d(100%, 0, 0)"
       else if position is 'left'
         PrefixedStyle @element[0], 'transform', "translate3d(-100%, 0, 0)"
 
+      loader = protoLoader.clone()
       @element.append loader
-      @img = CreateImage(url)
+      @img = CreateImage ctrl.getUrl(data)
       @img.onload = =>
         loader.remove()
         @element.append @img
         @element.removeClass('gallery-loading')
-        console.log "image load", url
       @img.onerror = =>
         loader.remove()
         @element.removeClass('gallery-loading')
         @element.addClass('gallery-error')
-        console.log "image error", url
-
-      options =
-        onStart: -> console.log "start"
-        onMove: (offset)-> console.log offset
-        onEnd: (offset, ratio)-> console.log offset, ratio
-      Swipe @element, options
-
-
+        console.log "image error", @img.src
       this
 
-    Slide.prototype.loadNeighbor = ->
-      @left = new Slide()
-      @right = new Slide()
+    Slide::bindSwipe = (width)->
 
+      #Already bind
+      if @swiper
+        console.log "enable swipe of #{@index}"
+        @swiper.setDisable false
+        return
+
+      if @left and @right
+        direction = 'both'
+      else if @left
+        direction = 'right'
+      else if @right
+        direction = 'left'
+      else
+        return
+
+      console.log "bind swipe of #{@index}, on #{direction}"
+
+      PrefixedEvent @element, "TransitionEnd", =>
+        if @snaping
+          @snaping = false
+          @resetState()
+
+      options =
+        width: width
+        direction: direction
+        onStart: (x)=>
+          @setAnimate('none')
+          @left.setAnimate('none') if @left
+          @right.setAnimate('none') if @right
+
+        onMove: (offset)=>
+          @updatePosition(offset)
+          @right.updatePosition(offset+width) if @right
+          @left.updatePosition(offset-width) if @left
+
+        onEnd: (offset, aniRatio)=>
+          if aniRatio
+            @snaping = true
+            console.log "disable swipe of #{@index}"
+            @swiper.setDisable true
+            time = aniRatio * 0.4
+            prop = "all #{time}s ease-in"
+            @setAnimate prop
+            @updatePosition offset
+            console.log offset, aniRatio, width
+            if @right
+              @right.setAnimate prop
+              @right.updatePosition(offset+width)
+            if @left
+              @left.setAnimate prop
+              @left.updatePosition(offset-width)
+          else
+            @resetState()
+      @swiper = Swipe @element, options
+
+
+    Slide::setAnimate = (prop)->
+      PrefixedStyle @element[0], 'transition', prop
+
+    Slide::updatePosition = (offset)->
+      @x = offset
+      if offset
+        PrefixedStyle @element[0], 'transform', "translate3d(#{offset}px, 0, 0)"
+      else
+        PrefixedStyle @element[0], 'transform', null
+
+    Slide::resetState = ->
+      @setAnimate(null)
+      @left.setAnimate(null) if @left
+      @right.setAnimate(null) if @right
+      if @x is 0
+        console.log "enable swipe of #{@index}"
+        @swiper.setDisable false
+      else
+        @ctrl.onSlide(@x)
 
     Slide
 
@@ -145,29 +264,18 @@ angular.module( 'Gallery', [])
                 </span>
               </div>
               """
-    link: (scope, element, attr, ctrl) ->
-
   )
   .directive('gallerySlides', (Slide, ImageUtil)->
     restrict: 'C'
     require: '^galleryView'
     link: (scope, element, attr, ctrl) ->
-      objects = scope.objects
-      index = scope.index
-      url = ImageUtil.path(objects[index], 0)
-      slide = new Slide(url)
 
-      if index > 0
-        url = ImageUtil.path(objects[index-1], 0)
-        slide.left = new Slide(url, 'left')
+      width = null
+      ctrl.initSlides(element)
 
-      if index + 1 < objects.length
-        url = ImageUtil.path(objects[index+1], 0)
-        slide.right = new Slide(url, 'right')
-
-      element.append(slide.left.element)
-      element.append(slide.element)
-      element.append(slide.right.element)
+      element.ready ->
+        width = element[0].clientWidth
+        ctrl.startSlides(width)
 
   )
   .directive('xgallerySlide', ()->
