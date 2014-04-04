@@ -107,10 +107,10 @@ angular.module('app.home', ['Gallery', 'restangular'])
       itemHeight = item.offsetHeight
       containerHeight = scroll.container.offsetHeight
       #above
-      if top > itemTop + itemHeight
+      if top > itemTop
         scroll.scroller.scrollTo(0, itemTop)
       #below
-      else if top < itemTop - containerHeight
+      else if top < itemTop+itemHeight-containerHeight
         scroll.scroller.scrollTo(0, itemTop+itemHeight-containerHeight)
 
       item.getBoundingClientRect()
