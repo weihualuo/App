@@ -13,6 +13,7 @@ angular.module( 'Gallery', [])
 #    window.ctrl = this
 
     @getUrl = (obj)-> ImageUtil.path(obj, 2)
+    @getThumb = (obj)-> ImageUtil.thumb(obj)
 
     @initSlides = (element)->
       index = $scope.index
@@ -140,7 +141,7 @@ angular.module( 'Gallery', [])
   )
   .factory('Slide', (Swipe, PrefixedStyle, PrefixedEvent)->
 
-    CreateImage = (url)->
+    createImage = (url)->
       img = new Image()
       img.src = url
       img.draggable = false
@@ -149,7 +150,14 @@ angular.module( 'Gallery', [])
 
     timing = "cubic-bezier(0.645, 0.045, 0.355, 1.000)"
     protoElement = angular.element '<div class="gallery-slide gallery-loading"></div>'
-    protoLoader = angular.element '<i class="icon icon-large ion-loading-d"></i>'
+
+    createLoader = (url)->
+      angular.element """
+                       <div class='box-center'>
+                         <img src='#{url}' draggable='false' class='gallery-loader-img'>
+                         <div class='gallery-loader-spin'><i class="icon ion-loading-a"></i></div>
+                       </div>
+                       """
 
     Slide = (ctrl, data, index, position)->
 
@@ -160,25 +168,24 @@ angular.module( 'Gallery', [])
       @index = index
       @element = protoElement.clone()
 
-
       if position is 'right'
         PrefixedStyle @element[0], 'transform', "translate3d(100%, 0, 0)"
       else if position is 'left'
         PrefixedStyle @element[0], 'transform', "translate3d(-100%, 0, 0)"
 
-      loader = protoLoader.clone()
+      loader = createLoader(ctrl.getThumb(data))
       @element.append loader
-      @img = CreateImage ctrl.getUrl(data)
+      @img = createImage ctrl.getUrl(data)
       @img.onload = =>
         loader.remove()
         @element.append @img
         @element.removeClass('gallery-loading')
-        console.log "image load", @img.src
+        #console.log "image load", @img.src
       @img.onerror = =>
         loader.remove()
         @element.removeClass('gallery-loading')
         @element.addClass('gallery-error')
-        console.log "image error", @img.src
+        #console.log "image error", @img.src
       this
 
     Slide::bindSwipe = ()->
