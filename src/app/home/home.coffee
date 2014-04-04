@@ -41,6 +41,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
         paths = obj.paths or (obj.paths = [])
         paths[seq] or (paths[seq] = getPath(obj, seq))
       thumb: (obj)-> @path(obj, thumb_index)
+      best: (obj)-> @path(obj, 2)
 
   )
   .directive('imageThumb', (ImageUtil)->

@@ -12,9 +12,6 @@ angular.module( 'Gallery', [])
 #    @getCurrent = ()-> current
 #    window.ctrl = this
 
-    @getUrl = (obj)-> ImageUtil.path(obj, 2)
-    @getThumb = (obj)-> ImageUtil.thumb(obj)
-
     @initSlides = (element)->
       index = $scope.index
       container = element
@@ -139,7 +136,7 @@ angular.module( 'Gallery', [])
 
     this
   )
-  .factory('Slide', (Swipe, PrefixedStyle, PrefixedEvent)->
+  .factory('Slide', (Swipe, PrefixedStyle, PrefixedEvent, ImageUtil)->
 
     createImage = (url)->
       img = new Image()
@@ -151,13 +148,26 @@ angular.module( 'Gallery', [])
     timing = "cubic-bezier(0.645, 0.045, 0.355, 1.000)"
     protoElement = angular.element '<div class="gallery-slide"></div>'
 
-    createLoader = (url)->
-      angular.element """
+    createLoader = (data)->
+      url = ImageUtil.thumb(data)
+      loader = angular.element """
                        <div class='gallery-loader'>
-                         <img src='#{url}' draggable='false' class='gallery-loader-img'>
+                         <img src='#{url}' draggable='false' width='100%' height='100%'>
                          <div class='gallery-loader-spin'><i class="icon ion-loading-a"></i></div>
                        </div>
                        """
+      w = data.width
+      h = data.height
+      rx = window.innerWidth/w
+      ry = window.innerHeight/h
+      if rx < 1 or ry < 1
+        r = Math.min(rx, ry)
+        w = r*w
+        h = r*h
+      loader.css
+        width: w+'px'
+        height: h+'px'
+      loader
 
     Slide = (ctrl, data, index, position)->
 
@@ -173,9 +183,9 @@ angular.module( 'Gallery', [])
       else if position is 'left'
         PrefixedStyle @element[0], 'transform', "translate3d(-100%, 0, 0)"
 
-      loader = createLoader(ctrl.getThumb(data))
+      loader = createLoader(data)
       @element.append loader
-      @img = createImage ctrl.getUrl(data)
+      @img = createImage ImageUtil.best(data)
       @img.onload = =>
         loader.remove()
         @element.append @img
