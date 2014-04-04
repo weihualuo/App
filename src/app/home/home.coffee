@@ -78,9 +78,11 @@ angular.module('app.home', ['Gallery', 'restangular'])
         locals:
           image: $scope.objects[index]
 
+    item = null
     $scope.onImageView = (obj, e)->
       item = e.target
       item = item.parentNode if item.tagName is 'IMG'
+      $scope.item = item
       TogglePane
         id: 'imageView'
         template: "<gallery-view></gallery-view>"
@@ -90,6 +92,28 @@ angular.module('app.home', ['Gallery', 'restangular'])
         locals:
           index: $scope.objects.indexOf(obj)
           rect:  item.getBoundingClientRect()
+
+    $scope.$on 'gallery.slide', (e, index, x)->
+      console.log "gallery.slide", index, x
+      item = item.previousElementSibling if x > 0
+      item = item.nextElementSibling if x < 0
+      if $scope.haveMore and index+6 > $scope.objects.length
+        $scope.$emit 'scroll.moreStart'
+
+    $scope.getItemRect = ->
+      scroll = $scope.$scroll
+      top = scroll.scroller.getValues().top
+      itemTop = item.offsetTop
+      itemHeight = item.offsetHeight
+      containerHeight = scroll.container.offsetHeight
+      #above
+      if top > itemTop + itemHeight
+        scroll.scroller.scrollTo(0, itemTop)
+      #below
+      else if top < itemTop - containerHeight
+        scroll.scroller.scrollTo(0, itemTop+itemHeight-containerHeight)
+
+      item.getBoundingClientRect()
 
   )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->

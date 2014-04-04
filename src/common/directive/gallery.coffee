@@ -1,7 +1,7 @@
 
 
 angular.module( 'Gallery', [])
-  .controller('GalleryCtrl', ($scope, Slide, ImageUtil, $timeout)->
+  .controller('GalleryCtrl', ($scope, Slide, ImageUtil, $timeout, PrefixedStyle, PrefixedEvent)->
 
     objects = $scope.objects
     container = current = null
@@ -11,6 +11,13 @@ angular.module( 'Gallery', [])
     # for Debug use
 #    @getCurrent = ()-> current
 #    window.ctrl = this
+
+    @setTransform = (el, rect)->
+      offsetX = rect.left+rect.width/2-window.innerWidth/2
+      offsetY = rect.top+rect.height/2-window.innerHeight/2
+      ratioX = rect.width/window.innerWidth
+      ratioY = rect.height/window.innerHeight
+      PrefixedStyle el, 'transform', "translate3d(#{offsetX}px, #{offsetY}px, 0) scale3d(#{ratioX}, #{ratioY}, 0)"
 
     @initSlides = (element)->
       index = $scope.index
@@ -36,6 +43,7 @@ angular.module( 'Gallery', [])
         #if ref = current.left
           #console.log "prepend", ref.index
         container.prepend(current.left.element) if current.left
+        $scope.$emit 'gallery.slide', current.index, x
 
       else if x < 0
         #console.log "slide to right"
@@ -51,6 +59,7 @@ angular.module( 'Gallery', [])
         #if current.right
           #console.log "append", current.right.index
         container.append(current.right.element) if current.right
+        $scope.$emit 'gallery.slide', current.index, x
 
       # Init load, postpone neighbors loading after first slide entered
       else
@@ -115,19 +124,25 @@ angular.module( 'Gallery', [])
       auto = null
       $scope.playing = false
 
+    # Avoid memery leak here
     clearOnExit = ->
       ctrl.pause()
 
     $scope.$on '$destroy', clearOnExit
+
+    @close = ->
+      $scope.displayCtrl = no
+      PrefixedStyle container[0], 'transition', 'all ease-in 300ms'
+      ctrl.setTransform container[0], $scope.getItemRect()
+      PrefixedEvent container, "TransitionEnd", ->
+        $scope.$emit 'destroyed'
 
     $scope.onCtrl = (e, id)->
       switch id
         when 'info'
           ctrl.pause()
           $scope.onImageInfo(current.index)
-        when 'close'
-          $scope.$emit 'destroyed'
-
+        when 'close' then ctrl.close()
         when 'prev' then current.prev()
         when 'next' then current.next()
         when 'slide' then $scope.displayCtrl = not $scope.displayCtrl
@@ -310,16 +325,11 @@ angular.module( 'Gallery', [])
     link: (scope, element, attr, ctrl) ->
 
       slides = element[0].firstElementChild
-      rect = scope.rect
-      offsetX = rect.left+rect.width/2-window.innerWidth/2
-      offsetY = rect.top+rect.height/2-window.innerHeight/2
-      ratioX = rect.width/window.innerWidth
-      ratioY = rect.height/window.innerHeight
-      PrefixedStyle slides, 'transform', "translate3d(#{offsetX}px, #{offsetY}px, 0) scale3d(#{ratioX}, #{ratioY}, 0)"
+      ctrl.setTransform slides, scope.rect
       ctrl.initSlides(angular.element(slides))
 
       element.ready ->
-        PrefixedStyle slides, 'transition', 'all ease-in 400ms'
+        PrefixedStyle slides, 'transition', 'all ease-in 300ms'
         PrefixedStyle slides, 'transform', null
         ctrl.onSlide()
   )
