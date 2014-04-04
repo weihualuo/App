@@ -54,7 +54,7 @@ angular.module( 'Gallery', [])
           #console.log "append", current.right.index
         container.append(current.right.element) if current.right
 
-      # Init load, postpone neighbors loading after first image displayed
+      # Init load, postpone neighbors loading after first slide entered
       else
         @loadNeighbors(current)
         container.prepend(current.left.element) if current.left
@@ -132,7 +132,7 @@ angular.module( 'Gallery', [])
 
         when 'prev' then current.prev()
         when 'next' then current.next()
-        when 'slide' then $scope.hideCtrl = !$scope.hideCtrl
+        when 'slide' then $scope.displayCtrl = not $scope.displayCtrl
         when 'play' then (if auto then ctrl.pause() else ctrl.play())
       e.stopPropagation()
 
@@ -173,11 +173,12 @@ angular.module( 'Gallery', [])
         loader.remove()
         @element.append @img
         @element.removeClass('gallery-loading')
+        console.log "image load", @img.src
       @img.onerror = =>
         loader.remove()
         @element.removeClass('gallery-loading')
         @element.addClass('gallery-error')
-        #console.log "image error", @img.src
+        console.log "image error", @img.src
       this
 
     Slide::bindSwipe = ()->
@@ -284,16 +285,25 @@ angular.module( 'Gallery', [])
     Slide
 
   )
-  .directive('galleryView', ()->
+  .directive('galleryView', (PrefixedStyle)->
     restrict: 'E'
     replace: true
     controller: 'GalleryCtrl'
     templateUrl: 'modal/gallery.tpl.html'
     link: (scope, element, attr, ctrl) ->
 
-      slides = angular.element(element[0].firstElementChild)
-      ctrl.initSlides(slides)
+      slides = element[0].firstElementChild
+      rect = scope.rect
+      offsetX = rect.left+rect.width/2-window.innerWidth/2
+      offsetY = rect.top+rect.height/2-window.innerHeight/2
+      ratioX = rect.width/window.innerWidth
+      ratioY = rect.height/window.innerHeight
+      PrefixedStyle slides, 'transform', "translate3d(#{offsetX}px, #{offsetY}px, 0) scale3d(#{ratioX}, #{ratioY}, 0)"
+      ctrl.initSlides(angular.element(slides))
+
       element.ready ->
+        PrefixedStyle slides, 'transition', 'all ease-in 400ms'
+        PrefixedStyle slides, 'transform', null
         ctrl.onSlide()
   )
 

@@ -77,7 +77,9 @@ angular.module('app.home', ['Gallery', 'restangular'])
         locals:
           image: $scope.objects[index]
 
-    $scope.onImageView = (obj)->
+    $scope.onImageView = (obj, e)->
+      item = e.target
+      item = item.parentNode if item.tagName is 'IMG'
       TogglePane
         id: 'imageView'
         template: "<gallery-view></gallery-view>"
@@ -86,6 +88,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
         scope: $scope
         locals:
           index: $scope.objects.indexOf(obj)
+          rect:  item.getBoundingClientRect()
 
   )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->

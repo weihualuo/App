@@ -1,6 +1,6 @@
 
 
-<div class="gallery-view fade-in-out" ng-class="{'gallery-controls': !hideCtrl}" ng-click="onCtrl($event, 'slide')">
+<div class="gallery-view" ng-class="{'gallery-controls': displayCtrl}" ng-click="onCtrl($event, 'slide')">
     <div class="gallery-slides"></div>
     <span class="prev" ng-class="{'ng-hide': first}" ng-click="onCtrl($event, 'prev')">
        <i class="icon ion-chevron-left"></i>
