@@ -1,15 +1,16 @@
 
 
 angular.module( 'Gallery', [])
-  .controller('GalleryCtrl', ($scope, Slide, ImageUtil)->
+  .controller('GalleryCtrl', ($scope, Slide, ImageUtil, $timeout)->
 
     objects = $scope.objects
     container = current = null
     ctrl = this
     range = 3
 
-    @getCurrent = ()-> current
-    window.ctrl = this
+    # for Debug use
+#    @getCurrent = ()-> current
+#    window.ctrl = this
 
     @getUrl = (obj)-> ImageUtil.path(obj, 2)
 
@@ -19,9 +20,6 @@ angular.module( 'Gallery', [])
       current = new Slide(this, objects[index], index)
       container.empty()
       container.append(current.element)
-      @loadNeighbors(current)
-      container.prepend(current.left.element) if current.left
-      container.append(current.right.element) if current.right
 
     @onSlide = (x)->
       if x > 0
@@ -37,8 +35,7 @@ angular.module( 'Gallery', [])
         current = current.left
         @loadNeighbors(current)
 
-        if ref = current.left
-          no
+        #if ref = current.left
           #console.log "prepend", ref.index
         container.prepend(current.left.element) if current.left
 
@@ -53,15 +50,23 @@ angular.module( 'Gallery', [])
         current = current.right
         @loadNeighbors(current)
 
-        if current.right
-          no
+        #if current.right
           #console.log "append", current.right.index
+        container.append(current.right.element) if current.right
+
+      # Init load, postpone neighbors loading after first image displayed
+      else
+        @loadNeighbors(current)
+        container.prepend(current.left.element) if current.left
         container.append(current.right.element) if current.right
 
       current.bindSwipe()
       current.element.addClass('active')
-      $scope.first = not current.left
-      $scope.last = not current.right
+
+      # make sure scope digest called
+      $timeout ->
+        $scope.first = not current.left
+        $scope.last = not current.right
 
       #debug info
 #      info = "current: " + current.index + " left: "
@@ -112,13 +117,17 @@ angular.module( 'Gallery', [])
       auto = null
       $scope.playing = false
 
+    clearOnExit = ->
+      ctrl.pause()
+
+    $scope.$on '$destroy', clearOnExit
+
     $scope.onCtrl = (e, id)->
       switch id
         when 'info'
           ctrl.pause()
           $scope.onImageInfo(current.index)
         when 'close'
-          ctrl.pause()
           $scope.$emit 'destroyed'
 
         when 'prev' then current.prev()
@@ -275,45 +284,18 @@ angular.module( 'Gallery', [])
     Slide
 
   )
-  .directive('galleryView', ($timeout)->
+  .directive('galleryView', ()->
     restrict: 'E'
     replace: true
     controller: 'GalleryCtrl'
-    template: """
-              <div class="gallery-view fade-in-out" ng-class="{'gallery-controls': !hideCtrl}" ng-click="onCtrl($event, 'slide')">
-                <div class="gallery-slides"></div>
-                <span class="prev" ng-class="{'ng-hide': first}" ng-click="onCtrl($event, 'prev')">‹</span>
-                <span class="next" ng-class="{'ng-hide': last}" ng-click="onCtrl($event, 'next')">›</span>
-                <span class="close" ng-click="onCtrl($event, 'close')"><i class="icon ion-ios7-close-outline"></i></span>
-                <span class="play-pause" ng-click="onCtrl($event, 'play')">
-                  <i class="icon ion-play" ng-class="{'ng-hide': playing}"></i>
-                  <i class="icon ion-pause" ng-class="{'ng-hide': !playing}"></i>
-                </span>
-                <span class="info" ng-click="onCtrl($event, 'info')">
-                  <i class="icon ion-ios7-information-outline"></i>
-                </span>
-              </div>
-              """
-  )
-  .directive('gallerySlides', (Slide, ImageUtil)->
-    restrict: 'C'
-    require: '^galleryView'
+    templateUrl: 'modal/gallery.tpl.html'
     link: (scope, element, attr, ctrl) ->
 
-      ctrl.initSlides(element)
+      slides = angular.element(element[0].firstElementChild)
+      ctrl.initSlides(slides)
       element.ready ->
         ctrl.onSlide()
-
   )
-  .directive('xgallerySlide', ()->
-    restrict: 'A'
-    require: '^galleryView'
-    link: (scope, element, attr, ctrl) ->
-      img = new Image()
-      img.draggable = false
-      img.className = "gallery-img"
-      element.append(img)
-      ctrl.addImage img
 
-  )
+
 
