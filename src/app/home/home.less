@@ -57,15 +57,25 @@
   opacity: 1;
 
 }
-.gallery-loader-spin{
-  position: absolute;
-  color: white;
-  left: 50%;
-  top: 50%;
-  font-size: 32px;
-  margin-top: -16px;
-  margin-left: -16px;
+
+.gallery-loader{
+
+  >.gallery-loader-spin{
+    position: absolute;
+    color: white;
+    left: 50%;
+    top: 50%;
+    font-size: 32px;
+    margin-top: -16px;
+    margin-left: -16px;
+  }
+//  &.gallery-error{
+//      background: url(img/error.png) center no-repeat;
+//      background-size: 64px 64px;
+//  }
 }
+
+
 
 .gallery-controls{
   > span{

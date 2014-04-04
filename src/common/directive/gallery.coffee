@@ -149,11 +149,11 @@ angular.module( 'Gallery', [])
       img
 
     timing = "cubic-bezier(0.645, 0.045, 0.355, 1.000)"
-    protoElement = angular.element '<div class="gallery-slide gallery-loading"></div>'
+    protoElement = angular.element '<div class="gallery-slide"></div>'
 
     createLoader = (url)->
       angular.element """
-                       <div class='box-center'>
+                       <div class='gallery-loader'>
                          <img src='#{url}' draggable='false' class='gallery-loader-img'>
                          <div class='gallery-loader-spin'><i class="icon ion-loading-a"></i></div>
                        </div>
@@ -179,12 +179,12 @@ angular.module( 'Gallery', [])
       @img.onload = =>
         loader.remove()
         @element.append @img
-        @element.removeClass('gallery-loading')
+        #@element.removeClass('gallery-loading')
         #console.log "image load", @img.src
       @img.onerror = =>
-        loader.remove()
-        @element.removeClass('gallery-loading')
-        @element.addClass('gallery-error')
+        #loader.remove()
+        #@element.removeClass('gallery-loading')
+        loader.addClass('gallery-error')
         #console.log "image error", @img.src
       this
 
