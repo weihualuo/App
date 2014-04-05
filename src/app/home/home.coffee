@@ -52,8 +52,10 @@ angular.module('app.home', ['Gallery', 'restangular'])
     link: (scope, element)->
       image = null
       element.on 'dynamic.remove', ->
+        #console.log "dynamic.remove", scope.obj.id
         image.remove() if image
       element.on 'dynamic.add', ->
+        #console.log "dynamic.add", scope.obj.id
         image = new Image()
         image.src = ImageUtil.thumb(scope.obj)
         image.onload = ->

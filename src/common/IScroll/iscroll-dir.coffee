@@ -106,28 +106,42 @@ angular.module( 'Scroll', [])
       lastTop = -201
 
       notify = (newStart, newEnd)->
-        add = remove = []
+        #add = remove = []
+        children = element.children()
+        length = children.length
         if newStart > start
-          remove = remove.concat [start..(newStart-1)]
+          #remove = remove.concat [start..(newStart-1)]
+          for i in [start..(newStart-1)]
+            if i >= length then break
+            angular.element(children[i]).triggerHandler 'dynamic.remove'
         else if newStart < start
-          add = add.concat [newStart..(start-1)]
+          #add = add.concat [newStart..(start-1)]
+          for i in [newStart..(start-1)]
+            if i >= length then break
+            angular.element(children[i]).triggerHandler 'dynamic.add'
         if newEnd < end
-          remove = remove.concat [newEnd..(end-1)]
+          #remove = remove.concat [newEnd..(end-1)]
+          for i in [newEnd..(end-1)]
+            if i >= length then break
+            angular.element(children[i]).triggerHandler 'dynamic.remove'
         else if newEnd > end
-          add = add.concat [end..(newEnd-1)]
+          #add = add.concat [end..(newEnd-1)]
+          for i in [end..(newEnd-1)]
+            if i >= length then break
+            angular.element(children[i]).triggerHandler 'dynamic.add'
 
         start = newStart
         end = newEnd
          #console.log "remove", remove
          #console.log "add", add
-        children = element.children()
-        length = children.length
-        for i in remove
-          if i >= length then break
-          angular.element(children[i]).triggerHandler 'dynamic.remove'
-        for i in add
-          if i >= length then break
-          angular.element(children[i]).triggerHandler 'dynamic.add'
+#        children = element.children()
+#        length = children.length
+#        for i in remove
+#          if i >= length then break
+#          angular.element(children[i]).triggerHandler 'dynamic.remove'
+#        for i in add
+#          if i >= length then break
+#          angular.element(children[i]).triggerHandler 'dynamic.add'
 
       update = ->
         item = element[0].firstElementChild
