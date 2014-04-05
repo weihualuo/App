@@ -22,14 +22,13 @@ angular.module( 'Model', ['restangular'])
     Factory = (name)->
       #make objects to be a Array and an restangular object
       @name = name
-      @objects = _.extend [], Restangular.all name
       @cursor = null
       @param = null
       this
 
     Factory.prototype.list = (param)->
-      objs = @objects
       if !angular.equals @param, param
+        objs = @objects = _.extend [], Restangular.all @name
         @param = angular.copy param
         #resolved should be reset because collection will be different
         objs.$resolved = no
@@ -38,10 +37,11 @@ angular.module( 'Model', ['restangular'])
           objs.meta = data.meta
           #if data is array, it  only copy array
           angular.copy(data, objs)
-        ).finally ->
           objs.$resolved = yes
+        ).finally ->
+
       #Return the colletion
-      objs
+      @objects
 
     Factory.prototype.more = ->
       objs = @objects
@@ -84,8 +84,9 @@ angular.module( 'Model', ['restangular'])
           # bug: restAngular url is not correct
           data.$promise = promise
           angular.copy data, @cursor
-        ).finally =>
           @cursor.$resolved = yes
+        ).finally =>
+
       @cursor
 
     (name)->  _objects[name] ?=  new Factory name
@@ -109,8 +110,9 @@ angular.module( 'Model', ['restangular'])
           localStorage.setItem(data.route, JSON.stringify(data))
           data.$promise = promise
           angular.copy data, @value
-        ).finally =>
           @value.$resolved = yes
+        ).finally =>
+
       @value
 
     # init in only used for the first time

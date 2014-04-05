@@ -50,6 +50,10 @@ angular.module('app.home', ['Gallery', 'restangular'])
 
     restrict:'C'
     link: (scope, element)->
+
+      if scope.$last
+        scope.$emit 'list.rendered'
+        #console.log "I am last", scope.obj.id
       image = null
       element.on 'dynamic.remove', ->
         #console.log "dynamic.remove", scope.obj.id

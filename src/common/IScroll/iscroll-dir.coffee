@@ -24,10 +24,14 @@ angular.module( 'Scroll', [])
       element.ready ->
         scroll.reflow()
 
-      scope.$on 'scroll.reload', ->
+#      scope.$on 'scroll.reload', ->
+#        if scroll
+#          scroll.scroller.scrollTo(0, 0)
+#          $timeout (->scroll.reflow()), 900
+      scope.$on 'list.rendered', ->
         if scroll
           scroll.scroller.scrollTo(0, 0)
-          $timeout (->scroll.reflow()), 900
+          $timeout (->scroll.reflow())
 
   )
   .directive('refresher', ($timeout, PrefixedStyle)->
@@ -174,7 +178,11 @@ angular.module( 'Scroll', [])
           #console.log "onStep", top
           update()
 
-      scope.$on 'scroll.reload', ->
+#      scope.$on 'scroll.reload', ->
+#        start = end = lastTop =  0
+#        $timeout update, 1000
+
+      scope.$on 'list.rendered', ->
         start = end = lastTop =  0
-        $timeout update, 1000
+        $timeout update
   )

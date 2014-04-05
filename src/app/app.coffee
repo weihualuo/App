@@ -245,10 +245,14 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     objects = null
 
     reloadObjects = ->
-      $scope.objects = objects = collection.list($routeParams)
+      # Make sure there is a reflow of empty
+      # So that $last in ng-repeat works
+      $scope.objects = []
+      objects = collection.list($routeParams)
       if !objects.$resolved
         Popup.loading objects.$promise
-      objects.$promise.then ->
+      objects.$promise.then -> $timeout ->
+        $scope.objects = objects
         $scope.haveMore = objects.meta.more
         $scope.setRightButton(objects.length + $scope.haveMore + '张')
         $scope.$broadcast('scroll.reload')
