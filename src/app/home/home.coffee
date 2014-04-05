@@ -25,6 +25,8 @@ angular.module('app.home', ['Gallery', 'restangular'])
       seq
 
     thumb_index = getIndex cal window.innerWidth
+
+
     meta = Single('meta').get()
     reg = new RegExp(/\d+\/(.+?)-\d+\.(\w+)/)
 
@@ -46,15 +48,13 @@ angular.module('app.home', ['Gallery', 'restangular'])
   )
   .directive('imageThumb', (ImageUtil)->
 
-    (scope, element, attr)->
+    restrict:'C'
+    link: (scope, element)->
+      image = new Image()
+      image.src = ImageUtil.thumb(scope.obj)
+      image.onload = ->
+        element.append image
 
-      element.ready ->
-        path = ImageUtil.thumb(scope.obj)
-        attr.$set 'src', path
-
-      element.on 'error', ->
-        element.off 'error'
-        attr.$set 'src', "/m/assets/img/default.jpeg"
   )
 
 
