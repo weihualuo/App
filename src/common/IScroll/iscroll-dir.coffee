@@ -20,14 +20,14 @@ angular.module( 'Scroll', [])
         raw.parentNode.insertBefore(refresher[0], raw)
 
       #Shoud reflow on element ready
-      #No everyone send a scroll.reload
+      #Not everyone send a scroll.reload
       element.ready ->
         scroll.reflow()
 
       scope.$on 'scroll.reload', ->
         if scroll
           scroll.scroller.scrollTo(0, 0)
-          $timeout (->scroll.reflow()), 1000
+          $timeout (->scroll.reflow()), 900
 
   )
   .directive('refresher', ($timeout, PrefixedStyle)->
@@ -96,14 +96,13 @@ angular.module( 'Scroll', [])
       updatePosition(0)
 
   )
-  .directive('dynamic', ->
-    (scope, element, attr)->
+  .directive('dynamic', ($timeout)->
+    (scope, element)->
 
       scroll = scope.$scroll
       n = 2
-      start = end = 0
+      start = end = lastTop =  0
       step = 200
-      lastTop = -201
 
       notify = (newStart, newEnd)->
         #add = remove = []
@@ -145,6 +144,7 @@ angular.module( 'Scroll', [])
 
       update = ->
         item = element[0].firstElementChild
+
         if not item then return
         top = scroll.scroller.getValues().top
         itemHeight = item.offsetHeight
@@ -171,9 +171,10 @@ angular.module( 'Scroll', [])
 
       scroll.onStep = (top)->
         if Math.abs(top-lastTop) > step
-           #console.log "onStep", top
+          #console.log "onStep", top
           update()
 
-
-
+      scope.$on 'scroll.reload', ->
+        start = end = lastTop =  0
+        $timeout update, 1000
   )

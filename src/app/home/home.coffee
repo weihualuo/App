@@ -53,13 +53,18 @@ angular.module('app.home', ['Gallery', 'restangular'])
       image = null
       element.on 'dynamic.remove', ->
         #console.log "dynamic.remove", scope.obj.id
-        image.remove() if image
+        if image
+          image.remove()
+          image = null
       element.on 'dynamic.add', ->
         #console.log "dynamic.add", scope.obj.id
-        image = new Image()
-        image.src = ImageUtil.thumb(scope.obj)
-        image.onload = ->
-          element.append image
+        if not image
+          image = new Image()
+          image.src = ImageUtil.thumb(scope.obj)
+          image.onload = ->
+            element.append image
+          #image.onerror = ->
+            #console.log "onerror", scope.obj.id
 
   )
 
@@ -69,11 +74,6 @@ angular.module('app.home', ['Gallery', 'restangular'])
 
     #extend from ListCtrl
     $controller('ListCtrl', $scope:$scope)
-
-    obj2Links  = (objs)->
-      _.map objs, (obj)->
-        href: $filter('fullImagePath')(obj, 0)
-        title: obj.title
 
     $scope.onImageInfo = (index)->
       TogglePane
