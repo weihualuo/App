@@ -1,7 +1,6 @@
 
-<ul scrollable refreshable dynamic class="image-container" ng-show="objects.$resolved">
+<ul scrollable refreshable dynamic class="image-container" ng-click="onImageView($event)" ng-show="objects.$resolved">
     <li class="image-thumb"
-       ng-click="onImageView(obj, $event)"
        ng-repeat="obj in objects track by obj.id">
     </li>
 </ul>

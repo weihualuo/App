@@ -85,18 +85,21 @@ angular.module('app.home', ['Gallery', 'restangular'])
           image: $scope.objects[index]
 
     item = null
-    $scope.onImageView = (obj, e)->
+    $scope.onImageView = (e)->
+      #Delegate mode in large list
       item = e.target
-      item = item.parentNode if item.tagName is 'IMG'
-      TogglePane
-        id: 'imageView'
-        template: "<gallery-view></gallery-view>"
-        hash: 'gallery'
-        backdrop: false
-        scope: $scope
-        locals:
-          index: $scope.objects.indexOf(obj)
-          rect:  item.getBoundingClientRect()
+      if item.tagName is 'IMG'
+        item = item.parentNode
+        obj = angular.element(item).scope().obj
+        TogglePane
+          id: 'imageView'
+          template: "<gallery-view></gallery-view>"
+          hash: 'gallery'
+          backdrop: false
+          scope: $scope
+          locals:
+            index: $scope.objects.indexOf(obj)
+            rect:  item.getBoundingClientRect()
 
     $scope.$on 'gallery.slide', (e, index, x)->
       console.log "gallery.slide", index, x
