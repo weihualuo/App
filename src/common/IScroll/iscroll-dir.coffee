@@ -40,7 +40,7 @@ angular.module( 'Scroll', [])
               """
     link: (scope, element, attr)->
 
-      position = 0
+      position = lastTop = 0
       height = 50
       updatePosition = (pos)->
         if pos != null
@@ -56,6 +56,7 @@ angular.module( 'Scroll', [])
 
       raw = element[0]
       scroll = scope.$scroll
+       #console.log scroll.step
       scroller = scroll.scroller
       enableMore = true
       scroll.onScroll (left, top)->
@@ -65,11 +66,12 @@ angular.module( 'Scroll', [])
             if top+200 > max > 0
               enableMore = false
               scope.$emit 'scroll.moreStart'
-
+          scroll.onStep?(top)
         else if top >= -height
           updatePosition(-top)
         else if position != height
           updatePosition height
+        null
 
       scroller.activatePullToRefresh height, (->), (->), ->
         setAnimate('shrinking 0.5s linear 0 infinite alternate')
@@ -92,5 +94,72 @@ angular.module( 'Scroll', [])
         enableMore = true
 
       updatePosition(0)
+
+  )
+  .directive('dynamic', ->
+    (scope, element, attr)->
+
+      scroll = scope.$scroll
+      n = 2
+      start = end = 0
+      step = 200
+      lastTop = -201
+
+      notify = (newStart, newEnd)->
+        add = remove = []
+        if newStart > start
+          remove = remove.concat [start..(newStart-1)]
+        else if newStart < start
+          add = add.concat [newStart..(start-1)]
+        if newEnd < end
+          remove = remove.concat [newEnd..(end-1)]
+        else if newEnd > end
+          add = add.concat [end..(newEnd-1)]
+
+        start = newStart
+        end = newEnd
+         #console.log "remove", remove
+         #console.log "add", add
+        children = element.children()
+        length = children.length
+        for i in remove
+          if i >= length then break
+          angular.element(children[i]).triggerHandler 'dynamic.remove'
+        for i in add
+          if i >= length then break
+          angular.element(children[i]).triggerHandler 'dynamic.add'
+
+      update = ->
+        item = element[0].firstElementChild
+        if not item then return
+        top = scroll.scroller.getValues().top
+        itemHeight = item.offsetHeight
+        containerHeight = element[0].parentNode.clientHeight
+        numPerRow = Math.round element[0].clientWidth/item.offsetWidth
+
+         #console.log "top: #{top}, itemHeight: #{itemHeight}, containerHeight: #{containerHeight}, numPerRow: #{numPerRow}"
+
+        # row above fully invisible
+        rowHide = Math.floor top/itemHeight
+        if rowHide > n
+          newStart = (rowHide-n)*numPerRow
+        else
+          newStart = 0
+
+        # lastRow visible
+        bottomRow = Math.ceil (top+containerHeight)/itemHeight
+        newEnd = (bottomRow+n)*numPerRow
+
+         #console.log "rowHide: #{rowHide}, bottomRow: #{bottomRow}, newStart is #{newStart}, newEnd is #{newEnd}"
+         #console.log "Items keep: #{newEnd-newStart}, row: #{(newEnd-newStart)/numPerRow}"
+        notify(newStart, newEnd)
+        lastTop = top
+
+      scroll.onStep = (top)->
+        if Math.abs(top-lastTop) > step
+           #console.log "onStep", top
+          update()
+
+
 
   )

@@ -50,10 +50,14 @@ angular.module('app.home', ['Gallery', 'restangular'])
 
     restrict:'C'
     link: (scope, element)->
-      image = new Image()
-      image.src = ImageUtil.thumb(scope.obj)
-      image.onload = ->
-        element.append image
+      image = null
+      element.on 'dynamic.remove', ->
+        image.remove() if image
+      element.on 'dynamic.add', ->
+        image = new Image()
+        image.src = ImageUtil.thumb(scope.obj)
+        image.onload = ->
+          element.append image
 
   )
 
@@ -82,7 +86,6 @@ angular.module('app.home', ['Gallery', 'restangular'])
     $scope.onImageView = (obj, e)->
       item = e.target
       item = item.parentNode if item.tagName is 'IMG'
-      $scope.item = item
       TogglePane
         id: 'imageView'
         template: "<gallery-view></gallery-view>"
@@ -105,7 +108,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
       top = scroll.scroller.getValues().top
       itemTop = item.offsetTop
       itemHeight = item.offsetHeight
-      containerHeight = scroll.container.offsetHeight
+      containerHeight = scroll.container.clientHeight
       #above
       if top > itemTop
         scroll.scroller.scrollTo(0, itemTop)
