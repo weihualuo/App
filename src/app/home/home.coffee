@@ -70,6 +70,8 @@ angular.module('app.home', ['Gallery', 'restangular'])
           #image.onerror = ->
             #console.log "onerror", scope.obj.id
 
+      element.triggerHandler 'dynamic.add'
+
   )
 
 

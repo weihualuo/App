@@ -24,13 +24,14 @@ angular.module( 'Scroll', [])
       element.ready ->
         scroll.reflow()
 
-#      scope.$on 'scroll.reload', ->
-#        if scroll
-#          scroll.scroller.scrollTo(0, 0)
-#          $timeout (->scroll.reflow()), 900
+      # list reset
+      scope.$on 'scroll.reload', ->
+        if scroll
+          $timeout (->scroll.scroller.scrollTo(0, 0))
+
+      # list reset or more item loaded
       scope.$on 'list.rendered', ->
         if scroll
-          scroll.scroller.scrollTo(0, 0)
           $timeout (->scroll.reflow())
 
   )
@@ -67,7 +68,7 @@ angular.module( 'Scroll', [])
       scroll.onScroll (left, top)->
         if top >= 0
           scroll.onStep?(top)
-          if enableMore and top+200 > scroller.getScrollMax().top > 0
+          if enableMore and top > scroller.getScrollMax().top > 0
             enableMore = false
             scope.$emit 'scroll.moreStart'
 
@@ -83,6 +84,7 @@ angular.module( 'Scroll', [])
           setAnimate('shrinking 0.5s linear 0 infinite alternate')
           scope.$emit 'scroll.refreshStart'
 
+      #delay at least an animation duration
       scope.$on 'scroll.refreshComplete', ->
         $timeout (->
           scroller.finishPullToRefresh()
@@ -90,17 +92,19 @@ angular.module( 'Scroll', [])
           scroll.reflow()
         ), 1000
 
-      scope.$on 'scroll.moreComplete', (e, more)->
+      scope.$on 'scroll.moreComplete', ()->
 
       scope.$on 'scroll.reload', ->
         enableRefersh = false
         enableMore = false
-        console.log "reload disable"
 
+      #disable for a while,
+      #browser rendering is not finished in fact
       scope.$on 'list.rendered', ->
-        enableRefersh = true
-        enableMore = true
-        console.log "rendered enable"
+        $timeout (->
+          enableRefersh = true
+          enableMore = true
+        ), 1000
 
       updatePosition(0)
 
@@ -181,7 +185,7 @@ angular.module( 'Scroll', [])
 
       scroll.onStep = (top)->
         if Math.abs(top-lastTop) > step
-          #console.log "onStep", top
+          console.log "onStep", top
           update()
 
 #      scope.$on 'scroll.reload', ->
