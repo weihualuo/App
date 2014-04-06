@@ -53,7 +53,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
 
       if scope.$last
         scope.$emit 'list.rendered'
-        #console.log "I am last", scope.obj.id
+        console.log "I am last", scope.obj.id
       image = null
       element.on 'dynamic.remove', ->
         #console.log "dynamic.remove", scope.obj.id
@@ -106,7 +106,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
             rect:  item.getBoundingClientRect()
 
     $scope.$on 'gallery.slide', (e, index, x)->
-      console.log "gallery.slide", index, x
+      #console.log "gallery.slide", index, x
       item = item.previousElementSibling if x > 0
       item = item.nextElementSibling if x < 0
       if $scope.haveMore and index+6 > $scope.objects.length

@@ -3,7 +3,7 @@ angular.module( 'Model', ['restangular'])
   .config( (RestangularProvider) ->
 
     RestangularProvider.setBaseUrl '/api/'
-    RestangularProvider.setDefaultHttpFields({cache: true})
+    RestangularProvider.setDefaultHttpFields({cache: true, timeout: 10000})
 #    RestangularProvider.setRequestSuffix '/'
     RestangularProvider.setResponseExtractor (response, operation, what, url)->
       if operation is 'getList' and !(response instanceof Array)
@@ -61,8 +61,8 @@ angular.module( 'Model', ['restangular'])
       if objs.$resolved
         param = if objs.length then first:objs[0].id else {}
         #disable cache
-        angular.extend param, @param, _flag_:flag++
-        promise = objs.getList(param)
+        angular.extend param, @param
+        promise = objs.withHttpConfig({cache: false}).getList(param)
         promise.then (data)=>
           objs.meta = data.meta
           angular.forEach data, (v,i)->objs.splice i,0,v

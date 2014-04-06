@@ -167,7 +167,7 @@ angular.module( 'Gallery', [])
       url = ImageUtil.thumb(data)
       loader = angular.element """
                        <div class='gallery-loader'>
-                         <img src='#{url}' draggable='false' width='100%' height='100%'>
+                         <img src='#{url}' onerror='this.style.display="none"' width='100%' height='100%'>
                          <div class='gallery-loader-spin'><i class="icon ion-loading-a"></i></div>
                        </div>
                        """

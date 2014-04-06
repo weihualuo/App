@@ -275,7 +275,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       promise = collection.refresh()
       if promise
         promise.catch(->
-          $popup.alert(MESSAGE.LOAD_FAILED)
+          #Popup.alert(MESSAGE.LOAD_FAILED)
         ).finally ->
           $scope.$broadcast('scroll.refreshComplete')
 

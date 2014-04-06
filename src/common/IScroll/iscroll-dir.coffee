@@ -62,7 +62,8 @@ angular.module( 'Scroll', [])
       scroll = scope.$scroll
        #console.log scroll.step
       scroller = scroll.scroller
-      enableMore = true
+      enableRefersh = false
+      enableMore = false
       scroll.onScroll (left, top)->
         if top >= 0
           if enableMore
@@ -71,15 +72,17 @@ angular.module( 'Scroll', [])
               enableMore = false
               scope.$emit 'scroll.moreStart'
           scroll.onStep?(top)
-        else if top >= -height
-          updatePosition(-top)
-        else if position != height
-          updatePosition height
+        else if enableRefersh
+          if top >= -height
+            updatePosition(-top)
+          else if position != height
+            updatePosition height
         null
 
       scroller.activatePullToRefresh height, (->), (->), ->
-        setAnimate('shrinking 0.5s linear 0 infinite alternate')
-        scope.$emit 'scroll.refreshStart'
+        if enableRefersh
+          setAnimate('shrinking 0.5s linear 0 infinite alternate')
+          scope.$emit 'scroll.refreshStart'
 
       scope.$on 'scroll.refreshComplete', ->
         $timeout (->
@@ -89,13 +92,17 @@ angular.module( 'Scroll', [])
         ), 1000
 
       scope.$on 'scroll.moreComplete', (e, more)->
-        $timeout (->
-          enableMore = more
-          scroll.reflow()
-        ), 1000
+        enableMore = more
 
       scope.$on 'scroll.reload', ->
+        enableRefersh = false
+        enableMore = false
+        console.log "reload disable"
+
+      scope.$on 'list.rendered', ->
+        enableRefersh = true
         enableMore = true
+        console.log "rendered enable"
 
       updatePosition(0)
 
@@ -104,7 +111,7 @@ angular.module( 'Scroll', [])
     (scope, element)->
 
       scroll = scope.$scroll
-      n = 2
+      n = 5
       start = end = lastTop =  0
       step = 200
 
