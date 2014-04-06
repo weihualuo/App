@@ -67,7 +67,7 @@ angular.module( 'Scroll', [])
       enableMore = false
       scroll.onScroll (left, top)->
         if top >= 0
-          scroll.onStep?(top)
+          #scroll.onStep?(top)
           if enableMore and top > scroller.getScrollMax().top > 0
             enableMore = false
             scope.$emit 'scroll.moreStart'
@@ -81,6 +81,7 @@ angular.module( 'Scroll', [])
 
       scroller.activatePullToRefresh height, (->), (->), ->
         if enableRefersh
+          enableRefersh = false
           setAnimate('shrinking 0.5s linear 0 infinite alternate')
           scope.$emit 'scroll.refreshStart'
 
@@ -90,6 +91,7 @@ angular.module( 'Scroll', [])
           scroller.finishPullToRefresh()
           setAnimate(null)
           scroll.reflow()
+          enableRefersh = true
         ), 1000
 
       scope.$on 'scroll.moreComplete', ()->
