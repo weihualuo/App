@@ -66,12 +66,11 @@ angular.module( 'Scroll', [])
       enableMore = false
       scroll.onScroll (left, top)->
         if top >= 0
-          if enableMore
-            max = scroller.getScrollMax().top
-            if top+200 > max > 0
-              enableMore = false
-              scope.$emit 'scroll.moreStart'
           scroll.onStep?(top)
+          if enableMore and top+200 > scroller.getScrollMax().top > 0
+            enableMore = false
+            scope.$emit 'scroll.moreStart'
+
         else if enableRefersh
           if top >= -height
             updatePosition(-top)
@@ -92,7 +91,6 @@ angular.module( 'Scroll', [])
         ), 1000
 
       scope.$on 'scroll.moreComplete', (e, more)->
-        enableMore = more
 
       scope.$on 'scroll.reload', ->
         enableRefersh = false
@@ -179,6 +177,7 @@ angular.module( 'Scroll', [])
          #console.log "Items keep: #{newEnd-newStart}, row: #{(newEnd-newStart)/numPerRow}"
         notify(newStart, newEnd)
         lastTop = top
+        step =  itemHeight
 
       scroll.onStep = (top)->
         if Math.abs(top-lastTop) > step
