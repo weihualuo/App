@@ -1,15 +1,18 @@
 
 
-<content class="res-content" on-refresh='onRefresh()'>
-    <refresher></refresher>
 
-        <a class="item item-thumbnail-left" ng-repeat="obj in objects track by obj.id" ng-click="">
-            <img ng-src="{{obj.image}}">
-            <h2>{{obj.name}}<span class="badge">{{obj.category.cn}}</span></h2>
-            <p>{{obj.desc}}</p>
-        </a>
+<ul scrollable>
+    <li class="item item-thumbnail-left"
+        ng-repeat="obj in objects track by obj.id">
+        <img ng-src="{{obj.image}}">
+        <h2>{{obj.name}}<span class="badge">{{obj.category.cn}}</span></h2>
+        <p>{{obj.desc}}</p>
+    </li>
+</ul>
 
-</content>
+<div class="box-center fill" ng-show="objects.$resolved && !objects.length">
+    没有找到！
+</div>
 
 
 

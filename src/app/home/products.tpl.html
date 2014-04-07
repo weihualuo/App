@@ -1,14 +1,15 @@
 
-<content class="res-content" on-refresh='onRefresh()'>
-    <refresher></refresher>
+<ul scrollable>
+    <li class="product-list"
+        ng-repeat="obj in objects track by obj.id">
+        <img style="vertical-align: middle" ng-src="{{meta.imgbase+obj.params[1].image.image}}" /><br>
+        <span>{{obj.title}}</span>
+    </li>
+</ul>
 
-        <a class="product-list"
-           ng-repeat="obj in objects track by obj.id" >
-            <img style="vertical-align: middle" ng-src="{{meta.imgbase+obj.params[1].image.image}}" /><br>
-            <span>{{obj.title}}</span>
-        </a>
-
-</content>
+<div class="box-center fill" ng-show="objects.$resolved && !objects.length">
+    没有找到！
+</div>
 
 
 
