@@ -3,6 +3,9 @@
     <li class="image-thumb"
        ng-repeat="obj in objects track by obj.id">
     </li>
+    <div class="list-more" ng-show="loadingMore">
+        <i class="icon ion ion-loading-d"></i>
+    </div>
 </ul>
 
 <div class="box-center fill" ng-show="objects.$resolved && !objects.length">

@@ -265,9 +265,11 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         return
       promise = collection.more()
       if promise
+        $scope.loadingMore = true
         promise.then( (data)->
           $scope.haveMore = objects.meta.more
         ).finally ->
+          $scope.loadingMore = false
           $scope.$broadcast('scroll.moreComplete', true)
 
     #Refresh the list
