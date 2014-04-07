@@ -127,6 +127,7 @@ angular.module( 'Gallery', [])
     # Avoid memery leak here
     clearOnExit = ->
       ctrl.pause()
+      window.removeEventListener 'resize', onResize
 
     $scope.$on '$destroy', clearOnExit
 
@@ -149,6 +150,17 @@ angular.module( 'Gallery', [])
         when 'play' then (if auto then ctrl.pause() else ctrl.play())
       e.stopPropagation()
 
+    onResize = ->
+      current.onResize()
+      next = current
+      while next = next.left
+        next.onResize()
+      next = current
+      while next = next.right
+        next.onResize()
+    window.addEventListener "resize", onResize
+
+
     this
   )
   .factory('Slide', (Swipe, PrefixedStyle, PrefixedEvent, ImageUtil)->
@@ -162,6 +174,21 @@ angular.module( 'Gallery', [])
 
     timing = "cubic-bezier(0.645, 0.045, 0.355, 1.000)"
     protoElement = angular.element '<div class="gallery-slide"></div>'
+    protoTag = angular.element '<div class="gallery-tag"><i class="icon ion-ios7-pricetag"></i></div>'
+
+    getLoaderDimension = (data)->
+      w = data.width
+      h = data.height
+      rx = window.innerWidth/w
+      ry = window.innerHeight/h
+      if rx < 1 or ry < 1
+        r = Math.min(rx, ry)
+        w = r*w
+        h = r*h
+      ret =
+        width: w+'px'
+        height: h+'px'
+
 
     createLoader = (data)->
       url = ImageUtil.thumb(data)
@@ -171,17 +198,7 @@ angular.module( 'Gallery', [])
                          <div class='gallery-loader-spin'><i class="icon ion-loading-a"></i></div>
                        </div>
                        """
-      w = data.width
-      h = data.height
-      rx = window.innerWidth/w
-      ry = window.innerHeight/h
-      if rx < 1 or ry < 1
-        r = Math.min(rx, ry)
-        w = r*w
-        h = r*h
-      loader.css
-        width: w+'px'
-        height: h+'px'
+      loader.css getLoaderDimension(data)
       loader
 
     Slide = (ctrl, data, index, position)->
@@ -198,20 +215,31 @@ angular.module( 'Gallery', [])
       else if position is 'left'
         PrefixedStyle @element[0], 'transform', "translate3d(-100%, 0, 0)"
 
-      loader = createLoader(data)
-      @element.append loader
+      @loader = createLoader(data)
+      @element.append @loader
       @img = createImage ImageUtil.best(data)
       @img.onload = =>
-        loader.remove()
-        @element.append @img
+        @loader.empty()
+        @element.prepend @img
+        @addTags(@loader)
         #@element.removeClass('gallery-loading')
         #console.log "image load", @img.src
       @img.onerror = =>
-        #loader.remove()
+        #@loader.remove()
         #@element.removeClass('gallery-loading')
-        loader.addClass('gallery-error')
+        @loader.addClass('gallery-error')
         #console.log "image error", @img.src
       this
+
+    Slide::onResize = ->
+      @loader.css getLoaderDimension(@data)
+
+    Slide::addTags = (container)->
+      tags = [{x: 50, y:50}, {x:25, y:25}]
+      for tag in tags
+        t = protoTag.clone()
+        t.css left:"#{tag.x}%", top:"#{tag.y}%"
+        container.append t
 
     Slide::bindSwipe = ()->
 

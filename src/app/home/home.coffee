@@ -25,6 +25,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
       seq
 
     thumb_index = getIndex cal window.innerWidth
+    best_index =  if window.innerWidth > 750 then 0 else 2
 
 
     meta = Single('meta').get()
@@ -43,8 +44,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
         paths = obj.paths or (obj.paths = [])
         paths[seq] or (paths[seq] = getPath(obj, seq))
       thumb: (obj)-> @path(obj, thumb_index)
-      best: (obj)-> @path(obj, 2)
-
+      best: (obj)-> @path(obj, best_index)
   )
   .directive('imageThumb', (ImageUtil)->
 
