@@ -2,40 +2,81 @@ angular.module('app.home', ['Gallery', 'restangular'])
 
   .factory('ImageUtil', (Single)->
 
-    imageTable = 3:188, 4:175, 5:155, 6:105
-    cal = (wid)->
-      n = 6
-      if wid <= 1024 then n = 5
-      if wid <= 800 then n = 4
-      if wid <= 630 then n = 3
-      if wid <= 420 then n = 2
-      if wid >= 850 then wid -= 60
-      wid -= 4
-      wid/n*0.98
+    imageTable =
+      1: [2048, 1536, 1.33]
+      2: [1280, 800,  1.6]
+      5: [1024, 768,  1.33]
+      6: [960, 640,   1.5]
+      7: [960, 540,   1.78]
+      8: [800, 480,   1.67]
+      10: [480, 320,  1.5]
 
-    getIndex = (wid)->
-      console.log wid
+    thumbTable =
+      17: [188, 188]
+      18: [175, 175]
+      19: [155, 155]
+      20: [105, 105]
+
+    getThumbWidth = (width)->
+      n = 6
+      if width <= 1024 then n = 5
+      if width <= 800 then n = 4
+      if width <= 630 then n = 3
+      if width <= 420 then n = 2
+
+      if width >= 850 then width -= 60
+      width -= 4
+      width/n*0.98
+
+    #Get the index most close to width
+    getThumbIndex = (width)->
+      console.log width
       seq = 0
-      match = 2000
-      for s, w of imageTable
-        dif = Math.abs(w-wid)
+      match = 3000
+      for i, v of thumbTable
+        dif = Math.abs(v[0]-width)
         if dif < match
           match = dif
-          seq = s
+          seq = i
       seq
 
-    thumb_index = getIndex cal window.innerWidth
-    best_index =  if window.innerWidth > 750 then 0 else 2
+    #Return a array in preferred order
+    getBestIndexs = (w, h)->
+      weight = {}
+      ret = []
+      index = 0
+      r = Number((w/h).toFixed(2))
+      for i, v of imageTable
+        if w is v[0] and h is v[1]
+          weight[i] = 0
+        else if r is v[2]
+          weight[i] = Math.abs(w-v[0])+1
+        else
+          weight[i] = Math.abs(w-v[0])+2560
 
+        if index is 0
+          ret.push(i)
+        else
+          insertAt = index
+          for ii in [0..index-1]
+            if weight[ret[ii]] > weight[i]
+              insertAt = ii
+              break
+          ret.splice(insertAt, 0, i)
+        index++
+      ret
+
+
+    thumb_index = getThumbIndex getThumbWidth window.innerWidth
+    w = Math.max(window.innerWidth, window.innerHeight)*window.devicePixelRatio
+    h = Math.min(window.innerWidth, window.innerHeight)*window.devicePixelRatio
+    best_index = getBestIndexs w, h
+    console.log best_index, thumb_index
 
     meta = Single('meta').get()
     reg = new RegExp(/\d+\/(.+?)-\d+\.(\w+)/)
 
     getPath = (obj, seq)->
-      # request large image but there is not
-      # set to second large or third large
-      if seq is 0 and !(obj.array & 1)
-        if (obj.array & 2) then seq = 1 else seq =2
       replaceReg = seq + '/$1-' + seq + '.$2'
       meta.imgbase + obj.image.replace(reg, replaceReg)
 
@@ -44,7 +85,14 @@ angular.module('app.home', ['Gallery', 'restangular'])
         paths = obj.paths or (obj.paths = [])
         paths[seq] or (paths[seq] = getPath(obj, seq))
       thumb: (obj)-> @path(obj, thumb_index)
-      best: (obj)-> @path(obj, best_index)
+      best: (obj)->
+        if not obj.best
+          for i in best_index
+            if obj.array & (1<<i)
+              break
+          [obj.width, obj.height] = imageTable[i]
+          obj.best = @path(obj, i)
+        obj.best
   )
   .directive('imageThumb', (ImageUtil)->
 

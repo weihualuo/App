@@ -179,12 +179,10 @@ angular.module( 'Gallery', [])
     getLoaderDimension = (data)->
       w = data.width
       h = data.height
-      rx = window.innerWidth/w
-      ry = window.innerHeight/h
-      if rx < 1 or ry < 1
-        r = Math.min(rx, ry)
-        w = r*w
-        h = r*h
+      ratio = Math.min(window.innerWidth/w, window.innerHeight/h)
+      if ratio < 1
+        w = ratio*w
+        h = ratio*h
       ret =
         width: w+'px'
         height: h+'px'
@@ -215,9 +213,9 @@ angular.module( 'Gallery', [])
       else if position is 'left'
         PrefixedStyle @element[0], 'transform', "translate3d(-100%, 0, 0)"
 
+      @img = createImage ImageUtil.best(data)
       @loader = createLoader(data)
       @element.append @loader
-      @img = createImage ImageUtil.best(data)
       @img.onload = =>
         @loader.empty()
         @element.prepend @img
