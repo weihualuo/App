@@ -90,7 +90,10 @@ angular.module('app.home', ['Gallery', 'restangular'])
           for i in best_index
             if obj.array & (1<<i)
               break
-          [obj.width, obj.height] = imageTable[i]
+          if obj.width > obj.height
+            [obj.width, obj.height] = imageTable[i]
+          else
+            [obj.height, obj.width] = imageTable[i]
           obj.best = @path(obj, i)
         obj.best
   )
