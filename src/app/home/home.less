@@ -83,6 +83,9 @@
   position: absolute;
   color: bisque;
   font-size: @icon-large;
+  .transform-origin(left top);
+  .rotateZ(45deg);
+  .animation(shaking 1s linear 0 2);
 }
 
 .gallery-controls{
@@ -100,6 +103,7 @@
   > .close {
     top: 15px;
     right: 15px;
+    width: 60px;
     font-size: @icon-xl;
   }
 
@@ -113,7 +117,7 @@
     right: 15px;
     bottom: 15px;
     font-size: @icon-large;
-    width: 40px;
+    width: 60px;
     line-height: 40px;
   }
 

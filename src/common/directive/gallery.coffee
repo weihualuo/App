@@ -233,10 +233,9 @@ angular.module( 'Gallery', [])
       @loader.css getLoaderDimension(@data)
 
     Slide::addTags = (container)->
-      tags = [{x: 50, y:50}, {x:25, y:25}]
-      for tag in tags
+      for tag in @data.tags
         t = protoTag.clone()
-        t.css left:"#{tag.x}%", top:"#{tag.y}%"
+        t.css left:"#{tag.left}%", top:"#{tag.top}%"
         container.append t
 
     Slide::bindSwipe = ()->
@@ -312,12 +311,12 @@ angular.module( 'Gallery', [])
 
 
     Slide::next = (prop="all 0.4s #{timing}")->
-      if @right
+      if not @snaping and @right
         @width = @element[0].offsetWidth
         @animateTo(-1)
 
     Slide::prev = (prop="all 0.4s #{timing}")->
-      if @left
+      if not @snaping and @left
         @width = @element[0].offsetWidth
         @animateTo(1)
 
