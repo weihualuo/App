@@ -1,7 +1,7 @@
 
 
 angular.module( 'Gallery', [])
-  .controller('GalleryCtrl', ($scope, Slide, ImageUtil, $timeout, PrefixedStyle, PrefixedEvent, Service)->
+  .controller('GalleryCtrl', ($scope, Slide, $timeout, PrefixedStyle, PrefixedEvent, Service, TogglePane, $compile)->
 
     objects = $scope.objects
     container = current = null
@@ -138,6 +138,26 @@ angular.module( 'Gallery', [])
       PrefixedEvent container, "TransitionEnd", ->
         $scope.$emit 'destroyed'
 
+    @addTags = (tags, container)->
+      for tag in tags
+        scope = $scope.$new()
+        scope.tag = tag
+        el = $compile('<image-tag></image-tag>')(scope)
+        el.css left:"#{tag.left}%", top:"#{tag.top}%"
+        container.append el
+
+    $scope.onTags = (tag, rect)->
+      ctrl.pause()
+      console.log "ontag", tag, rect
+      TogglePane
+        id: 'tagView'
+        template: "<tag-view></tag-view>"
+        hash: 'tagview'
+        scope: $scope
+        locals:
+          tag: tag
+          rect: rect
+
     $scope.onCtrl = (e, id)->
 
       if not Service.noRepeat('slideCtrl', 600)
@@ -150,8 +170,9 @@ angular.module( 'Gallery', [])
         when 'close' then ctrl.close()
         when 'prev' then current.prev()
         when 'next' then current.next()
-        when 'slide' then $scope.displayCtrl = not $scope.displayCtrl
         when 'play' then (if auto then ctrl.pause() else ctrl.play())
+        when 'slide' then $scope.displayCtrl = not $scope.displayCtrl
+
       e.stopPropagation()
 
     onResize = ->
@@ -178,7 +199,6 @@ angular.module( 'Gallery', [])
 
     timing = "cubic-bezier(0.645, 0.045, 0.355, 1.000)"
     protoElement = angular.element '<div class="gallery-slide"></div>'
-    protoTag = angular.element '<div class="gallery-tag"><i class="icon ion-ios7-pricetag"></i></div>'
 
     getLoaderDimension = (data)->
       w = data.width
@@ -223,7 +243,7 @@ angular.module( 'Gallery', [])
       @img.onload = =>
         @loader.empty()
         @element.prepend @img
-        @addTags(@loader)
+        @ctrl.addTags(@data.tags, @loader)
         #@element.removeClass('gallery-loading')
         #console.log "image load", @img.src
       @img.onerror = =>
@@ -236,11 +256,11 @@ angular.module( 'Gallery', [])
     Slide::onResize = ->
       @loader.css getLoaderDimension(@data)
 
-    Slide::addTags = (container)->
-      for tag in @data.tags
-        t = protoTag.clone()
-        t.css left:"#{tag.left}%", top:"#{tag.top}%"
-        container.append t
+    Slide::handleClick = (e)->
+      target = e.target or e.srcElement
+      if target.tagName is 'I' or target.className is "gallery-tag"
+        return true
+      return false
 
     Slide::bindSwipe = ()->
 
@@ -361,6 +381,30 @@ angular.module( 'Gallery', [])
         PrefixedStyle slides, 'transition', 'all ease-in 300ms'
         PrefixedStyle slides, 'transform', null
         ctrl.onSlide()
+  )
+  .directive('imageTag', ()->
+    restrict: 'E'
+    replace: true
+    template: """
+              <div class="gallery-tag" ng-click="onClick($event)"><i class="icon ion-ios7-pricetag"></i></div>
+              """
+    link: (scope, element) ->
+      scope.onClick = (e)->
+        e.stopPropagation()
+        scope.onTags(scope.tag, element[0].getBoundingClientRect())
+  )
+  .directive('tagView', ()->
+    restrict: 'E'
+    replace: true
+    template: """
+              <div class="tag-view"> this is tag view </div>
+              """
+    link: (scope, element, attr) ->
+      rect = scope.rect
+      element.css
+        left: rect.left+'px'
+        top: rect.top+'px'
+
   )
 
 
