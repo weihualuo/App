@@ -1,7 +1,7 @@
 
 
 angular.module( 'Gallery', [])
-  .controller('GalleryCtrl', ($scope, Slide, ImageUtil, $timeout, PrefixedStyle, PrefixedEvent)->
+  .controller('GalleryCtrl', ($scope, Slide, ImageUtil, $timeout, PrefixedStyle, PrefixedEvent, Service)->
 
     objects = $scope.objects
     container = current = null
@@ -139,6 +139,10 @@ angular.module( 'Gallery', [])
         $scope.$emit 'destroyed'
 
     $scope.onCtrl = (e, id)->
+
+      if not Service.noRepeat('slideCtrl', 600)
+        return
+
       switch id
         when 'info'
           ctrl.pause()

@@ -90,21 +90,28 @@ angular.module('app.home', ['Gallery', 'restangular'])
           for i in best_index
             if obj.array & (1<<i)
               break
-          if obj.width > obj.height
+          #landscape image
+          if obj.array & 1
             [obj.width, obj.height] = imageTable[i]
           else
             [obj.height, obj.width] = imageTable[i]
           obj.best = @path(obj, i)
         obj.best
   )
+  .filter( 'thumbPath',  (ImageUtil)->
+    (obj)-> ImageUtil.thumb(obj)
+  )
+  .directive('listRender', ()->
+    (scope)->
+      if scope.$last
+        scope.$emit 'list.rendered'
+        console.log "I am last", scope.obj.id
+  )
   .directive('imageThumb', (ImageUtil)->
 
     restrict:'C'
     link: (scope, element)->
 
-      if scope.$last
-        scope.$emit 'list.rendered'
-        console.log "I am last", scope.obj.id
       image = null
       element.on 'dynamic.remove', ->
         #console.log "dynamic.remove", scope.obj.id
@@ -120,7 +127,35 @@ angular.module('app.home', ['Gallery', 'restangular'])
             element.append image
           #image.onerror = ->
             #console.log "onerror", scope.obj.id
+      element.triggerHandler 'dynamic.add'
 
+  )
+  .directive('productThumb', (ImageUtil)->
+
+    restrict:'C'
+    link: (scope, element)->
+
+      info = angular.element """
+                             <div>
+                                <span class='title'></span>
+                             </div>
+                             """
+
+      image = null
+      element.on 'dynamic.remove', ->
+        #console.log "dynamic.remove", scope.obj.id
+        if image
+          image.remove()
+          image = null
+      element.on 'dynamic.add', ->
+        #console.log "dynamic.add", scope.obj.id
+        if not image
+          image = new Image()
+          image.src = ImageUtil.thumb(scope.obj.params[0])
+          image.onload = ->
+            element.prepend image
+      #image.onerror = ->
+      #console.log "onerror", scope.obj.id
       element.triggerHandler 'dynamic.add'
 
   )

@@ -1,10 +1,16 @@
 
-<ul scrollable>
-    <li class="product-list"
+<ul scrollable refreshable class="image-container" ng-click="onProductView($event)">
+    <li class="product-thumb" list-render
         ng-repeat="obj in objects track by obj.id">
-        <img style="vertical-align: middle" ng-src="{{meta.imgbase+obj.params[1].image.image}}" /><br>
-        <span>{{obj.title}}</span>
+        <img>
+        <div class="info">
+            <span class="title">{{obj.title}}</span>
+            <span class="price">{{obj.params[0].price}}</span>
+        </div>
     </li>
+    <div class="list-more" ng-show="loadingMore">
+        <i class="icon ion-loading-d"></i>
+    </div>
 </ul>
 
 <div class="box-center fill" ng-show="objects.$resolved && !objects.length">
