@@ -139,10 +139,22 @@
 
 .tag-view{
   position: absolute;
-  width: 200px;
-  height: 150px;
   background: rgba(0,0,0,0.7);
   z-index: @z-index-popup+10;
+  >img{
+    width: 105px;
+    height: 105px;
+    margin: 10px;
+    float: left;
+  }
+  >h5{
+    font-size: 20px;
+    color: white;
+  }
+  >p{
+    font-size: 15px;
+    color: white;
+  }
 }
 
 .image-container{
@@ -194,7 +206,6 @@
     padding: 5px;
     >.title{
       font-size: 20px;
-
     }
     >.price{
       font-size: 12px;

@@ -393,17 +393,44 @@ angular.module( 'Gallery', [])
         e.stopPropagation()
         scope.onTags(scope.tag, element[0].getBoundingClientRect())
   )
+  .controller('tagController', ($scope, Many, ImageUtil)->
+    list = Many('products')
+
+    $scope.title = $scope.tag.title
+    $scope.desc = $scope.tag.desc
+    $scope.product = product = list.get($scope.tag.product)
+    product.$promise.then ->
+      $scope.src = ImageUtil.small(product.params[0])
+      if not $scope.title then $scope.title = product.title
+      if not $scope.desc then $scope.desc = product.desc
+
+  )
   .directive('tagView', ()->
     restrict: 'E'
     replace: true
+    controller: 'tagController'
     template: """
-              <div class="tag-view"> this is tag view </div>
+              <div class="tag-view">
+                <img ng-src="{{src}}">
+                <h5 class='title'>{{title}}</h5>
+                <p class='desc'>{{desc}}</p>
+              </div>
               """
     link: (scope, element, attr) ->
+      width = 250
+      height = 125
       rect = scope.rect
+      left = rect.left
+      top = rect.top
+      if left + width > window.innerWidth
+        left = window.innerWidth - width
+      if top + height > window.innerHeight
+        top = window.innerHeight - height
       element.css
-        left: rect.left+'px'
-        top: rect.top+'px'
+        left: left+'px'
+        top: top+'px'
+        width: width+'px'
+        height: height+'px'
 
   )
 

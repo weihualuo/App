@@ -16,24 +16,31 @@ angular.module('app.home', ['Gallery', 'restangular'])
       18: [175, 175]
       19: [155, 155]
       20: [105, 105]
+      
+    productThumbTable =
+      16: [310, 247]
+      17: [262, 209]
+      18: [236, 188]
+      20: [105, 105]
 
-    getThumbWidth = (width)->
-      n = 6
-      if width <= 1024 then n = 5
-      if width <= 800 then n = 4
-      if width <= 630 then n = 3
-      if width <= 420 then n = 2
+    getThumbWidth = (width, n, r)->
+      n ?= 6
+      r ?=0.98
+      if width <= 1024 then n--
+      if width <= 800 then n--
+      if width <= 630 then n--
+      if width <= 420 then n--
 
       if width >= 850 then width -= 60
       width -= 4
-      width/n*0.98
+      width/n*r
 
     #Get the index most close to width
-    getThumbIndex = (width)->
+    getThumbIndex = (width, table)->
       console.log width
       seq = 0
       match = 3000
-      for i, v of thumbTable
+      for i, v of table
         dif = Math.abs(v[0]-width)
         if dif < match
           match = dif
@@ -67,7 +74,9 @@ angular.module('app.home', ['Gallery', 'restangular'])
       ret
 
 
-    thumb_index = getThumbIndex getThumbWidth window.innerWidth
+    thumb_index = getThumbIndex(getThumbWidth(window.innerWidth, 6), thumbTable)
+    product_thumb_index = getThumbIndex(getThumbWidth(window.innerWidth, 5, 0.96), productThumbTable)
+
     w = Math.max(window.innerWidth, window.innerHeight)*window.devicePixelRatio
     h = Math.min(window.innerWidth, window.innerHeight)*window.devicePixelRatio
     best_index = getBestIndexs w, h
@@ -85,6 +94,8 @@ angular.module('app.home', ['Gallery', 'restangular'])
         paths = obj.paths or (obj.paths = [])
         paths[seq] or (paths[seq] = getPath(obj, seq))
       thumb: (obj)-> @path(obj, thumb_index)
+      productThumb: (obj)-> @path(obj, product_thumb_index)
+      small: (obj)-> @path(obj, 20)
       best: (obj)->
         if not obj.best
           for i in best_index
@@ -151,7 +162,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
         #console.log "dynamic.add", scope.obj.id
         if not image
           image = new Image()
-          image.src = ImageUtil.thumb(scope.obj.params[0])
+          image.src = ImageUtil.productThumb(scope.obj.params[0])
           image.onload = ->
             element.prepend image
       #image.onerror = ->
