@@ -1,6 +1,6 @@
 angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
                          'templates-app', 'templates-common',
-                         'Model', 'app.home', 'app.discussion',
+                         'Model', 'app.utils', 'app.home', 'app.detail', 'app.discussion',
                          'myWidget', 'ngCachingView', 'Service', 'ui.popup', 'Scroll'
                          'MESSAGE'
 ])
@@ -17,9 +17,15 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     )
     .when( '/products'
       name: '/products'
-      controller: 'ListCtrl'
+      controller: 'ProductCtrl'
       templateUrl: 'home/products.tpl.html'
       zIndex: 1
+    )
+    .when( '/products/:id'
+      name: '/productView'
+      controller: 'ProductDetailCtrl'
+      templateUrl: 'detail/product.tpl.html'
+      zIndex: 2
     )
     .when( '/pros'
       name: '/pros'

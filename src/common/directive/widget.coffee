@@ -1,50 +1,6 @@
 
 
 angular.module( 'myWidget', [])
-  .directive('moreItem', ()->
-    restrict: 'E'
-    replace: true
-    transclude: true
-    templateUrl: "template/widget/moreItem.html"
-    scope:
-      onMore: "&"
-    link: (scope, el, attr)->
-
-      onFinished = ->
-        scope.loading = no
-
-      if attr.loading is "true"
-        setTimeout -> el[0].click()
-
-      el.on 'click', ->
-        if !scope.loading
-          scope.loading = yes
-          scope.onMore onFinished: onFinished
-          scope.$apply()
-
-  )
-  .directive('myTabs', ()->
-    restrict: 'E'
-    replace: true
-    transclude: true
-    template: '<a class="tab-item" ng-click="onTap()" ng-transclude></a>'
-    scope:
-      activeTab: "="
-      onClick: "&"
-    link: (scope, el, attr)->
-
-      if attr.activeTab
-        scope.$watch 'activeTab', (value)->
-          if value is attr.value
-            el.addClass('active')
-          else
-            el.removeClass('active')
-
-      scope.onTap = ->
-        scope.onClick()
-        if attr.activeTab
-          scope.activeTab = attr.value
-  )
   .directive( 'fileSelect', ->
     restrict: 'E'
     replace: true
@@ -106,19 +62,6 @@ angular.module( 'myWidget', [])
           if file and file.type.indexOf('image') >= 0
             scope.onSelect file:file
         scope.$apply()
-
-  )
-  .directive('verticalEqual', ()->
-    (scope, element) ->
-      element.ready ->
-        raw = element[0]
-        height = raw.offsetHeight
-        num = raw.children.length
-        totalOffset = 0
-        totalOffset += item.offsetHeight for item in raw.children
-        margin = (height - totalOffset)/(num+1)
-        style = marginTop:margin+'px', marginBottom: margin+'px'
-        angular.extend item.style, style for item in raw.children
 
   )
   .directive('sidePane', (Swipe, PrefixedStyle, PrefixedEvent)->

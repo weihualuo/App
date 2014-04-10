@@ -1,11 +1,11 @@
 
-<ul scrollable refreshable class="image-container" ng-click="onProductView($event)">
+<ul scrollable refreshable class="container">
     <li class="product-thumb" list-render
+        ng-click="onProductView($event, obj)"
         ng-repeat="obj in objects track by obj.id">
-        <img>
         <div class="info">
-            <span class="title">{{obj.title}}</span>
-            <span class="price">{{obj.params[0].price}}</span>
+            <span class="title" no-watch="obj.title"></span>
+            <span class="price" no-watch="obj.params[0].price"></span>
         </div>
     </li>
     <div class="list-more" ng-show="loadingMore">
