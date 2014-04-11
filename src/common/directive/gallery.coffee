@@ -24,51 +24,46 @@ angular.module( 'Gallery', [])
       container = element
       current = new Slide(this, objects[index], index)
       container.empty()
-      container.append(current.element)
+      current.attach(container)
 
     @onSlide = (x)->
       if x > 0
         #console.log "slide to left"
-        current.element.removeClass('active')
+        current.onHide()
 
         if ref = current.right
+          ref.detach()
           #console.log "remove right", ref.index
-          # Need to rebind event
-          ref.swiper = null
-          ref.element.remove()
 
         current = current.left
         @loadNeighbors(current)
 
-        #if ref = current.left
+        if ref = current.left
+          ref.attach(container)
           #console.log "prepend", ref.index
-        container.prepend(current.left.element) if current.left
-        $scope.$emit 'gallery.slide', current.index, x
 
       else if x < 0
         #console.log "slide to right"
-        current.element.removeClass('active')
+        current.onHide()
         if ref = current.left
+          ref.detach()
           #console.log "remove left", ref.index
-          ref.swiper = null
-          ref.element.remove()
 
         current = current.right
         @loadNeighbors(current)
 
-        #if current.right
-          #console.log "append", current.right.index
-        container.append(current.right.element) if current.right
-        $scope.$emit 'gallery.slide', current.index, x
+        if ref = current.right
+          ref.attach(container, 1)
+          #console.log "append", ref.index
 
       # Init load, postpone neighbors loading after first slide entered
       else
         @loadNeighbors(current)
-        container.prepend(current.left.element) if current.left
-        container.append(current.right.element) if current.right
+        current.left.attach(container) if current.left
+        current.right.attach(container, 1) if current.right
 
-      current.bindSwipe()
-      current.element.addClass('active')
+      current.onShow()
+      $scope.$emit 'gallery.slide', current.index, x
 
       # make sure scope digest called
       $timeout ->
@@ -99,7 +94,7 @@ angular.module( 'Gallery', [])
         else
           break
       # Remove slide out of range
-      delete next.left if next.left
+      next.left = null
 
       index = slide.index
       next = slide
@@ -113,7 +108,7 @@ angular.module( 'Gallery', [])
         else
           break
       # Remove slide out of range
-      delete next.right if next.right
+      next.right = null
 
     auto = null
     @play = ->
@@ -171,7 +166,15 @@ angular.module( 'Gallery', [])
         when 'prev' then current.prev()
         when 'next' then current.next()
         when 'play' then (if auto then ctrl.pause() else ctrl.play())
-        when 'slide' then $scope.displayCtrl = not $scope.displayCtrl
+        when 'slide'
+          target = e.target or e.srcElement
+          if target.tagName is 'I'
+            target = target.parentNode
+          if target.classList.contains 'gallery-tag'
+            s = angular.element(target).scope()
+            $scope.onTags(s.tag, target.getBoundingClientRect())
+
+          $scope.displayCtrl = not $scope.displayCtrl
 
       e.stopPropagation()
 
@@ -241,9 +244,9 @@ angular.module( 'Gallery', [])
       @loader = createLoader(data)
       @element.append @loader
       @img.onload = =>
-        @loader.empty()
+
         @element.prepend @img
-        @ctrl.addTags(@data.tags, @loader)
+        #@ctrl.addTags(@data.tags, @loader)
         #@element.removeClass('gallery-loading')
         #console.log "image load", @img.src
       @img.onerror = =>
@@ -252,6 +255,26 @@ angular.module( 'Gallery', [])
         @loader.addClass('gallery-error')
         #console.log "image error", @img.src
       this
+
+    Slide::attach = (parent, pos)->
+      @loader.empty()
+      @ctrl.addTags(@data.tags, @loader)
+      if pos > 0
+        parent.append @element
+      else
+        parent.prepend @element
+
+    Slide::detach = ()->
+      @swiper = null
+      @loader.empty()
+      @element.remove()
+
+    Slide::onShow = ()->
+      @element.addClass('active')
+      @bindSwipe()
+
+    Slide::onHide = ()->
+      @element.removeClass('active')
 
     Slide::onResize = ->
       @loader.css getLoaderDimension(@data)
@@ -390,8 +413,8 @@ angular.module( 'Gallery', [])
               """
     link: (scope, element) ->
       scope.onClick = (e)->
-        e.stopPropagation()
-        scope.onTags(scope.tag, element[0].getBoundingClientRect())
+        #e.stopPropagation()
+        #scope.onTags(scope.tag, element[0].getBoundingClientRect())
   )
   .controller('tagController', ($scope, Many, ImageUtil)->
     list = Many('products')

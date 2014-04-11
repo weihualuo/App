@@ -122,6 +122,7 @@ angular.module( 'Service', [])
       onStart = options.onStart or angular.noop
       onMove = options.onMove or angular.noop
       onEnd = options.onEnd or angular.noop
+      #width = options.width or 0
 
       startTime = 0
       startX = 0
@@ -179,7 +180,7 @@ angular.module( 'Service', [])
           switch value
             when 'right' then direction = 1
             when 'left' then direction = -1
-            else direction = -1
+            else direction = 0
         }
 
 
