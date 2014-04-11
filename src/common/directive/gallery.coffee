@@ -133,25 +133,12 @@ angular.module( 'Gallery', [])
       PrefixedEvent container, "TransitionEnd", ->
         $scope.$emit 'destroyed'
 
-    @addTags = (tags, container)->
+    @addTags = (tags, parent)->
       for tag in tags
         scope = $scope.$new()
         scope.tag = tag
-        el = $compile('<image-tag></image-tag>')(scope)
-        el.css left:"#{tag.left}%", top:"#{tag.top}%"
-        container.append el
-
-    $scope.onTags = (tag, rect)->
-      ctrl.pause()
-      console.log "ontag", tag, rect
-      TogglePane
-        id: 'tagView'
-        template: "<tag-view></tag-view>"
-        hash: 'tagview'
-        scope: $scope
-        locals:
-          tag: tag
-          rect: rect
+        parent.append $compile('<image-tag></image-tag>')(scope)
+      return
 
     $scope.onCtrl = (e, id)->
 
@@ -167,14 +154,15 @@ angular.module( 'Gallery', [])
         when 'next' then current.next()
         when 'play' then (if auto then ctrl.pause() else ctrl.play())
         when 'slide'
-          target = e.target or e.srcElement
-          if target.tagName is 'I'
-            target = target.parentNode
-          if target.classList.contains 'gallery-tag'
-            s = angular.element(target).scope()
-            $scope.onTags(s.tag, target.getBoundingClientRect())
+#          target = e.target or e.srcElement
+#          if target.tagName is 'I'
+#            target = target.parentNode
+#          if target.classList.contains 'gallery-tag'
+#            s = angular.element(target).scope()
+#            $scope.onTags(s.tag, target.getBoundingClientRect())
 
           $scope.displayCtrl = not $scope.displayCtrl
+          $scope.$broadcast('ctrl.click')
 
       e.stopPropagation()
 
@@ -186,6 +174,8 @@ angular.module( 'Gallery', [])
       next = current
       while next = next.right
         next.onResize()
+      $scope.$broadcast('ctrl.resize')
+
     window.addEventListener "resize", onResize
 
 
@@ -405,16 +395,27 @@ angular.module( 'Gallery', [])
         PrefixedStyle slides, 'transform', null
         ctrl.onSlide()
   )
-  .directive('imageTag', ()->
+  .directive('imageTag', ($compile)->
     restrict: 'E'
     replace: true
     template: """
               <div class="gallery-tag" ng-click="onClick($event)"><i class="icon ion-ios7-pricetag"></i></div>
               """
     link: (scope, element) ->
+      tag = scope.tag
+      view = null
+      element.css left:"#{tag.left}%", top:"#{tag.top}%"
       scope.onClick = (e)->
-        #e.stopPropagation()
-        #scope.onTags(scope.tag, element[0].getBoundingClientRect())
+        e.stopPropagation()
+        if not view
+          view = $compile('<tag-view></tag-view>')(scope)
+          element.parent().append view
+        return
+
+      scope.$on 'ctrl.click', ->
+        if view
+          view.remove()
+          view = null
   )
   .controller('tagController', ($scope, Many, ImageUtil)->
     list = Many('products')
@@ -440,20 +441,51 @@ angular.module( 'Gallery', [])
               </div>
               """
     link: (scope, element, attr) ->
+
       width = 250
       height = 125
-      rect = scope.rect
-      left = rect.left
-      top = rect.top
-      if left + width > window.innerWidth
-        left = window.innerWidth - width
-      if top + height > window.innerHeight
-        top = window.innerHeight - height
+      tag = scope.tag
       element.css
-        left: left+'px'
-        top: top+'px'
         width: width+'px'
         height: height+'px'
+
+      locate = ->
+        left = tag.left
+        top = tag.top
+        right = 100 - left
+        bottom = 100 - top
+        rect = element[0].parentNode.getBoundingClientRect()
+
+        leftPoint = rect.left + rect.width*left/100
+        if leftPoint <= window.innerWidth - width
+          left = left + '%'
+          right = null
+        else if leftPoint >= width
+          left = null
+          right = right + '%'
+        else
+          left = (rect.width - width)/2 + 'px'
+          right = null
+
+        topPoint = rect.top + rect.height*top/100
+        if topPoint <= window.innerHeight - height
+          top = top + '%'
+          bottom = null
+        else if topPoint >= height
+          top = null
+          bottom = bottom + '%'
+        else
+          top = (rect.height - height)/2 + 'px'
+          bottom = null
+
+        element.css
+          left: left
+          right: right
+          top: top
+          bottom: bottom
+
+      element.ready locate
+      scope.$on 'ctrl.resize', locate
 
   )
 
