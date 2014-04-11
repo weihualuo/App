@@ -234,8 +234,10 @@ angular.module( 'Gallery', [])
       @loader = createLoader(data)
       @element.append @loader
       @img.onload = =>
-
+        @loader.empty()
+        @imgLoad = yes
         @element.prepend @img
+        @addTags()
         #@ctrl.addTags(@data.tags, @loader)
         #@element.removeClass('gallery-loading')
         #console.log "image load", @img.src
@@ -246,17 +248,22 @@ angular.module( 'Gallery', [])
         #console.log "image error", @img.src
       this
 
+    Slide::addTags = ->
+      if @imgLoad and @attached
+        @ctrl.addTags(@data.tags, @loader)
+
     Slide::attach = (parent, pos)->
-      @loader.empty()
-      @ctrl.addTags(@data.tags, @loader)
+      @attached = yes
+      @addTags()
       if pos > 0
         parent.append @element
       else
         parent.prepend @element
 
     Slide::detach = ()->
+      @attached = no
       @swiper = null
-      @loader.empty()
+      @loader.empty() if @imgLoad
       @element.remove()
 
     Slide::onShow = ()->
@@ -448,6 +455,7 @@ angular.module( 'Gallery', [])
       element.css
         width: width+'px'
         height: height+'px'
+        display: 'none'
 
       locate = ->
         left = tag.left
@@ -483,6 +491,8 @@ angular.module( 'Gallery', [])
           right: right
           top: top
           bottom: bottom
+          display: 'block'
+
 
       element.ready locate
       scope.$on 'ctrl.resize', locate
