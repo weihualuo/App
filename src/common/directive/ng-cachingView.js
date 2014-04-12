@@ -205,6 +205,9 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
             var link = $compile($element.contents());
 
+            if (current.animation){
+                $element.addClass(current.animation);
+            }
 
             if(current.zIndex){
                 $element.data('$zIndex', Number(current.zIndex));

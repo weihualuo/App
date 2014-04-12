@@ -25,6 +25,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       name: '/productView'
       controller: 'ProductDetailCtrl'
       templateUrl: 'detail/product.tpl.html'
+      animation: 'popup-in-right'
       zIndex: 2
     )
     .when( '/pros'
