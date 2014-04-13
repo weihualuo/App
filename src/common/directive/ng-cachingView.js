@@ -209,6 +209,11 @@ function ngViewFillContentFactory($compile, $controller, $route) {
                 $element.addClass(current.animation);
             }
 
+            if(current.zIndex){
+                $element.data('$zIndex', Number(current.zIndex));
+                $element.data('$templateUrl', current.templateUrl);
+            }
+
             if (current.controller) {
                 locals.$scope = scope;
                 var controller = $controller(current.controller, locals);
