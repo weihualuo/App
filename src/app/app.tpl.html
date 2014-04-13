@@ -1,12 +1,12 @@
 
 
-<header class="bar bar-header bar-dark" ng-hide="switch.hideHeader">
+<header class="bar bar-header bar-dark" ng-hide="env.noHeader">
     <button class="button button-clear icon ion-navicon"> 我的家居 </button>
-    <h1 class="title">{{title}}</h1>
-    <button class="button button-clear"> {{rightText}} </button>
+    <h1 class="title">{{env.title}}</h1>
+    <button class="button button-clear"> {{env.rightText}} </button>
 </header>
 
-<header class="bar bar-subheader res-has-side box-align-center" ng-hide="hideSub">
+<header class="bar bar-subheader res-has-side box-align-center" ng-show="env.filters">
     <form class="flex1" ng-submit="onSearch(se)" ng-class="{focused:inFocus}">
         <label class="box-align-center">
             <i class="icon ion-ios7-search placeholder-icon"></i>
@@ -14,18 +14,18 @@
         </label>
     </form>
 
-    <a class="filter-menu" ng-show="filters" ng-class="{active:cleared}" ng-click="onAll()">
+    <a class="filter-menu" ng-class="{active:cleared}" ng-click="onAll()">
         全部
     </a>
 
-    <a class="filter-menu res-hide-l" ng-show="filters" ng-class="{active:!cleared}" ng-click="onFilter()">
+    <a class="filter-menu res-hide-l" ng-class="{active:!cleared}" ng-click="onFilter()">
         筛选
     </a>
 
-    <list-filter ng-repeat="filter in filters"></list-filter>
+    <list-filter ng-repeat="filter in env.filters"></list-filter>
 
 </header>
 
 <div ng-caching-view class="content-view res-has-side"></div>
 
-<ul class="side-pane res-side-pane" include="modal/sideMenu.tpl.html" ng-hide="hideSide"></ul>
+<ul class="side-pane res-side-pane" include="modal/sideMenu.tpl.html" ng-hide="env.noSide"></ul>

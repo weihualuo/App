@@ -30,13 +30,13 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     )
     .when( '/pros'
       name: 'pros'
-      controller: 'ListCtrl'
+      controller: 'ProsCtrl'
       templateUrl: 'home/pros.tpl.html'
       zIndex: 1
       )
     .when( '/ideabooks'
       name: 'ideabooks'
-      controller: 'ListCtrl'
+      controller: 'IdeabookCtrl'
       templateUrl: 'home/ideabooks.tpl.html'
       zIndex: 1
     )
@@ -58,6 +58,26 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       redirectTo: '/photos'
     )
   )
+  .value('Env',
+    photos:
+      filters: ['style', 'room', 'location']
+      title: '照片'
+    products:
+      filters: ['style', 'room']
+      title: '产品'
+    pros:
+      filters: ['location']
+      title: '设计师'
+    ideabooks:
+      filters: ['style', 'room']
+      title: '灵感集'
+    advice:
+      title: '建议'
+    my:
+      title: '我的家居'
+    productDetail:
+      title: '产品详情'
+  )
   .run( ($location, $document)->
     # simulate html5Mode
     if !location.hash
@@ -66,19 +86,10 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     #prevent webkit drag
     $document.on 'touchmove mousemove', (e)->e.preventDefault()
   )
-  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, Config, $route) ->
-
-    #console.log 'path', $route.current.name
+  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, Config, Env, $route) ->
 
     $scope.onTestDevice = ->
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
-
-    #Right buttons
-    rightTexts = {}
-    $scope.setRightButton = (title)->
-      name = $route.current.name
-      rightTexts[name] = title
-      $scope.rightText = title
     
     #Load meta info first
     $scope.meta = Single('meta', Config.$meta).get()
@@ -92,13 +103,13 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         $scope.se = param.se
 
     #get or update current filter setting
-    filterParam = {}
+    filterSetting = {}
     $scope.paramUpdateFlag = 0
     $scope.updateFilters = (name, type, value)->
-      pathParam = filterParam[name]
+      pathParam = filterSetting[name]
       #init if not exist
       if !angular.isObject(pathParam)
-        pathParam = filterParam[name] = {}
+        pathParam = filterSetting[name] = {}
       #update
       if angular.isString(type)
         $scope.paramUpdateFlag++
@@ -120,10 +131,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     $scope.$on '$viewContentLoaded', ->
       name = $route.current.name
       $scope.pos = name
-      $scope.filters = Config[name].filters
-        #pathFilters[path]
-      $scope.rightText = rightTexts[name]
-      $scope.title = Config[name].title
+      $scope.env = Env[name]
       $scope.paramUpdateFlag++
 
     $scope.onSideMenu = (name)->
@@ -174,11 +182,11 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       item
 
   )
-  .controller( 'ListCtrl', ($scope, $timeout, $route, $routeParams, Many, Popup, MESSAGE) ->
+  .controller( 'ListCtrl', ($scope, name, $timeout, $routeParams, Many, Popup, Env, MESSAGE) ->
 
     console.log 'ListCtrl'
 
-    name = $route.current.name
+    #name = $route.current.name
     $scope.updateFilters(name, $routeParams)
     #uri = path.match(/\/(\w+)/)[1]
     collection = Many(name)
@@ -194,7 +202,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       objects.$promise.then -> $timeout ->
         $scope.objects = objects
         $scope.haveMore = objects.meta.more
-        $scope.setRightButton(objects.length + $scope.haveMore + '张')
+        Env[name].rightText = objects.length + $scope.haveMore + '张'
         $scope.$broadcast('scroll.reload')
 
     #Load more objects

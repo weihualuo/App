@@ -27,7 +27,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
     console.log 'PhotoCtrl'
 
     #extend from ListCtrl
-    $controller('ListCtrl', $scope:$scope)
+    $controller('ListCtrl', {$scope:$scope, name: 'photos'})
 
     $scope.onImageInfo = (index)->
       TogglePane
@@ -118,10 +118,20 @@ angular.module('app.home', ['Gallery', 'restangular'])
   )
   .controller( 'ProductCtrl', ($scope, $controller, Nav)->
     #extend from ListCtrl
-    $controller('ListCtrl', $scope:$scope)
+    $controller('ListCtrl', {$scope:$scope, name: 'products'})
 
     $scope.onProductView = (e, obj)->
       Nav.go('productDetail', id:obj.id)
+  )
+  .controller( 'ProsCtrl', ($scope, $controller, Nav)->
+    #extend from ListCtrl
+    $controller('ListCtrl', {$scope:$scope, name: 'pros'})
+
+  )
+  .controller( 'IdeabookCtrl', ($scope, $controller, Nav)->
+    #extend from ListCtrl
+    $controller('ListCtrl', {$scope:$scope, name: 'ideabooks'})
+
   )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
     console.log 'AdviceCtrl'
