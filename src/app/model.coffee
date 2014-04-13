@@ -97,14 +97,14 @@ angular.module( 'Model', ['restangular'])
   .factory('Single', (Restangular)->
     _objects = {}
 
-    Factory = (name)->
+    Factory = (name, @default)->
       @value = Restangular.one name
       this
 
     Factory.prototype.get = (force)->
       if !@value.$promise or force
         @value.$promise = promise = @value.get()
-        local = JSON.parse localStorage.getItem(@value.route)
+        local = JSON.parse(localStorage.getItem(@value.route)) or @default
         angular.extend(@value, local)
         promise.then( (data)=>
           localStorage.setItem(data.route, JSON.stringify(data))

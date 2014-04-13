@@ -17,7 +17,7 @@ angular.module('app.detail', [])
         $scope.src = ImageUtil.last(obj.params[0])
 
     $scope.onBack = ->
-      Nav.go('/products')
+      Nav.go('products')
 
   )
 

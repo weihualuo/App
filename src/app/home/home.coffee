@@ -121,17 +121,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
     $controller('ListCtrl', $scope:$scope)
 
     $scope.onProductView = (e, obj)->
-      Nav.go('/productView', id:obj.id)
-#      TogglePane
-#        id: 'productView'
-#        template: "<product-view></product-view>"
-#        hash: 'productView'
-#        backdrop: false
-#        root:
-#        scope: $scope
-#        locals:
-#          obj: obj
-
+      Nav.go('productDetail', id:obj.id)
   )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
     console.log 'AdviceCtrl'

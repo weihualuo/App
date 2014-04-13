@@ -10,45 +10,45 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     #$locationProvider.html5Mode(true)
 
     $routeProvider.when( '/photos',
-      name: '/photos'
+      name: 'photos'
       controller: 'PhotoCtrl'
       templateUrl: 'home/photos.tpl.html'
       zIndex: 1
     )
     .when( '/products'
-      name: '/products'
+      name: 'products'
       controller: 'ProductCtrl'
       templateUrl: 'home/products.tpl.html'
       zIndex: 1
     )
     .when( '/products/:id'
-      name: '/productView'
+      name: 'productDetail'
       controller: 'ProductDetailCtrl'
       templateUrl: 'detail/product.tpl.html'
       animation: 'popup-in-right no-sub'
       zIndex: 2
     )
     .when( '/pros'
-      name: '/pros'
+      name: 'pros'
       controller: 'ListCtrl'
       templateUrl: 'home/pros.tpl.html'
       zIndex: 1
       )
     .when( '/ideabooks'
-      name: '/ideabooks'
+      name: 'ideabooks'
       controller: 'ListCtrl'
       templateUrl: 'home/ideabooks.tpl.html'
       zIndex: 1
     )
     .when( '/advice'
-      name: '/advice'
+      name: 'advice'
       controller: 'AdviceCtrl'
       templateUrl: 'home/advice.tpl.html'
       zIndex: 1
       animation: 'no-sub'
     )
     .when( '/my'
-      name: '/my'
+      name: 'my'
       controller: 'MyCtrl'
       templateUrl: 'home/my.tpl.html'
       zIndex: 1
@@ -58,40 +58,6 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       redirectTo: '/photos'
     )
   )
-  .constant('AppConfig',
-    meta:
-      room:
-        title: '空间'
-        any:
-          id: 0
-          en: 'All spaces'
-          cn: '所有空间'
-      style:
-        title: '风格'
-        any:
-          id: 0
-          en: 'Any Style'
-          cn: '所有风格'
-      location:
-        title: '地点'
-        any:
-          id: 0
-          en: 'Any Area'
-          cn: '全部地点'
-    filters:
-      '/photos': ['style', 'room', 'location']
-      '/products': ['style', 'room']
-      '/pros': ['location']
-      '/ideabooks': ['style', 'room']
-    titles:
-      '/photos': '照片'
-      '/products': '产品'
-      '/pros': '设计师'
-      '/ideabooks': '灵感集'
-      '/advice': '建议'
-      '/my': '我的家居'
-
-  )
   .run( ($location, $document)->
     # simulate html5Mode
     if !location.hash
@@ -100,50 +66,39 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     #prevent webkit drag
     $document.on 'touchmove mousemove', (e)->e.preventDefault()
   )
-  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, $location, AppConfig) ->
+  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, Config, $route) ->
 
-    console.log 'path',$location.path()
+    #console.log 'path', $route.current.name
 
-    filterMeta = AppConfig.meta
-    pathFilters = AppConfig.filters
-    pathTitles = AppConfig.titles
-    rightTexts = {}
-    
     $scope.onTestDevice = ->
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
 
-    #Set the app title to a specific name or default value
-    $scope.setTitle = (title)->
-      $scope.title = title or $scope.appTitle
-
-    #Set page title
-    $scope.setPageTitle = (title)->
-      $scope.pageTitle = title or $scope.appTitle
-
-    
+    #Right buttons
+    rightTexts = {}
     $scope.setRightButton = (title)->
-      path = $location.path()
-      rightTexts[path] = title
+      name = $route.current.name
+      rightTexts[name] = title
       $scope.rightText = title
     
-
     #Load meta info first
-    $scope.meta = Single('meta').get()
+    $scope.meta = Single('meta', Config.$meta).get()
     $scope.meta.$promise.then ->
       $scope.paramUpdateFlag++
 
     $scope.$watch 'paramUpdateFlag', ->
-      param = $scope.updateFilters $location.path()
-      $scope.cleared = angular.equals(param, {})
-      $scope.se = param.se
+      if $route.current
+        param = $scope.updateFilters $route.current.name
+        $scope.cleared = angular.equals(param, {})
+        $scope.se = param.se
 
-    $scope.filterParam = {}
+    #get or update current filter setting
+    filterParam = {}
     $scope.paramUpdateFlag = 0
-    $scope.updateFilters = (path, type, value)->
-      pathParam = $scope.filterParam[path]
+    $scope.updateFilters = (name, type, value)->
+      pathParam = filterParam[name]
       #init if not exist
       if !angular.isObject(pathParam)
-        pathParam = $scope.filterParam[path] = {}
+        pathParam = filterParam[name] = {}
       #update
       if angular.isString(type)
         $scope.paramUpdateFlag++
@@ -159,98 +114,74 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       else if type is 0
         angular.copy({}, pathParam)
         $scope.paramUpdateFlag++
-
       #return
       pathParam
 
     $scope.$on '$viewContentLoaded', ->
-      path = $location.path()
-      $scope.pos = path
-      $scope.filters = pathFilters[path]
-      $scope.rightText = rightTexts[path]
-      $scope.title = pathTitles[path]
+      name = $route.current.name
+      $scope.pos = name
+      $scope.filters = Config[name].filters
+        #pathFilters[path]
+      $scope.rightText = rightTexts[name]
+      $scope.title = Config[name].title
       $scope.paramUpdateFlag++
 
     $scope.onSideMenu = (name)->
       Nav.go name, null, $scope.updateFilters(name)
-
-
-    $scope.toggleSideMenu = ()->
-      if !Service.noRepeat('toggleSideMenu')
-        return
-      menu = document.querySelector('.res-side-pane')
-      if menu and menu.offsetHeight
-        return
-
-      TogglePane
-        id: 'sidebar'
-        template: "<side-pane position='left' class='pane-side-menu popup-in-left'></side-pane>"
-        url: "modal/sideMenu.tpl.html"
-        hash: 'sidemenu'
-        locals:
-          pos:$location.path()
-          onSideMenu: (name)-> @$close(name)
-        success: $scope.onSideMenu
 
     $scope.toggleFilter = (type)->
 
       if !Service.noRepeat('toggleFilter')
         return
 
-      if !filterMeta[type]
+      if !Config.$filter[type]
         console.log "not found", type
         return
 
-      path = $location.path()
+      name = $route.current.name
       TogglePane
         id: 'filters'
         template: "<side-pane position='right' class='pane-filter-bar popup-in-right'></side-pane>"
         url: "modal/filterBar.tpl.html"
         hash: 'filters'
         locals:
-          title: filterMeta[type].title
-          items: [filterMeta[type].any].concat $scope.meta[type]
-          selected: $scope.updateFilters(path)[type] or 0
+          title: Config.$filter[type].title
+          items: [Config.$filter[type].any].concat $scope.meta[type]
+          selected: $scope.updateFilters(name)[type] or 0
         success: (id)->
-          param = $scope.updateFilters(path, type, id)
-          Nav.go path, null, param
+          param = $scope.updateFilters(name, type, id)
+          Nav.go name, null, param
 
     $scope.onAll = ->
-      path = $location.path()
-      param = $scope.updateFilters(path, 0)
-      Nav.go path, null, param
+      name = $route.current.name
+      param = $scope.updateFilters(name, 0)
+      Nav.go name, null, param
 
 
     $scope.onSearch = (se)->
-      path = $location.path()
-      param = $scope.updateFilters(path, 'se', se)
-      Nav.go path, null, param
+      name = $route.current.name
+      param = $scope.updateFilters(name, 'se', se)
+      Nav.go name, null, param
       $timeout -> document.activeElement.blur()
-
-    $scope.onKeyPress = (e, se)->
-      if e.keyCode is 13
-        $scope.onSearch(se)
 
 
     $scope.getFilterItem = (type)->
-      path = $location.path()
-      selected = $scope.updateFilters(path)[type] or 0
+      name = $route.current.name
+      selected = $scope.updateFilters(name)[type] or 0
       item = _.find $scope.meta[type], id:parseInt(selected)
       if !item
-        item = filterMeta[type].any
+        item = Config.$filter[type].any
       item
 
   )
-  .controller( 'ListCtrl', ($scope, $timeout, $location, $routeParams, Many, Popup, MESSAGE) ->
+  .controller( 'ListCtrl', ($scope, $timeout, $route, $routeParams, Many, Popup, MESSAGE) ->
 
     console.log 'ListCtrl'
 
-    path = $location.path()
-    $scope.updateFilters(path, $routeParams)
-
-    uri = path.match(/\/(\w+)/)[1]
-
-    collection = Many(uri)
+    name = $route.current.name
+    $scope.updateFilters(name, $routeParams)
+    #uri = path.match(/\/(\w+)/)[1]
+    collection = Many(name)
     objects = null
 
     reloadObjects = ->
@@ -305,12 +236,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         scope.item = scope.getFilterItem(scope.filter)
   )
   .directive('include', ($http, $templateCache, $compile)->
-    controller: 'AppCtrl'
-    link: (scope, element, attr) ->
-
+    (scope, element, attr) ->
       $http.get(attr.include, cache: $templateCache).success (content)->
         element.html(content)
         $compile(element.contents())(scope)
-
   )
 
