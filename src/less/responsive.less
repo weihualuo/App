@@ -1,14 +1,5 @@
 @import "variables";
 
-.res-main-pane{
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: @headerHeight;
-  bottom: 0;
-  background-color: #fff;
-}
-
 .res-side-pane{
   z-index: @z-index-side-pane;
   left: 0;
@@ -23,11 +14,17 @@
   display: none;
 }
 
+.res-has-side{
+  left: 0;
+  right: 0;
+  width: auto;
+}
+
 // >= 850
 @media (min-width: 850px){
 
-  .res-main-pane{
-    left : @side-pane-width !important;
+  .res-has-side{
+    left: @side-pane-width;
   }
 }
 
@@ -42,7 +39,6 @@
     .hbox-justify;
   }
 }
-
 
 //  <= 640
 @media (max-width: 640px){

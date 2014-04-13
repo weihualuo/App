@@ -25,7 +25,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       name: '/productView'
       controller: 'ProductDetailCtrl'
       templateUrl: 'detail/product.tpl.html'
-      animation: 'popup-in-right'
+      animation: 'popup-in-right no-sub'
       zIndex: 2
     )
     .when( '/pros'
@@ -45,12 +45,14 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'AdviceCtrl'
       templateUrl: 'home/advice.tpl.html'
       zIndex: 1
+      animation: 'no-sub'
     )
     .when( '/my'
       name: '/my'
       controller: 'MyCtrl'
       templateUrl: 'home/my.tpl.html'
       zIndex: 1
+      animation: 'no-sub'
     )
     .otherwise(
       redirectTo: '/photos'

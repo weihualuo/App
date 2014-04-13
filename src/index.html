@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html
       ng-app="app"
-      ng-controller="AppCtrl"
+
         >
   <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -19,46 +19,15 @@
 	<% }); %>
 
   </head>
-  <body ng-init='appTitle=pageTitle'>
+  <body ng-controller="AppCtrl" ng-include="'app.tpl.html'">
 
-    <div ng-if="false" style="position: absolute;top: 48%; width: 100%; text-align: center;z-index: 2">
+    <div style="position: absolute;top: 48%; width: 100%; text-align: center;z-index: 2">
         Page Loading...
     </div>
 
-    <header class="bar bar-header bar-dark">
-        <button class="button button-clear icon ion-navicon" ng-click="toggleSideMenu('photos')"> 我的家居 </button>
-        <h1 class="title">{{title}}</h1>
-        <button class="button button-clear"> {{rightText}} </button>
-    </header>
-
-    <div class="res-main-pane">
-
-        <div class="bar box-align-center">
-            <form class="flex1" ng-submit="onSearch(se)" ng-class="{focused:inFocus}">
-                <label class="box-align-center">
-                    <i class="icon ion-ios7-search placeholder-icon"></i>
-                    <input type="search" ng-model="se" ng-focus="inFocus=1" ng-blur="inFocus=0" placeholder="搜索">
-                </label>
-            </form>
-
-            <a class="filter-menu" ng-show="filters" ng-class="{active:cleared}" ng-click="onAll()">
-                全部
-            </a>
-
-            <a class="filter-menu res-hide-l" ng-show="filters" ng-class="{active:!cleared}" ng-click="onFilter()">
-                筛选
-            </a>
-
-            <list-filter id='{{filter}}' ng-repeat="filter in filters"></list-filter>
-
-        </div>
-        <div ng-caching-view class="content-view"></div>
-    </div>
-
-    <ul class="side-pane res-side-pane" ng-include="'modal/sideMenu.tpl.html'"></ul>
-
-  <script>
+    <script>
       console.log(new Date());
-  </script>
+    </script>
+
   </body>
 </html>

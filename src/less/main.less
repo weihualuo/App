@@ -4,7 +4,7 @@
 @import  "../../vendor/ionic-0.9.17-alpha/dist/css/ionic";
 @import "../../vendor/ionic-0.9.17-alpha/dist/css/themes/ionic-ios7";
 //ionic used note:
-//bar bar-header icon button title list item
+//bar bar-header bar-subheader icon button title list item
 //scroll
 
 //@import "../../vendor/Gallery/css/blueimp-gallery";
@@ -24,12 +24,22 @@ body{
 
 .content-view{
   position: absolute;
-  top: @headerHeight;
+  top: @headerHeight*2;
   right: 0;
   bottom: 0;
   left: 0;
   overflow: hidden;
   background-color: #fff;
+
+  &.no-sub{
+    top: @headerHeight !important;
+  }
+  &.no-header{
+    top: 0 !important;
+  }
+  &.no-side{
+    left: 0 !important;
+  }
 }
 
 .container{
