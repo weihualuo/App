@@ -12,27 +12,28 @@ angular.module( 'Scroll', [])
         paging: attr.paging?
         bouncing: not attr.paging?
         scrollingComplete: complete
+        el: raw
 
-      scope.$scroll = scroll = new EasyScroller raw, options
+      scope.$scroll = scroll = new ionic.views.Scroll(options)
 
-      if attr.refreshable? and attr.refreshable != 'false'
-        refresher = $compile('<refresher></refresher>')(scope)
-        raw.parentNode.insertBefore(refresher[0], raw)
+#      if attr.refreshable? and attr.refreshable != 'false'
+#        refresher = $compile('<refresher></refresher>')(scope)
+#        raw.parentNode.insertBefore(refresher[0], raw)
 
       #Shoud reflow on element ready
       #Not everyone send a scroll.reload
       element.ready ->
-        scroll.reflow()
+        scroll.resize()
 
       # list reset
       scope.$on 'scroll.reload', ->
         if scroll
-          $timeout (->scroll.scroller.scrollTo(0, 0))
+          $timeout (->scroll.scrollTo(0, 0))
 
       # list reset or more item loaded
       scope.$on 'list.rendered', ->
         if scroll
-          $timeout (->scroll.reflow())
+          $timeout (->scroll.resize())
 
   )
   .directive('refresher', ($timeout, PrefixedStyle)->

@@ -291,8 +291,8 @@ var Scroller;
         initialize: function(options) {
             var self = this;
 
-            this.__container = options.el;
-            this.__content = options.el.firstElementChild;
+            this.__container = options.el.parentNode;
+            this.__content = options.el;
 
             //Remove any scrollTop attached to these elements; they are virtual scroll now
             //This also stops on-load-scroll-to-window.location.hash that the browser does
@@ -635,7 +635,7 @@ var Scroller;
                     e.preventDefault();
                 }, false);
 
-                document.addEventListener("touchmove", function(e) {
+                container.addEventListener("touchmove", function(e) {
                     if(e.defaultPrevented) {
                         return;
                     }
@@ -663,7 +663,7 @@ var Scroller;
                     mousedown = true;
                 }, false);
 
-                document.addEventListener("mousemove", function(e) {
+                container.addEventListener("mousemove", function(e) {
                     if (!mousedown || e.defaultPrevented) {
                         return;
                     }

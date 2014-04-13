@@ -59,6 +59,9 @@ module.exports = {
 //        'vendor/ionic-v0.9.26/js/ionic.js',
 //        'vendor/ionic-0.9.17-alpha/dist/js/ionic.js',
 
+        'vendor2/ionicCustom/ionic.js',
+        'vendor2/ionicCustom/scrollView.js',
+
         'vendor/angular-1.2.14/angular.js',
         'vendor/angular-1.2.14/angular-animate.js',
         'vendor/angular-1.2.14/angular-touch.js',
@@ -70,9 +73,9 @@ module.exports = {
 
 //        'vendor/iscroll/build/iscroll-infinite.js',
 //        'vendor/iscroll/build/iscroll-probe.js',
-        'vendor/scroller/src/Animate.js',
-        'vendor/scroller/src/EasyScroller.js',
-        'vendor/scroller/src/Scroller.js',
+//        'vendor/scroller/src/Animate.js',
+//        'vendor/scroller/src/EasyScroller.js',
+//        'vendor/scroller/src/Scroller.js',
 
         'vendor/lodash/lodash.js',
         'vendor/restangular1.2.2/restangular.js',
