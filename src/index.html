@@ -1,14 +1,11 @@
 <!DOCTYPE html>
-<html
-      ng-app="app"
-
-        >
+<html>
   <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
       <meta content=”yes” name=”apple-mobile-web-app-capable” />
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
 
-    <title ng-bind="pageTitle" ng-init='pageTitle="大美家居"'>大美家居</title>
+    <title>大美家居</title>
 
     <% styles.forEach( function ( file ) { %>
     <link rel="stylesheet" type="text/css" href="<%= file %>" />
@@ -19,10 +16,10 @@
 	<% }); %>
 
   </head>
-  <body ng-controller="AppCtrl" ng-include="'app.tpl.html'">
+  <body ng-app="app" include="app.tpl.html">
 
     <div style="position: absolute;top: 48%; width: 100%; text-align: center;z-index: 2">
-        Page Loading...
+        Loading...
     </div>
 
     <script>

@@ -299,9 +299,18 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     restrict: 'E'
     replace: true
     template: '<a class="filter-menu res-display-l" ng-class="{active:item.id}" ng-click="toggleFilter(filter)">{{item.cn || item.en}} <i class="icon ion-arrow-down-b"></i></a>'
-    link: (scope, element, attr, ctrl) ->
+    link: (scope) ->
       #Should use with ng-repeat
       scope.$watch 'paramUpdateFlag', ->
         scope.item = scope.getFilterItem(scope.filter)
+  )
+  .directive('include', ($http, $templateCache, $compile)->
+    controller: 'AppCtrl'
+    link: (scope, element, attr) ->
+
+      $http.get(attr.include, cache: $templateCache).success (content)->
+        element.html(content)
+        $compile(element.contents())(scope)
+
   )
 
