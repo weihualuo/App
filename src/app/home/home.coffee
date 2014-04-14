@@ -38,7 +38,6 @@ angular.module('app.home', ['Gallery', 'restangular'])
         locals:
           image: $scope.objects[index]
 
-    item = null
     $scope.onImageView = (e)->
       #Delegate mode in large list
       item = e.target
@@ -56,26 +55,8 @@ angular.module('app.home', ['Gallery', 'restangular'])
             rect:  item.getBoundingClientRect()
 
     $scope.$on 'gallery.slide', (e, index, x)->
-      #console.log "gallery.slide", index, x
-      item = item.previousElementSibling if x > 0
-      item = item.nextElementSibling if x < 0
       if $scope.haveMore and index+6 > $scope.objects.length
         $scope.$emit 'scroll.moreStart'
-
-    $scope.getItemRect = ->
-      scroll = $scope.$scroll
-      top = scroll.scroller.getValues().top
-      itemTop = item.offsetTop
-      itemHeight = item.offsetHeight
-      containerHeight = scroll.container.clientHeight
-      #above
-      if top > itemTop
-        scroll.scroller.scrollTo(0, itemTop)
-      #below
-      else if top < itemTop+itemHeight-containerHeight
-        scroll.scroller.scrollTo(0, itemTop+itemHeight-containerHeight)
-
-      item.getBoundingClientRect()
 
   )
   .directive('productThumb', (ImageUtil)->

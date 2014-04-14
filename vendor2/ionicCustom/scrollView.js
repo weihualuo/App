@@ -386,7 +386,7 @@ var Scroller;
                 ionic.trigger('scroll', {
                     scrollTop: self.__scrollTop,
                     scrollLeft: self.__scrollLeft,
-                    target: self.__container
+                    target: self.__content
                 });
             }, this.options.scrollEventInterval);
 
@@ -394,7 +394,7 @@ var Scroller;
                 ionic.trigger('scrollend', {
                     scrollTop: self.__scrollTop,
                     scrollLeft: self.__scrollLeft,
-                    target: self.__container
+                    target: self.__content
                 });
             };
 

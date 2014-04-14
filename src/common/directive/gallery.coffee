@@ -129,7 +129,7 @@ angular.module( 'Gallery', [])
     @close = ->
       $scope.displayCtrl = no
       PrefixedStyle container[0], 'transition', 'all ease-in 300ms'
-      ctrl.setTransform container[0], $scope.getItemRect()
+      ctrl.setTransform container[0], $scope.getItemRect(current.index)
       PrefixedEvent container, "TransitionEnd", ->
         $scope.$emit 'destroyed'
 
