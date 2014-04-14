@@ -1,4 +1,4 @@
-angular.module('app.home', ['Gallery', 'restangular'])
+angular.module('app.home', ['restangular'])
 
   .directive('imageThumb', (ImageUtil)->
 
@@ -23,7 +23,7 @@ angular.module('app.home', ['Gallery', 'restangular'])
       element.triggerHandler 'dynamic.add'
 
   )
-  .controller( 'PhotoCtrl', ($scope, $controller, $timeout, $filter, Many, Popup, TogglePane, MESSAGE) ->
+  .controller( 'PhotoCtrl', ($scope, $controller, $timeout, $filter, Many, Popup, Nav, TogglePane, MESSAGE) ->
     console.log 'PhotoCtrl'
 
     #extend from ListCtrl
@@ -39,11 +39,15 @@ angular.module('app.home', ['Gallery', 'restangular'])
           image: $scope.objects[index]
 
     $scope.onImageView = (e)->
+
       #Delegate mode in large list
       item = e.target
       if item.tagName is 'IMG'
         item = item.parentNode
         obj = angular.element(item).scope().obj
+        Nav.go('photoDetail', id:obj.id)
+        return
+
         TogglePane
           id: 'imageView'
           template: "<gallery-view></gallery-view>"

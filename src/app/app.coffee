@@ -1,6 +1,6 @@
 angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
                          'templates-app', 'templates-common',
-                         'Model', 'app.utils', 'app.home', 'app.detail', 'app.discussion',
+                         'Model', 'app.utils', 'app.home', 'app.photo', 'app.detail', 'app.discussion',
                          'myWidget', 'ngCachingView', 'Service', 'ui.popup', 'Scroll'
                          'MESSAGE'
 ])
@@ -15,6 +15,14 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       templateUrl: 'home/photos.tpl.html'
       zIndex: 1
     )
+    .when( '/photos/:id',
+      name: 'photoDetail'
+      controller: 'PhotoDetailCtrl'
+      templateUrl: 'photo/photoDetail.tpl.html'
+      class: 'no-sub no-header no-side'
+      zIndex: 1
+      
+    )
     .when( '/products'
       name: 'products'
       controller: 'ProductCtrl'
@@ -25,7 +33,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       name: 'productDetail'
       controller: 'ProductDetailCtrl'
       templateUrl: 'detail/product.tpl.html'
-      animation: 'popup-in-right no-sub'
+      class: 'popup-in-right no-sub'
       zIndex: 2
     )
     .when( '/pros'
@@ -45,14 +53,14 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'AdviceCtrl'
       templateUrl: 'home/advice.tpl.html'
       zIndex: 1
-      animation: 'no-sub'
+      class: 'no-sub'
     )
     .when( '/my'
       name: 'my'
       controller: 'MyCtrl'
       templateUrl: 'home/my.tpl.html'
       zIndex: 1
-      animation: 'no-sub'
+      class: 'no-sub'
     )
     .otherwise(
       redirectTo: '/photos'
@@ -77,6 +85,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       title: '我的家居'
     productDetail:
       title: '产品详情'
+    photoDetail:
+      noHeader: true
   )
   .run( ($location, $document)->
     # simulate html5Mode

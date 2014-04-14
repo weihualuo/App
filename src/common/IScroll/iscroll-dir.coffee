@@ -1,6 +1,6 @@
 
 angular.module( 'Scroll', [])
-  .directive('scrollable', ($timeout, $compile)->
+  .directive('scrollable', ($timeout)->
     (scope, element, attr)->
 
       scrollable = attr.scrollable
@@ -80,10 +80,6 @@ angular.module( 'Scroll', [])
           else if position != height
             updatePosition height
         null
-
-      element.on 'scrollend', (e)->
-        detail = (e.originalEvent || e).detail || {}
-        console.log detail
 
       scroller.activatePullToRefresh height, (->), (->), ->
         if enableRefersh
