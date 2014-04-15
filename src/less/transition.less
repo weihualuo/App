@@ -120,4 +120,15 @@
   }
 }
 
+.fade-to-hide{
+  &.ng-hide-add, &.ng-hide-remove{
+    display:block!important;
+    opacity:1;
+    .transition(all linear 0.5s);
+  }
+  &.ng-hide{
+    opacity: 0;
+  }
+}
+
 

@@ -20,7 +20,8 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       scope.$on 'slide.close', (e, index)->
         if scope.scrollView
           PrefixedStyle raw, 'transition', 'all ease-in 300ms'
-          setTransform raw, scope.scrollView.getItemRect(index)
+          #TODO must use a timeout, why?
+          setTimeout (->setTransform raw, scope.scrollView.getItemRect(index)), 50
           PrefixedEvent element, "TransitionEnd", ->
             console.log "end"
             PrefixedStyle raw, 'transition', null
@@ -62,7 +63,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     onImageInfo = (index)->
       TogglePane
         id: 'infoView'
-        template: "<side-pane position='left' class='pane-image-info popup-in-left'></side-pane>"
+        template: "<side-pane position='right' class='pane-image-info popup-in-right'></side-pane>"
         url: "modal/imageInfo.tpl.html"
         hash: 'info'
         locals:
@@ -76,7 +77,6 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
       switch id
         when 'info'
-          #ctrl.pause()
           onImageInfo(slideCtrl.getCurrentIndex())
         when 'close'
           $scope.displayCtrl = no

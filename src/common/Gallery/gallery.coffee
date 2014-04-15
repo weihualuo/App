@@ -178,7 +178,6 @@ angular.module( 'NewGallery', [])
       element.ready locate
       window.addEventListener "resize", locate
       scope.$on '$destroy', ->
-        console.log "tagview destroy"
         window.removeEventListener 'resize', locate
 
   )

@@ -1,6 +1,6 @@
 
-<div rect-transform class="gallery-view" ng-class="{'gallery-controls': displayCtrl}" ng-click="onCtrl($event, 'slide')">
-    <div slide-view class="gallery-slides"></div>
+<div rect-transform class="gallery-view" ng-class="{'gallery-controls': displayCtrl}">
+    <div slide-view class="gallery-slides" ng-click="onCtrl($event, 'slide')"></div>
     <span class="prev" ng-class="{'ng-hide': first}" ng-click="onCtrl($event, 'prev')">
        <i class="icon ion-chevron-left"></i>
     </span>
@@ -9,10 +9,6 @@
     </span>
     <span class="close" ng-click="onCtrl($event, 'close')">
         <i class="icon ion-ios7-close-outline"></i>
-    </span>
-    <span class="play-pause" ng-click="onCtrl($event, 'play')">
-      <i class="icon ion-play" ng-class="{'ng-hide': playing}"></i>
-      <i class="icon ion-pause" ng-class="{'ng-hide': !playing}"></i>
     </span>
     <span class="info" ng-click="onCtrl($event, 'info')">
       <i class="icon ion-ios7-information-outline"></i>

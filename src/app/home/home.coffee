@@ -29,29 +29,6 @@ angular.module('app.home', ['restangular'])
     #extend from ListCtrl
     $controller('ListCtrl', {$scope:$scope, name: 'photos'})
 
-    goDetail = (param, hash)->
-      TogglePane
-        id: 'imageView'
-        template: "<gallery-view></gallery-view>"
-        hash: hash
-        parent: $element
-        backdrop: false
-        scope: $scope
-        locals: param
-
-#    $scope.$on '$viewContentLoaded', ->
-#      hash = Nav.hash()
-#      if hash and index = parseInt(hash)
-#        goDetail index:index
-
-    $scope.onImageInfo = (index)->
-      TogglePane
-        id: 'infoView'
-        template: "<side-pane position='left' class='pane-image-info popup-in-left'></side-pane>"
-        url: "modal/imageInfo.tpl.html"
-        hash: 'info'
-        locals:
-          image: $scope.objects[index]
 
     $scope.onImageView = (e)->
 
@@ -67,16 +44,6 @@ angular.module('app.home', ['restangular'])
         #goDetail data, data.index
         Nav.go('photoDetail', null, null, null, data)
         return
-
-        TogglePane
-          id: 'imageView'
-          template: "<gallery-view></gallery-view>"
-          hash: 'gallery'
-          backdrop: false
-          scope: $scope
-          locals:
-            index: $scope.objects.indexOf(obj)
-            rect:  item.getBoundingClientRect()
 
     $scope.$on 'gallery.slide', (e, index, x)->
       if $scope.haveMore and index+6 > $scope.objects.length
