@@ -27,7 +27,7 @@ angular.module( 'Scroll', [])
       scope.$on 'list.rendered', ->
         $timeout (->scrollView.resize())
 
-      scope.getItemRect = (index)->
+      scrollView.getItemRect = (index)->
         item = element.children()[index]
         top = scrollView.getValues().top
         itemTop = item.offsetTop

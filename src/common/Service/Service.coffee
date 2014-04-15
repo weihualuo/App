@@ -115,7 +115,7 @@ angular.module( 'Service', [])
       for p in pfx
         element.style[p+type]= value
   )
-  .factory('Swipe', ($swipe, PrefixedStyle, PrefixedEvent)->
+  .factory('Swipe', ($swipe)->
 
     (element, options)->
 
@@ -129,7 +129,6 @@ angular.module( 'Service', [])
       onStart = options.onStart or angular.noop
       onMove = options.onMove or angular.noop
       onEnd = options.onEnd or angular.noop
-      #width = options.width or 0
 
       startTime = 0
       startX = 0
@@ -146,10 +145,8 @@ angular.module( 'Service', [])
           if Math.abs(pos)*2 > width or swiping
             if pos*direction >= 0
               if pos < 0 then x = -width else x = width
-          ratio = null
-          if x isnt pos
-            ratio = (Math.abs(pos-x)/width).toFixed(2)
-          #console.log "pos=#{pos}, x=#{x}, width=#{width}"
+
+          ratio = Number (Math.abs(pos-x)/width).toFixed(2)
           onEnd(x, ratio)
 
       $swipe.bind element,

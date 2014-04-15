@@ -1,5 +1,5 @@
 
-angular.module('app.photo', ['Gallery'])
+angular.module('app.photo', ['NewGallery'])
   .directive('rectTransform', (PrefixedStyle, PrefixedEvent)->
 
     setTransform = (el, rect)->
@@ -17,51 +17,79 @@ angular.module('app.photo', ['Gallery'])
           PrefixedStyle raw, 'transition', 'all ease-in 300ms'
           PrefixedStyle raw, 'transform', null
 
-      PrefixedEvent element, "TransitionEnd", ->
-        console.log "end"
-        PrefixedStyle raw, 'transition', null
-        #scope.$emit 'destroyed'
-
-      scope.onClose = (index)->
-        PrefixedStyle raw, 'transition', 'all ease-in 300ms'
-        setTransform raw, scope.getItemRect(index)
+      scope.$on 'slide.close', (e, index)->
+        if scope.scrollView
+          PrefixedStyle raw, 'transition', 'all ease-in 300ms'
+          setTransform raw, scope.scrollView.getItemRect(index)
+          PrefixedEvent element, "TransitionEnd", ->
+            console.log "end"
+            PrefixedStyle raw, 'transition', null
+            scope.$emit 'rect.destroyed'
+        else
+          scope.$emit 'rect.destroyed'
 
   )
-  .directive('galleryView', ($controller)->
-    restrict: 'C'
-    link: (scope, element, attr) ->
-
-      ctrl = null
-      slides = element[0].firstElementChild
-      scope.$on 'scroll.reload', ->
-        if not ctrl
-          ctrl = $controller('GalleryCtrl', $scope:scope)
-          ctrl.initSlides(angular.element(slides))
-          ctrl.onSlide()
-  )
-
-  .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env)->
+  .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane)->
     #extend from ListCtrl
     $controller('ListCtrl', {$scope:$scope, name: 'photos'})
     angular.extend($scope, Nav.data())
     $scope.index ?= 0
-    listScope = $scope.listScope
+    if listScope = $scope.listScope
+      $scope.scrollView = listScope.scrollView
 
-    Env.photoDetail.noHeader = false
-    Env.photoDetail.noSide = false
+    env = Env.photoDetail
+    env.noHeader = false
+    env.noSide = false
     $timeout (->
-      Env.photoDetail.noHeader = true
-      Env.photoDetail.noSide = true
+      env.noHeader = true
+      env.noSide = true
       $scope.$emit('envUpdate')
     ), 1000
+    $scope.$on 'slide.close', ->
+      env.noHeader = false
+      env.noSide = false
+      $scope.$emit('envUpdate')
 
-    $scope.getItemRect = (index)->
-      if listScope
-        listScope.getItemRect(index)
-      else
-        $element[0].getBoundingClientRect()
-
-    $scope.$on 'destroyed', ->
-      console.log "detroyed"
+    $scope.$on 'rect.destroyed', ->
       Nav.go('photos')
+
+    slideCtrl = null
+    $scope.$on 'scroll.reload', ->
+      slideCtrl = $scope.slideCtrl
+      slideCtrl.initSlides($scope.objects, $scope.index)
+      $timeout (->slideCtrl.onSlide()), 100
+
+    onImageInfo = (index)->
+      TogglePane
+        id: 'infoView'
+        template: "<side-pane position='left' class='pane-image-info popup-in-left'></side-pane>"
+        url: "modal/imageInfo.tpl.html"
+        hash: 'info'
+        locals:
+          image: $scope.objects[index]
+
+    $scope.onCtrl = (e, id)->
+
+      e.stopPropagation()
+      if not Service.noRepeat('slideCtrl', 600)
+        return
+
+      switch id
+        when 'info'
+          #ctrl.pause()
+          onImageInfo(slideCtrl.getCurrentIndex())
+        when 'close'
+          $scope.$emit 'slide.close', slideCtrl.getCurrentIndex()
+        when 'prev'
+          slideCtrl.prev()
+        when 'next'
+          slideCtrl.next()
+        when 'slide'
+          $scope.displayCtrl = not $scope.displayCtrl
+          $scope.$broadcast('ctrl.click')
+
+
+
+
+
   )

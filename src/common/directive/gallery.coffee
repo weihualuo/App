@@ -3,7 +3,7 @@
 angular.module( 'Gallery', [])
   .controller('GalleryCtrl', ($scope, Slide, $timeout, PrefixedStyle, PrefixedEvent, Service, TogglePane, $compile)->
 
-    objects = $scope.objects
+    objects = null
     container = current = null
     ctrl = this
     range = 3
@@ -20,6 +20,7 @@ angular.module( 'Gallery', [])
       PrefixedStyle el, 'transform', "translate3d(#{offsetX}px, #{offsetY}px, 0) scale3d(#{ratioX}, #{ratioY}, 0)"
 
     @initSlides = (element)->
+      objects = $scope.objects
       index = $scope.index
       container = element
       current = new Slide(this, objects[index], index)

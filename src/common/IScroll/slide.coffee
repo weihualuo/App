@@ -1,83 +1,6 @@
 
 
-angular.module( 'NewGallery', [])
-  .factory('Slide', (Swipe, PrefixedStyle, PrefixedEvent, ImageUtil)->
-
-    createImage = (url)->
-      img = new Image()
-      img.src = url
-      img.draggable = false
-      img.className = "gallery-img"
-      img
-
-    protoElement = angular.element '<div class="gallery-slide"></div>'
-
-    getLoaderDimension = (data)->
-      w = data.width
-      h = data.height
-      ratio = Math.min(window.innerWidth/w, window.innerHeight/h)
-      if ratio < 1
-        w = ratio*w
-        h = ratio*h
-      ret =
-        width: w+'px'
-        height: h+'px'
-
-
-    createLoader = (data)->
-      url = ImageUtil.thumb(data)
-      loader = angular.element """
-                               <div class='gallery-loader'>
-                               <img src='#{url}' onerror='this.style.display="none"' width='100%' height='100%'>
-                               <div class='gallery-loader-spin'><i class="icon ion-loading-a"></i></div>
-                               </div>
-                               """
-      loader.css getLoaderDimension(data)
-      loader
-
-    Slide = (@ctrl, @data, @index)->
-      #console.log "new slide", index, position
-      @width = null
-      @element = protoElement.clone()
-      @img = createImage ImageUtil.best(data)
-      @loader = createLoader(data)
-      @element.append @loader
-      @img.onload = =>
-        @loader.empty()
-        @imgLoad = yes
-        @element.prepend @img
-        @addTags()
-      @img.onerror = =>
-        @loader.addClass('gallery-error')
-      this
-
-    Slide::addTags = ->
-      if @imgLoad and @attached
-        @ctrl.addTags(@data.tags, @loader)
-
-    Slide::attach = (parent)->
-      @attached = yes
-      @addTags()
-      parent.empty()
-      parent.append @element
-
-    Slide::detach = ()->
-      @attached = no
-      @loader.empty() if @imgLoad
-      @element.remove()
-
-    Slide::onShow = ()->
-      @element.addClass('active')
-
-    Slide::onHide = ()->
-      @element.removeClass('active')
-
-    Slide::onResize = ->
-      @loader.css getLoaderDimension(@data)
-
-    Slide
-
-  )
+angular.module( 'Slide', [])
   .factory('Page', (PrefixedStyle, PrefixedEvent)->
     class Page
       constructor: (@id, @parent, @left, @right) ->
@@ -102,13 +25,14 @@ angular.module( 'NewGallery', [])
 
     Page
   )
-  .controller('SlideCtrl', ($scope, Slide, $timeout)->
+  .controller('SlideCtrl', ($scope, $timeout)->
     console.log 'SlideCtrl'
     objects = null
     current = null
     page = null
     ctrl = this
     slideView = null
+    Slide = null
     range = 3
 
     @getCurrentIndex = ()->
@@ -122,8 +46,10 @@ angular.module( 'NewGallery', [])
       if current.right
         slideView.next()
 
-    @initSlides = (objs, index)->
+    @initSlides = (factory, objs, index)->
+
       console.log 'initSlides'
+      Slide = factory
       slideView = $scope.slideView
       objects = objs
       current = new Slide(this, objs[index], index)
@@ -218,11 +144,11 @@ angular.module( 'NewGallery', [])
       for tag in tags
         scope = $scope.$new()
         scope.tag = tag
-        #parent.append $compile('<image-tag></image-tag>')(scope)
-      return
+      #parent.append $compile('<image-tag></image-tag>')(scope)
+    return
     this
   )
-  .directive('slideBox', (Page, Swipe, PrefixedStyle, PrefixedEvent, $timeout)->
+  .directive('slideView', (Page, Swipe, PrefixedStyle, PrefixedEvent, $timeout)->
     controller: 'SlideCtrl'
     link: (scope, element, attr, ctrl) ->
 
