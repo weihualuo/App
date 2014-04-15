@@ -157,9 +157,9 @@ angular.module( 'ui.popup', [])
         else
           deferred.reject()
         scope.$destroy()
-        # clear transition on element first
-        PrefixedStyle element[0], 'transition', null
+        #console.log 'leaving'
         $animate.leave element, ->
+          #console.log 'leaved'
           parent.remove() if backdrop
 
       angularDomEl = angular.element(template)

@@ -105,11 +105,11 @@ angular.module( 'myWidget', [])
           setAnimate('none')
         onMove: (offset)->
           updatePosition offset
-        onEnd: (offset, aniRatio)->
-          if aniRatio
+        onEnd: (offset, ratio)->
+          if ratio
             snaping = true
-            time = aniRatio * 0.3
-            setAnimate "all #{time}s ease-in"
+            time = Math.round(ratio * 300)
+            setAnimate "all #{time}ms ease-in"
             updatePosition offset
           else
             resetState()
