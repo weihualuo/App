@@ -1,5 +1,5 @@
 
-angular.module('app.photo', ['NewGallery'])
+angular.module('app.photo', ['NewGallery', 'Slide'])
   .directive('rectTransform', (PrefixedStyle, PrefixedEvent)->
 
     setTransform = (el, rect)->
@@ -29,7 +29,7 @@ angular.module('app.photo', ['NewGallery'])
           scope.$emit 'rect.destroyed'
 
   )
-  .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane)->
+  .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane, ImageSlide)->
     #extend from ListCtrl
     $controller('ListCtrl', {$scope:$scope, name: 'photos'})
     angular.extend($scope, Nav.data())
@@ -56,8 +56,8 @@ angular.module('app.photo', ['NewGallery'])
     slideCtrl = null
     $scope.$on 'scroll.reload', ->
       slideCtrl = $scope.slideCtrl
-      slideCtrl.initSlides($scope.objects, $scope.index)
-      $timeout (->slideCtrl.onSlide()), 100
+      slideCtrl.initSlides(ImageSlide, $scope.objects, $scope.index)
+
 
     onImageInfo = (index)->
       TogglePane
@@ -79,6 +79,7 @@ angular.module('app.photo', ['NewGallery'])
           #ctrl.pause()
           onImageInfo(slideCtrl.getCurrentIndex())
         when 'close'
+          $scope.displayCtrl = no
           $scope.$emit 'slide.close', slideCtrl.getCurrentIndex()
         when 'prev'
           slideCtrl.prev()
@@ -86,10 +87,5 @@ angular.module('app.photo', ['NewGallery'])
           slideCtrl.next()
         when 'slide'
           $scope.displayCtrl = not $scope.displayCtrl
-          $scope.$broadcast('ctrl.click')
-
-
-
-
 
   )
