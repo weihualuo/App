@@ -14,13 +14,14 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'PhotoCtrl'
       templateUrl: 'home/photos.tpl.html'
       zIndex: 1
+      cache: yes
     )
-    .when( '/photos/:id',
+    .when( '/photoDetail',
       name: 'photoDetail'
       controller: 'PhotoDetailCtrl'
       templateUrl: 'photo/photoDetail.tpl.html'
-      class: 'no-sub no-header no-side'
-      zIndex: 1
+      class: 'no-background no-header no-side'
+      zIndex: 2
       
     )
     .when( '/products'
@@ -28,6 +29,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'ProductCtrl'
       templateUrl: 'home/products.tpl.html'
       zIndex: 1
+      cache: yes
+
     )
     .when( '/products/:id'
       name: 'productDetail'
@@ -41,12 +44,14 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'ProsCtrl'
       templateUrl: 'home/pros.tpl.html'
       zIndex: 1
+      cache: yes
       )
     .when( '/ideabooks'
       name: 'ideabooks'
       controller: 'IdeabookCtrl'
       templateUrl: 'home/ideabooks.tpl.html'
       zIndex: 1
+      cache: yes
     )
     .when( '/advice'
       name: 'advice'
@@ -54,6 +59,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       templateUrl: 'home/advice.tpl.html'
       zIndex: 1
       class: 'no-sub'
+      cache: yes
     )
     .when( '/my'
       name: 'my'
@@ -61,6 +67,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       templateUrl: 'home/my.tpl.html'
       zIndex: 1
       class: 'no-sub'
+      cache: yes
     )
     .otherwise(
       redirectTo: '/photos'
@@ -86,7 +93,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     productDetail:
       title: '产品详情'
     photoDetail:
-      noHeader: true
+      noHeader: false
   )
   .run( ($location, $document)->
     # simulate html5Mode
@@ -143,6 +150,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       $scope.pos = name
       $scope.env = Env[name]
       $scope.paramUpdateFlag++
+
+    $scope.$on 'envUpdate', ->
+      $scope.env = Env[$route.current.name]
 
     $scope.onSideMenu = (name)->
       Nav.go name, null, $scope.updateFilters(name)

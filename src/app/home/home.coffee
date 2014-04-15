@@ -23,11 +23,26 @@ angular.module('app.home', ['restangular'])
       element.triggerHandler 'dynamic.add'
 
   )
-  .controller( 'PhotoCtrl', ($scope, $controller, $timeout, $filter, Many, Popup, Nav, TogglePane, MESSAGE) ->
+  .controller( 'PhotoCtrl', ($scope, $controller, $element, $timeout, $filter, Many, Popup, Nav, TogglePane, MESSAGE) ->
     console.log 'PhotoCtrl'
 
     #extend from ListCtrl
     $controller('ListCtrl', {$scope:$scope, name: 'photos'})
+
+    goDetail = (param, hash)->
+      TogglePane
+        id: 'imageView'
+        template: "<gallery-view></gallery-view>"
+        hash: hash
+        parent: $element
+        backdrop: false
+        scope: $scope
+        locals: param
+
+#    $scope.$on '$viewContentLoaded', ->
+#      hash = Nav.hash()
+#      if hash and index = parseInt(hash)
+#        goDetail index:index
 
     $scope.onImageInfo = (index)->
       TogglePane
@@ -45,7 +60,12 @@ angular.module('app.home', ['restangular'])
       if item.tagName is 'IMG'
         item = item.parentNode
         obj = angular.element(item).scope().obj
-        Nav.go('photoDetail', id:obj.id)
+        data =
+          rect: item.getBoundingClientRect()
+          index: $scope.objects.indexOf(obj)
+          listScope: $scope
+        #goDetail data, data.index
+        Nav.go('photoDetail', null, null, null, data)
         return
 
         TogglePane

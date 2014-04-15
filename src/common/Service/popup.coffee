@@ -108,7 +108,7 @@ angular.module( 'ui.popup', [])
       end: hidePopup
   )
   .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $document, $window, PrefixedStyle)->
-    (locals, parentScope, template, hash, url, backdrop)->
+    (locals, parentScope, template, hash, url, backdrop, parent)->
 
       deferred = $q.defer()
 
@@ -141,11 +141,11 @@ angular.module( 'ui.popup', [])
       scope.$on 'destroyed', ->scope.$close()
 
       body = $document[0].body
-      if !backdrop
-        parent = angular.element(body)
-      else
-        parent = $compile(backdrop)(scope)
-        body.appendChild(parent[0])
+      parent ?= angular.element(body)
+      if !!backdrop
+        backdrop = $compile(backdrop)(scope)
+        parent.append(backdrop)
+        parent = backdrop
         scope.onClose = (e)->
           target = e.target || e.srcElement
           if target is parent[0]
@@ -195,12 +195,12 @@ angular.module( 'ui.popup', [])
   .factory('TogglePane', (Modal)->
     panes = {}
     (param)->
-      {id, locals, scope, template, url, hash, backdrop, success, fail, always} = param
+      {id, locals, scope, template, url, hash, backdrop, parent, success, fail, always} = param
       if panes[id]
         panes[id].end()
         panes[id] = null
       else if id
-        panes[id] = Modal locals, scope, template, hash, url, backdrop
+        panes[id] = Modal locals, scope, template, hash, url, backdrop, parent
         panes[id].promise.then(success, fail).finally ->
           panes[id] = null
           if always then always()

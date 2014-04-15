@@ -61,7 +61,12 @@ function ngCachingViewFactory( $cacheFactory,  $route,   $animate, Nav) {
 
         function cleanupLastView() {
           if (currentScope) {
-            disconnectScope(currentScope);
+            if(currentScope.$cache){
+              disconnectScope(currentScope);
+            }
+            else{
+              currentScope.$destroy();
+            }
             currentScope = null;
           }
           if(currentElement) {
@@ -126,6 +131,7 @@ function ngCachingViewFactory( $cacheFactory,  $route,   $animate, Nav) {
                   currentScope.$param = $route.current.params;
                   currentScope.$broadcast('$scopeUpdate');
               }
+              console.log($route);
               return;
           }
           currentUrl = url;
@@ -157,24 +163,27 @@ function ngCachingViewFactory( $cacheFactory,  $route,   $animate, Nav) {
               var clone = $transclude(newScope, function(clone) {});
 
               changeView(clone);
-              //To avoid scope be detached from element
-              clone.remove = function(){
-                  var i, node, parent;
-                  for (i = 0; i < this.length; i++) {
-                      node = this[i];
-                      parent = node.parentNode;
-                      if (parent) {
-                          parent.removeChild(node);
-                      }
-                  }
-              };
+
               currentScope = current.scope = newScope;
               currentScope.$param = current.params;
               currentScope.$broadcast('$scopeUpdate');
               currentScope.$emit('$viewContentLoaded');
               currentScope.$eval(onloadExp);
 
-              if (url){
+              if (url && current.cache){
+
+                  currentScope.$cache = true;
+                  //To avoid scope be detached from element
+                  clone.remove = function(){
+                      var i, node, parent;
+                      for (i = 0; i < this.length; i++) {
+                          node = this[i];
+                          parent = node.parentNode;
+                          if (parent) {
+                              parent.removeChild(node);
+                          }
+                      }
+                  };
                   viewCache.put(url, clone);
               }
 
@@ -216,6 +225,7 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
             if (current.controller) {
                 locals.$scope = scope;
+                locals.$element = $element;
                 var controller = $controller(current.controller, locals);
                 if (current.controllerAs) {
                     scope[current.controllerAs] = controller;

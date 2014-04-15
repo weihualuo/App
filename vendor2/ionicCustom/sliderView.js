@@ -27,11 +27,11 @@ ionic.views.Slider = ionic.views.View.inherit({
     };
 
 
-    var container = options.el;
+    var container = options.el.parentNode;
 
     // quit if no root element
     if (!container) return;
-    var element = container.children[0];
+    var element = options.el;
     var slides, slidePos, width, length;
     options = options || {};
     var index = parseInt(options.startSlide, 10) || 0;
@@ -72,8 +72,10 @@ ionic.views.Slider = ionic.views.View.inherit({
         slide.setAttribute('data-index', pos);
 
         if (browser.transitions) {
-          slide.style.left = (pos * -width) + 'px';
           move(pos, index > pos ? -width : (index < pos ? width : 0), 0);
+        }
+        else{
+
         }
 
       }
@@ -257,6 +259,7 @@ ionic.views.Slider = ionic.views.View.inherit({
           case 'touchmove': this.move(event); break;
           case 'mousemove': this.move(event); break;
           case 'touchend': offloadFn(this.end(event)); break;
+          case 'touchcancel': offloadFn(this.end(event)); break;
           case 'mouseup': offloadFn(this.end(event)); break;
           case 'webkitTransitionEnd':
           case 'msTransitionEnd':
@@ -295,6 +298,7 @@ ionic.views.Slider = ionic.views.View.inherit({
         if(browser.touch) {
           element.addEventListener('touchmove', this, false);
           element.addEventListener('touchend', this, false);
+          element.addEventListener('touchcancel', this, false);
         } else {
           element.addEventListener('mousemove', this, false);
           element.addEventListener('mouseup', this, false);
@@ -439,6 +443,7 @@ ionic.views.Slider = ionic.views.View.inherit({
         if(browser.touch) {
           element.removeEventListener('touchmove', events, false)
           element.removeEventListener('touchend', events, false)
+          element.removeEventListener('touchcancel', events, false)
         } else {
           element.removeEventListener('mousemove', events, false)
           element.removeEventListener('mouseup', events, false)

@@ -58,16 +58,24 @@ angular.module( 'Service', [])
     viewStack = []
     current = null
     currentName = null
+    data = null
 
     Nav =
       push: (view)-> viewStack.push view
       pop: -> viewStack.pop()
       set: (view)-> current = view
+      data: -> data
 
-      go: (name, param, search, hash)->
-        name ?= currentName
+
+      hash: (hash, _data_)->
+        data = _data_
+        $location.hash hash
+
+      go: (name, param, search, hash, _data_)->
         route = _.find $route.routes, name:name
         replace = no
+        data = _data_
+
         if route
           currentName = name
           oldIndex = if current then current.data('$zIndex') or 0 else 0
@@ -82,7 +90,6 @@ angular.module( 'Service', [])
               #Should replace the current view
             else
               replace = yes
-
 
           #View is not in stack
           path = route.originalPath
