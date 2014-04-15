@@ -32,12 +32,14 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
   )
   .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane, ImageSlide)->
     #extend from ListCtrl
-    $controller('ListCtrl', {$scope:$scope, name: 'photos'})
     angular.extend($scope, Nav.data())
     $scope.index ?= 0
-    if listScope = $scope.listScope
-      $scope.scrollView = listScope.scrollView
+    if $scope.scope
+      Service.inheritScope($scope, $scope.scope)
+    else
+      $scope.listCtrl =  $controller('ListCtrl', {$scope:$scope, name: 'photos'})
 
+    #Set env to hide or show side & header
     env = Env.photoDetail
     env.noHeader = false
     env.noSide = false
@@ -51,13 +53,19 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       env.noSide = false
       $scope.$emit('envUpdate')
 
+
     $scope.$on 'rect.destroyed', ->
       Nav.go('photos')
 
     slideCtrl = null
-    $scope.$on 'scroll.reload', ->
+    initSlide = ->
       slideCtrl = $scope.slideCtrl
       slideCtrl.initSlides(ImageSlide, $scope.objects, $scope.index)
+
+    if $scope.objects
+      $scope.objects.$promise.then initSlide
+    else
+      $scope.$on 'scroll.reload', initSlide
 
 
     onImageInfo = (index)->

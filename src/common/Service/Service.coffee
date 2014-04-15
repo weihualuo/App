@@ -51,7 +51,37 @@ angular.module( 'Service', [])
       #Return a promise
       deferred.promise
 
+    disconnectScope : (scope)->
+      parent = scope.$parent
+      if (parent.$$childHead is scope)
+        parent.$$childHead = scope.$$nextSibling
+      
+      if (parent.$$childTail is scope)
+        parent.$$childTail = scope.$$prevSibling
+      
+      if (scope.$$prevSibling)
+        scope.$$prevSibling.$$nextSibling = scope.$$nextSibling
+      
+      if (scope.$$nextSibling)
+        scope.$$nextSibling.$$prevSibling = scope.$$prevSibling
+      
+      scope.$$nextSibling = scope.$$prevSibling = null
 
+    reconnectScope: (scope)->
+      child = scope
+      parent = child.$parent
+      child.$$prevSibling = parent.$$childTail
+      if (parent.$$childHead)
+        parent.$$childTail.$$nextSibling = child
+        parent.$$childTail = child
+      else
+        parent.$$childHead = parent.$$childTail = child
+
+    inheritScope : (child, parent)->
+      @disconnectScope(child)
+      child.$parent = parent
+      child.__proto__ = parent
+      @reconnectScope(child)
   )
   .factory('Nav', ($route, $location)->
 

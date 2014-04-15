@@ -27,11 +27,9 @@ angular.module('app.home', ['restangular'])
     console.log 'PhotoCtrl'
 
     #extend from ListCtrl
-    $controller('ListCtrl', {$scope:$scope, name: 'photos'})
-
+    $scope.listCtrl =  $controller('ListCtrl', {$scope:$scope, name: 'photos'})
 
     $scope.onImageView = (e)->
-
       #Delegate mode in large list
       item = e.target
       if item.tagName is 'IMG'
@@ -40,8 +38,7 @@ angular.module('app.home', ['restangular'])
         data =
           rect: item.getBoundingClientRect()
           index: $scope.objects.indexOf(obj)
-          listScope: $scope
-        #goDetail data, data.index
+          scope: $scope
         Nav.go('photoDetail', null, null, null, data)
         return
 

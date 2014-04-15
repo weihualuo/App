@@ -57,6 +57,7 @@ angular.module( 'NewGallery', [])
           scope = @scope.$new()
           scope.tag = tag
           @loader.append $compile('<image-tag></image-tag>')(scope)
+      null
 
     Slide::attach = (parent)->
       @attached = yes
