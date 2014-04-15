@@ -14,7 +14,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       if scope.rect
         setTransform raw, scope.rect
         element.ready ->
-          PrefixedStyle raw, 'transition', 'all ease-in 300ms'
+          PrefixedStyle raw, 'transition', 'all 300ms ease-in'
           PrefixedStyle raw, 'transform', null
 
       scope.$on 'slide.close', (e, index)->
@@ -87,5 +87,6 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           slideCtrl.next()
         when 'slide'
           $scope.displayCtrl = not $scope.displayCtrl
+          $scope.$broadcast('slide.click')
 
   )

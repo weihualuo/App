@@ -99,11 +99,10 @@ angular.module( 'NewGallery', [])
           element.parent().append view
         return
 
-      element.ready ->
-        element.parent().on 'click', ->
-          if view
-            view.remove()
-            view = null
+      scope.$on 'slide.click', ->
+        if view
+          view.remove()
+          view = null
   )
   .controller('tagController', ($scope, Many, ImageUtil)->
 
