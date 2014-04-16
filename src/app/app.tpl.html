@@ -1,6 +1,6 @@
 
 
-<header class="bar bar-header bar-dark fade-to-hide" ng-hide="env.noHeader">
+<header class="bar bar-header bar-dark fade-to-hide" ng-class="{'fade-to-top': env.noHeader}">
     <button class="button button-clear icon ion-navicon"> 我的家居 </button>
     <h1 class="title">{{env.title}}</h1>
     <button class="button button-clear"> {{env.rightText}} </button>
@@ -28,4 +28,4 @@
 
 <div ng-caching-view class="content-view res-has-side"></div>
 
-<ul class="side-pane res-side-pane fade-to-hide" include="modal/sideMenu.tpl.html" ng-hide="env.noSide"></ul>
+<ul class="side-pane res-side-pane" include="modal/sideMenu.tpl.html" ng-class="{'fade-to-left': env.noSide}"></ul>

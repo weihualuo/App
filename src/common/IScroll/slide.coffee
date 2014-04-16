@@ -244,6 +244,7 @@ angular.module( 'Slide', [])
         onStart: onStart
         onMove: onMove
         onEnd: onEnd
+        margin: 100
 
       scope.slideCtrl = ctrl
       scope.slideView =

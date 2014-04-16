@@ -94,6 +94,7 @@
   }
 }
 
+@ctrlWidth: 60px;
 .gallery-controls{
   > span{
     display: inherit;
@@ -109,13 +110,14 @@
   > .close {
     top: 15px;
     right: 15px;
-    width: 60px;
+    width: @ctrlWidth;
     font-size: @icon-xl;
   }
 
   > .info {
     right: 15px;
     bottom: 15px;
+    width: @ctrlWidth;
     font-size: @icon-xl;
   }
 
@@ -123,13 +125,13 @@
     right: 15px;
     bottom: 15px;
     font-size: @icon-large;
-    width: 60px;
+    width: @ctrlWidth;
     line-height: 40px;
   }
 
   >.prev, >.next{
     top: 50%;
-    width: 40px;
+    width: @ctrlWidth;
     height: 40px;
     margin-top: -20px;
     font-size: 40px;
