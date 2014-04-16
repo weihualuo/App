@@ -149,7 +149,7 @@ angular.module('app.utils', [])
         else
           element.removeClass 'active'
   )
-  .directive('rectTransform', (PrefixedStyle, PrefixedEvent)->
+  .directive('rectTrans', (PrefixedStyle, PrefixedEvent)->
 
     setTransform = (el, rect)->
       offsetX = rect.left+rect.width/2-window.innerWidth/2
@@ -158,23 +158,20 @@ angular.module('app.utils', [])
       ratioY = rect.height/window.innerHeight
       PrefixedStyle el, 'transform', "translate3d(#{offsetX}px, #{offsetY}px, 0) scale3d(#{ratioX}, #{ratioY}, 0)"
 
-    (scope, element)->
+    (scope, element, attr)->
       raw = element[0]
-      if scope.rect
-        setTransform raw, scope.rect
+      if rect = scope[attr.rectTrans]
+        setTransform raw, rect
         element.ready ->
           PrefixedStyle raw, 'transition', 'all 300ms ease-in'
           PrefixedStyle raw, 'transform', null
 
-      scope.$on 'slide.close', (e, index)->
-        if scope.scrollView
-          rect = scope.scrollView.getItemRect(index)
-        else
-          rect =
-            left: window.innerWidth/2 - 100
-            top: window.innerHeight/2 -100
-            width: 200
-            height: 200
+      scope.transformer =  (rect, callback)->
+        rect ?=
+          left: window.innerWidth/2 - 100
+          top: window.innerHeight/2 -100
+          width: 200
+          height: 200
 
         PrefixedStyle raw, 'transition', 'all ease-in 300ms'
         #TODO must use a timeout, why?
@@ -182,5 +179,5 @@ angular.module('app.utils', [])
         PrefixedEvent element, "TransitionEnd", ->
           console.log "end"
           PrefixedStyle raw, 'transition', null
-          scope.$emit 'rect.destroyed'
+          callback?()
   )

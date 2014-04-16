@@ -19,14 +19,18 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       env.noSide = true
       $scope.$emit('envUpdate')
     ), 1000
-    $scope.$on 'slide.close', ->
+
+    $scope.onClose = (index)->
       env.noHeader = false
       env.noSide = false
       $scope.$emit('envUpdate')
 
-
-    $scope.$on 'rect.destroyed', ->
-      Nav.go('photos')
+      close = -> Nav.go('photos')
+      if trans = $scope.transformer
+        rect = $scope.scrollView?.getItemRect(index)
+        trans(rect, close)
+      else
+        close()
 
     slideCtrl = null
     initSlide = ->
@@ -59,7 +63,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           onImageInfo(slideCtrl.getCurrentIndex())
         when 'close'
           $scope.displayCtrl = no
-          $scope.$emit 'slide.close', slideCtrl.getCurrentIndex()
+          $scope.onClose(slideCtrl.getCurrentIndex())
         when 'prev'
           slideCtrl.prev()
         when 'next'
