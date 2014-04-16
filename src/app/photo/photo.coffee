@@ -1,35 +1,6 @@
 
 angular.module('app.photo', ['NewGallery', 'Slide'])
-  .directive('rectTransform', (PrefixedStyle, PrefixedEvent)->
 
-    setTransform = (el, rect)->
-      offsetX = rect.left+rect.width/2-window.innerWidth/2
-      offsetY = rect.top+rect.height/2-window.innerHeight/2
-      ratioX = rect.width/window.innerWidth
-      ratioY = rect.height/window.innerHeight
-      PrefixedStyle el, 'transform', "translate3d(#{offsetX}px, #{offsetY}px, 0) scale3d(#{ratioX}, #{ratioY}, 0)"
-
-    (scope, element)->
-      raw = element[0]
-      if scope.rect
-        setTransform raw, scope.rect
-        element.ready ->
-          PrefixedStyle raw, 'transition', 'all 300ms ease-in'
-          PrefixedStyle raw, 'transform', null
-
-      scope.$on 'slide.close', (e, index)->
-        if scope.scrollView
-          PrefixedStyle raw, 'transition', 'all ease-in 300ms'
-          #TODO must use a timeout, why?
-          setTimeout (->setTransform raw, scope.scrollView.getItemRect(index)), 50
-          PrefixedEvent element, "TransitionEnd", ->
-            console.log "end"
-            PrefixedStyle raw, 'transition', null
-            scope.$emit 'rect.destroyed'
-        else
-          scope.$emit 'rect.destroyed'
-
-  )
   .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane, ImageSlide)->
     #extend from ListCtrl
     angular.extend($scope, Nav.data())
