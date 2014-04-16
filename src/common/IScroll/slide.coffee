@@ -23,6 +23,10 @@ angular.module( 'Slide', [])
       setAnimate: (prop)->
         PrefixedStyle @element[0], 'transition', prop
 
+      content: (slide)->
+        @element.empty()
+        @element.append slide.element
+
     Page
   )
   .controller('SlideCtrl', ($scope, $timeout)->
@@ -54,7 +58,8 @@ angular.module( 'Slide', [])
       objects = objs
       current = new Slide($scope, objs[index], index)
       page = slideView.getCurrentPage()
-      current.attach(page.element)
+      page.content current
+      current.onAttach()
       $timeout (=>@onSlide()), 10
 
     @onSlide = (x)->
@@ -72,7 +77,8 @@ angular.module( 'Slide', [])
         @loadNeighbors(current)
 
         if ref = current.left
-          ref.attach(page.left.element)
+          page.left.content ref
+          ref.onAttach()
         #console.log "prepend", ref.index
 
       else if x < 0
@@ -86,14 +92,19 @@ angular.module( 'Slide', [])
         @loadNeighbors(current)
 
         if ref = current.right
-          ref.attach(page.right.element, 1)
+          page.right.content ref
+          ref.onAttach()
         #console.log "append", ref.index
 
         # Init load, postpone neighbors loading after first slide entered
       else
         @loadNeighbors(current)
-        current.left.attach(page.left.element) if current.left
-        current.right.attach(page.right.element, 1) if current.right
+        if ref = current.left
+          page.left.content ref
+          ref.onAttach()
+        if ref = current.right
+          page.right.content ref
+          ref.onAttach()
 
       current.onShow()
       if current.left and current.right
@@ -141,6 +152,7 @@ angular.module( 'Slide', [])
       # Remove slide out of range
       next.right = null
 
+    #slide object may not in DOM
     onResize = ->
       current.onResize()
       next = current

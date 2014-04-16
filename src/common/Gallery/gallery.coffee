@@ -38,6 +38,7 @@ angular.module( 'NewGallery', [])
     Slide = (@scope, @data, @index)->
       #console.log "new slide", index, position
       @width = null
+      @tagEl = []
       @element = protoElement.clone()
       @img = createImage ImageUtil.best(data)
       @loader = createLoader(data)
@@ -53,17 +54,21 @@ angular.module( 'NewGallery', [])
 
     Slide::addTags = ->
       if @imgLoad and @attached
+        @tagEl = []
         for tag in @data.tags
           scope = @scope.$new()
           scope.tag = tag
-          @loader.append $compile('<image-tag></image-tag>')(scope)
+          el = $compile('<image-tag></image-tag>')(scope)
+          #slide is on show
+          if @element.hasClass('active')
+            el.addClass('active')
+          @tagEl.push el
+          @loader.append el
       null
 
-    Slide::attach = (parent)->
+    Slide::onAttach = ()->
       @attached = yes
       @addTags()
-      parent.empty()
-      parent.append @element
 
     Slide::detach = ()->
       @attached = no
@@ -72,9 +77,13 @@ angular.module( 'NewGallery', [])
 
     Slide::onShow = ()->
       @element.addClass('active')
+      for tag in @tagEl
+        tag.addClass('active')
 
     Slide::onHide = ()->
       @element.removeClass('active')
+      for tag in @tagEl
+        tag.removeClass('active')
 
     Slide::onResize = ->
       @loader.css getLoaderDimension(@data)

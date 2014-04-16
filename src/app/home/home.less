@@ -89,7 +89,9 @@
   font-size: @icon-large;
   .transform-origin(left top);
   .rotateZ(45deg);
-  .animation(shaking 1s linear 0 2);
+  &.active{
+    .animation(shaking 1s linear 0 2);
+  }
 }
 
 .gallery-controls{
