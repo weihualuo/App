@@ -42,10 +42,6 @@ angular.module('app.home', ['restangular'])
         Nav.go('photoDetail', null, null, null, data)
         return
 
-    $scope.$on 'gallery.slide', (e, index, x)->
-      if $scope.haveMore and index+6 > $scope.objects.length
-        $scope.$emit 'scroll.moreStart'
-
   )
   .directive('productThumb', (ImageUtil)->
 

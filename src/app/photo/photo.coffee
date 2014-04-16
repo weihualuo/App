@@ -32,6 +32,10 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       else
         close()
 
+    $scope.$on 'gallery.slide', (e, index)->
+      if $scope.haveMore and index+6 > $scope.objects.length
+        $scope.$emit 'scroll.moreStart'
+
     slideCtrl = null
     initSlide = ->
       slideCtrl = $scope.slideCtrl
