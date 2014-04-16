@@ -23,7 +23,7 @@ angular.module('app.home', ['restangular'])
       element.triggerHandler 'dynamic.add'
 
   )
-  .controller( 'PhotoCtrl', ($scope, $controller, $element, $timeout, $filter, Many, Popup, Nav, TogglePane, MESSAGE) ->
+  .controller( 'PhotoCtrl', ($scope, $controller, $element, $timeout, $filter, Many, Popup, Nav) ->
     console.log 'PhotoCtrl'
 
     #extend from ListCtrl
@@ -39,7 +39,11 @@ angular.module('app.home', ['restangular'])
           rect: item.getBoundingClientRect()
           index: $scope.objects.indexOf(obj)
           scope: $scope
-        Nav.go('photoDetail', null, null, null, data)
+        Nav.go
+          name: 'photoDetail'
+          data: data
+          push: yes
+          inherit: yes
         return
 
   )
@@ -86,7 +90,10 @@ angular.module('app.home', ['restangular'])
     $controller('ListCtrl', {$scope:$scope, name: 'products'})
 
     $scope.onProductView = (e, obj)->
-      Nav.go('productDetail', id:obj.id)
+      Nav.go
+        name:'productDetail'
+        param: id:obj.id
+        push: yes
   )
   .controller( 'ProsCtrl', ($scope, $controller, Nav)->
     #extend from ListCtrl

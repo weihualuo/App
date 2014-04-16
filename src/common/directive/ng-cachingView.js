@@ -117,8 +117,8 @@ function ngCachingViewFactory( $cacheFactory,  $route,   $animate, Nav) {
 
         function update() {
 
-          //console.log($route);
-          //window.$route = $route;
+          console.log($route);
+          window.$route = $route;
 
           var locals = $route.current && $route.current.locals,
               template = locals && locals.$template;

@@ -5,11 +5,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     #extend from ListCtrl
     angular.extend($scope, Nav.data())
     $scope.index ?= 0
-    if $scope.scope
-      Service.inheritScope($scope, $scope.scope)
-    else
-      $scope.listCtrl =  $controller('ListCtrl', {$scope:$scope, name: 'photos'})
-
+    $scope.listCtrl ?=  $controller('ListCtrl', {$scope:$scope, name: 'photos'})
     slideCtrl = null
 
     #Set env to hide or show side & header
@@ -27,7 +23,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       env.noSide = false
       $scope.$emit('envUpdate')
 
-      close = -> Nav.go('photos')
+      close = -> Nav.back({name:'photos'})
       if trans = $scope.transformer
         rect = $scope.scrollView?.getItemRect(index)
         trans(rect, close)
@@ -40,7 +36,10 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
     $scope.$on 'tag.view', (e, tag)->
       slideCtrl.enterBackground()
-      Nav.go 'productDetail', id:tag.product
+      Nav.go
+        name: 'productDetail'
+        param: id:tag.product
+        push: yes
 
     initSlide = ->
       slideCtrl = $scope.slideCtrl

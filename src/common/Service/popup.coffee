@@ -1,5 +1,5 @@
 
-angular.module( 'ui.popup', [])
+angular.module( 'Popup', [])
 
   .factory('Popup', ($rootScope, $location, $compile, $animate, $timeout, $q, $document, MESSAGE)->
 

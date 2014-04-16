@@ -83,61 +83,6 @@ angular.module( 'Service', [])
       child.__proto__ = parent
       @reconnectScope(child)
   )
-  .factory('Nav', ($route, $location)->
-
-    viewStack = []
-    current = null
-    currentName = null
-    data = null
-
-    Nav =
-      push: (view)-> viewStack.push view
-      pop: -> viewStack.pop()
-      set: (view)-> current = view
-      data: -> data
-
-
-      hash: (hash, _data_)->
-        data = _data_
-        $location.hash hash
-
-      back: (name)->
-        if viewStack.length
-          history.back()
-        else if name
-          @go name
-
-      go: (name, param, search, hash, _data_)->
-        route = _.find $route.routes, name:name
-        replace = no
-        data = _data_
-
-        if route
-          currentName = name
-          oldIndex = if current then current.data('$zIndex') or 0 else 0
-          newIndex = route.zIndex
-          #Not a forward navigation
-          if newIndex <= oldIndex
-            last = viewStack[viewStack.length-1]
-            #Already in the viewstack
-            if last and last.data('$templateUrl') is route.templateUrl
-              history.back()
-              return
-              #Should replace the current view
-            else
-              replace = yes
-
-          #View is not in stack
-          path = route.originalPath
-          _.each param, (value, key)->
-            re = new RegExp(':'+key)
-            path = path.replace(re, value)
-
-          $location.replace() if replace
-          $location.path path
-          $location.search search or {}
-          $location.hash hash or null
-  )
   .factory('PrefixedEvent', ->
     pfx = ["webkit", "moz", "MS", "o", ""]
     ($element, type, callback)->

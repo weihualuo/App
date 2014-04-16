@@ -1,6 +1,6 @@
 
 
-angular.module( 'myWidget', [])
+angular.module( 'Widget', [])
   .directive( 'fileSelect', ->
     restrict: 'E'
     replace: true

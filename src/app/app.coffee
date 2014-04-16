@@ -1,7 +1,7 @@
 angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
                          'templates-app', 'templates-common',
                          'Model', 'app.utils', 'app.home', 'app.photo', 'app.detail', 'app.discussion',
-                         'myWidget', 'ngCachingView', 'Service', 'ui.popup', 'Scroll'
+                         'CacheView', 'Service', 'Popup', 'Scroll', 'Widget'
                          'MESSAGE'
 ])
   .config( ($routeProvider, $compileProvider) ->
@@ -155,7 +155,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       $scope.env = Env[$route.current.name]
 
     $scope.onSideMenu = (name)->
-      Nav.go name, null, $scope.updateFilters(name)
+      Nav.go
+        name:name
+        search: $scope.updateFilters(name)
 
     $scope.toggleFilter = (type)->
 
@@ -178,18 +180,18 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
           selected: $scope.updateFilters(name)[type] or 0
         success: (id)->
           param = $scope.updateFilters(name, type, id)
-          Nav.go name, null, param
+          Nav.go({name:name, search:param})
 
     $scope.onAll = ->
       name = $route.current.name
       param = $scope.updateFilters(name, 0)
-      Nav.go name, null, param
+      Nav.go({name:name, search:param})
 
 
     $scope.onSearch = (se)->
       name = $route.current.name
       param = $scope.updateFilters(name, 'se', se)
-      Nav.go name, null, param
+      Nav.go({name:name, search:param})
       $timeout -> document.activeElement.blur()
 
 
