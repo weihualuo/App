@@ -101,6 +101,12 @@ angular.module( 'Service', [])
         data = _data_
         $location.hash hash
 
+      back: (name)->
+        if viewStack.length
+          history.back()
+        else if name
+          @go name
+
       go: (name, param, search, hash, _data_)->
         route = _.find $route.routes, name:name
         replace = no

@@ -37,7 +37,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'ProductDetailCtrl'
       templateUrl: 'detail/product.tpl.html'
       class: 'popup-in-right no-sub'
-      zIndex: 2
+      zIndex: 3
     )
     .when( '/pros'
       name: 'pros'

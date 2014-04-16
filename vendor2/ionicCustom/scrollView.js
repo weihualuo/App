@@ -403,7 +403,7 @@ var Scroller;
 
             // Get the render update function, initialize event handlers,
             // and calculate the size of the scroll container
-            this.__callback = this.getRenderFn();
+            this.__callback = this.options.callback || this.getRenderFn();
             this.__initEventHandlers();
             this.__createScrollbars();
 

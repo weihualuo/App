@@ -1,5 +1,27 @@
 
 angular.module( 'Scroll', [])
+
+  .directive('zoomable', (PrefixedStyle, Popup)->
+    (scope, element, attr)->
+
+      render = (left, top, zoom)->
+        console.log "render", left, top. zoom
+        Popup.alert "rennder #{zoom}"
+        PrefixedStyle element[0], 'transform', "scale(#{zoom})"
+
+      options =
+        scrollingX: off
+        scrollingY: off
+        zooming: on
+        el: element[0]
+        callback: render
+
+      scope.zoomView = zoomView = new ionic.views.Scroll(options)
+      #Shoud reflow on element ready
+      #Not everyone send a scroll.reload
+      element.ready ->
+        zoomView.resize()
+  )
   .directive('scrollable', ($timeout)->
     (scope, element, attr)->
 

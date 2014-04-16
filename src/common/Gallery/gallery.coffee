@@ -109,10 +109,12 @@ angular.module( 'NewGallery', [])
           element.parent().append view
         return
 
-      scope.$on 'slide.click', ->
+      remove = ->
         if view
           view.remove()
           view = null
+      scope.$on 'slide.click', remove
+      scope.$on 'tag.view', remove
   )
   .controller('tagController', ($scope, Many, ImageUtil)->
 
@@ -126,13 +128,17 @@ angular.module( 'NewGallery', [])
       if not $scope.title then $scope.title = product.title
       if not $scope.desc then $scope.desc = product.desc
 
+    $scope.onClickView = (e)->
+      e.stopPropagation()
+      $scope.$emit('tag.view', $scope.tag)
+
   )
   .directive('tagView', ()->
     restrict: 'E'
     replace: true
     controller: 'tagController'
     template: """
-              <div class="tag-view">
+              <div class="tag-view" ng-click="onClickView($event)">
                 <img ng-src="{{src}}">
                 <h5 class='title'>{{title}}</h5>
                 <p class='desc'>{{desc}}</p>

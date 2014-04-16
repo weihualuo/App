@@ -10,6 +10,8 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     else
       $scope.listCtrl =  $controller('ListCtrl', {$scope:$scope, name: 'photos'})
 
+    slideCtrl = null
+
     #Set env to hide or show side & header
     env = Env.photoDetail
     env.noHeader = false
@@ -36,7 +38,10 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       if $scope.haveMore and index+6 > $scope.objects.length
         $scope.$emit 'scroll.moreStart'
 
-    slideCtrl = null
+    $scope.$on 'tag.view', (e, tag)->
+      slideCtrl.enterBackground()
+      Nav.go 'productDetail', id:tag.product
+
     initSlide = ->
       slideCtrl = $scope.slideCtrl
       slideCtrl.initSlides(ImageSlide, $scope.objects, $scope.index)

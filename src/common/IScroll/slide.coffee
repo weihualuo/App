@@ -50,6 +50,12 @@ angular.module( 'Slide', [])
       if current.right
         slideView.next()
 
+    @enterBackground = ->
+      current.onHide()
+
+    @enterForeground = ->
+      current.onShow()
+
     @initSlides = (factory, objs, index)->
 
       console.log 'initSlides'
