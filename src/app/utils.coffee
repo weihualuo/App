@@ -206,7 +206,6 @@ angular.module('app.utils', [])
 
           transitEnd = (e)->
             if e.target is raw and entering
-              console.log "just it"
               entering = no
               PrefixedStyle raw, 'transition', null
               PrefixedEvent element, "TransitionEnd", transitEnd, off
@@ -227,7 +226,6 @@ angular.module('app.utils', [])
 
           transitEnd = (e)->
             if e.target is raw and leaving
-              console.log "end just it"
               leaving = no
               element.removeClass(transitOutStyle)
               PrefixedStyle raw, 'transition', null

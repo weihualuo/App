@@ -32,10 +32,10 @@ angular.module( 'CacheView', [])
 
       back: (option)->
         if viewStack.length
-          console.log "just history.back"
+          #console.log "just history.back"
           history.back()
         else if option
-          console.log "no stack, go", option.name
+          #console.log "no stack, go", option.name
           @go option
 
       go: (option)->
@@ -57,7 +57,7 @@ angular.module( 'CacheView', [])
         $location.search search or {}
         $location.hash hash or null
 
-        console.log "set url", $location.url(), replace
+        #console.log "set url", $location.url(), replace
 
 
   )
@@ -69,12 +69,12 @@ angular.module( 'CacheView', [])
     removeView = (view)->
       #in case of cached view, scope will be reused
       #i case of non-cached view, scope will be detroyed on remove
-      console.log "removing", view.name, view.scope
+      #console.log "removing", view.name, view.scope
       Service.disconnectScope(view.scope)
       Tansformer.leave(view.element, view.ctrl.transitOut)
 
     enterView = (view, cached)->
-      console.log "enter #{view.name} with cache=#{cached}"
+      #console.log "enter #{view.name} with cache=#{cached}"
       if cached
         Service.reconnectScope(view.scope)
         view.element.removeClass('replaced')
@@ -88,11 +88,11 @@ angular.module( 'CacheView', [])
       popToView: (name, params)->
         ret = false
         if current and current.name is name
-          console.log "nav to same view", name
+          #console.log "nav to same view", name
           ret = true
 
         else if view = _.find(stack, name:name)
-          console.log "view in stack", name, view.name
+          #console.log "view in stack", name, view.name
           removeView(current)
           while current = stack.pop()
             if current isnt view
@@ -105,7 +105,7 @@ angular.module( 'CacheView', [])
           ret = true
 
         if ret and not angular.equals(current.params, params)
-          console.log "param update", current.params, params
+          #console.log "param update", current.params, params
           current.params = params
           current.scope.$broadcast('$scopeUpdate')
         return ret
@@ -114,14 +114,14 @@ angular.module( 'CacheView', [])
         if not current
           current = view
           $element.after(view.element)
-          console.log "enter first view", view.name
+          #console.log "enter first view", view.name
 
         else if Nav.push()
           $animate.addClass(current.element, 'stacked')
           current.scope.$broadcast('enterBackground')
           stack.push(current)
           enterView(view, cached)
-          console.log "push view #{view.name}, stacked #{current.name}"
+          #console.log "push view #{view.name}, stacked #{current.name}"
           current = view
 
         # Replace the current view
@@ -129,7 +129,7 @@ angular.module( 'CacheView', [])
           current.element.addClass('replaced')
           enterView(view, cached)
           removeView(current)
-          console.log "enter #{view.name}, replace #{current.name}"
+          #console.log "enter #{view.name}, replace #{current.name}"
           current = view
 
         current.scope.$broadcast('$scopeUpdate')
@@ -149,36 +149,35 @@ angular.module( 'CacheView', [])
       update = ->
         name = $route.current && $route.current.name
         if not name
-          console.log "no name"
           return
         # if view is in stack, popup to it
         if ViewManager.popToView(name, $route.current.params)
-          console.log "hit stack, return"
+          #console.log "hit stack, return"
           return
 
         # Retrieve the view from cache
         view = viewCache.get(name)
         if view
-          console.log "hit cache"
+          #console.log "hit cache"
           ViewManager.changeView(view, true)
         else
           # scope maybe inherit from anthor view
           parentScope = scope
           if Nav.inherit()
             parentScope = ViewManager.current().scope
-            console.log "scope inherit from", parentScope
+            #console.log "scope inherit from", parentScope
           newScope = parentScope.$new()
 
           # Create a new view
           current = $route.current
           clone = $transclude(newScope, ->)
-          console.log "Create a new view", name, current.params
+          #console.log "Create a new view", name, current.params
           view = new ViewFactory(clone, name, newScope, current.params)
           ViewManager.changeView(view)
 
           #Cache the view
           if current.cache
-            console.log "Put to cache", name
+            #console.log "Put to cache", name
             viewCache.put(name, view)
             #To avoid scope be detached from element
             clone.remove = ()->
@@ -211,7 +210,5 @@ angular.module( 'CacheView', [])
         locals.$element = $element
         scope.$controller = $controller(current.controller, locals)
 
-      console.log current.name, "link"
       link(scope)
-      console.log current.name, "after link"
   )

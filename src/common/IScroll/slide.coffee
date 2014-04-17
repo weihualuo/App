@@ -69,7 +69,7 @@ angular.module( 'Slide', [])
 
     @initSlides = (factory, objs, index)->
 
-      console.log 'initSlides'
+      #console.log 'initSlides'
       Slide = factory
       slideView = $scope.slideView
       objects = objs
@@ -80,7 +80,7 @@ angular.module( 'Slide', [])
       $timeout (=>@onSlide()), 10
 
     @onSlide = (x)->
-      console.log "onSlide"
+      #console.log "onSlide"
       page = slideView.getCurrentPage()
       if x > 0
         #console.log "slide to left"
@@ -196,7 +196,7 @@ angular.module( 'Slide', [])
       current.right.right = current.left
 
       PrefixedEvent element, "TransitionEnd", (e)->
-        console.log "slide end"
+        #console.log "slide end"
         if snaping
           snaping = false
           swiper.setDisable false
@@ -206,7 +206,7 @@ angular.module( 'Slide', [])
         #width maybe vary on resize, onStart is not called when next, prev
         #width = element[0].clientWidth  #emulate a onStart, onMove
         offset = direction*width
-        console.log offset, width, ratio
+        #console.log offset, width, ratio
         if ratio
           time = Math.round ratio * 400
           prop = "all #{time}ms #{timing}"
@@ -236,7 +236,7 @@ angular.module( 'Slide', [])
         current.setAnimate('none')
         current.left.setAnimate('none')
         current.right.setAnimate('none')
-        console.log "start move", x
+        #console.log "start move", x
 
       onMove = (offset)->
         current.updatePosition(offset)
@@ -244,7 +244,7 @@ angular.module( 'Slide', [])
         current.left.updatePosition(offset-width) if offset >= 0
 
       onEnd = (offset, ratio)->
-        console.log "end move", offset, ratio
+        #console.log "end move", offset, ratio
         if offset > 0
           offset = 1
         else if offset < 0
