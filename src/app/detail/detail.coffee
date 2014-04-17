@@ -2,6 +2,8 @@ angular.module('app.detail', [])
 
   .controller( 'ProductDetailCtrl', ($scope, $routeParams, Many, ImageUtil, Popup, Nav) ->
 
+    @transitIn = @transitOut ='from-right'
+
     console.log 'ProductDetailCtrl'
     # Init locals
     collection = Many('products')
@@ -19,6 +21,7 @@ angular.module('app.detail', [])
     $scope.onBack = ->
       Nav.back({name:'products'})
 
+    this
   )
 
 

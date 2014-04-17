@@ -85,10 +85,13 @@ angular.module( 'Service', [])
   )
   .factory('PrefixedEvent', ->
     pfx = ["webkit", "moz", "MS", "o", ""]
-    ($element, type, callback)->
+    ($element, type, callback, isOn=on)->
       for p in pfx
         type = type.toLowerCase() if !p
-        $element.on(p+type, callback)
+        if isOn
+          $element.on(p+type, callback)
+        else
+          $element.off(p+type, callback)
   )
   .factory('PrefixedStyle', ->
     pfx = ["-webkit-", "-moz-", "o", ""]

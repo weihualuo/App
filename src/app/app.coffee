@@ -13,7 +13,6 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       name: 'photos'
       controller: 'PhotoCtrl'
       templateUrl: 'home/photos.tpl.html'
-      zIndex: 1
       cache: yes
     )
     .when( '/photoDetail',
@@ -21,14 +20,12 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'PhotoDetailCtrl'
       templateUrl: 'photo/photoDetail.tpl.html'
       class: 'no-background no-header no-side'
-      zIndex: 2
-      
+            
     )
     .when( '/products'
       name: 'products'
       controller: 'ProductCtrl'
       templateUrl: 'home/products.tpl.html'
-      zIndex: 1
       cache: yes
 
     )
@@ -37,27 +34,24 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'ProductDetailCtrl'
       templateUrl: 'detail/product.tpl.html'
       class: 'popup-in-right no-sub'
-      zIndex: 3
+      cache: yes
     )
     .when( '/pros'
       name: 'pros'
       controller: 'ProsCtrl'
       templateUrl: 'home/pros.tpl.html'
-      zIndex: 1
       cache: yes
       )
     .when( '/ideabooks'
       name: 'ideabooks'
       controller: 'IdeabookCtrl'
       templateUrl: 'home/ideabooks.tpl.html'
-      zIndex: 1
       cache: yes
     )
     .when( '/advice'
       name: 'advice'
       controller: 'AdviceCtrl'
       templateUrl: 'home/advice.tpl.html'
-      zIndex: 1
       class: 'no-sub'
       cache: yes
     )
@@ -65,7 +59,6 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       name: 'my'
       controller: 'MyCtrl'
       templateUrl: 'home/my.tpl.html'
-      zIndex: 1
       class: 'no-sub'
       cache: yes
     )

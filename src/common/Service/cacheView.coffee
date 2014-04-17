@@ -7,6 +7,7 @@ angular.module( 'CacheView', [])
   .factory('ViewFactory', ()->
     class View
       constructor: (@element, @name, @scope, @params) ->
+        @ctrl = @scope.$controller
     View
   )
   .factory('Nav', ($route, $location, viewStack)->
@@ -60,7 +61,7 @@ angular.module( 'CacheView', [])
 
 
   )
-  .factory('ViewManager', (Nav, $animate, Service, viewStack)->
+  .factory('ViewManager', (Nav, $animate, Service, viewStack, Tansformer)->
     current = null
     $element = null
     stack = viewStack
@@ -70,14 +71,14 @@ angular.module( 'CacheView', [])
       #i case of non-cached view, scope will be detroyed on remove
       console.log "removing", view.name, view.scope
       Service.disconnectScope(view.scope)
-      $animate.leave(view.element)
+      Tansformer.leave(view.element, view.ctrl.transitOut)
 
     enterView = (view, cached)->
       console.log "enter #{view.name} with cache=#{cached}"
       if cached
         Service.reconnectScope(view.scope)
         view.element.removeClass('replaced')
-      $animate.enter(view.element, null, current.element)
+      Tansformer.enter(view.element, null, current.element, view.ctrl.transitIn)
 
     api =
       init: (el)-> $element = el

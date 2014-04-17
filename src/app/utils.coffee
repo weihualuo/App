@@ -181,3 +181,62 @@ angular.module('app.utils', [])
           PrefixedStyle raw, 'transition', null
           callback?()
   )
+  .factory('Tansformer', ($timeout, PrefixedStyle, PrefixedEvent)->
+
+    api =
+      enter: (element, parent, after, transitInStyle)->
+        raw = element[0]
+        transition = 'all 300ms ease-in'
+
+        if transitInStyle
+          element.addClass(transitInStyle)
+          PrefixedStyle raw, 'transition', transition
+
+        if after
+          after.after(element)
+        else
+          parent.append(element)
+
+        if transitInStyle
+
+          entering = yes
+          transit = ->
+            element.removeClass(transitInStyle)
+          setTimeout transit, 10
+
+          transitEnd = (e)->
+            if e.target is raw and entering
+              console.log "just it"
+              entering = no
+              PrefixedStyle raw, 'transition', null
+              PrefixedEvent element, "TransitionEnd", transitEnd, off
+
+          PrefixedEvent element, "TransitionEnd", transitEnd
+
+      leave: (element, transitOutStyle)->
+        raw = element[0]
+        transition = 'all 300ms ease-in'
+
+        if transitOutStyle
+
+          leaving = yes
+          PrefixedStyle raw, 'transition', transition
+          transit = ->
+            element.addClass(transitOutStyle)
+          setTimeout transit, 10
+
+          transitEnd = (e)->
+            if e.target is raw and leaving
+              console.log "end just it"
+              leaving = no
+              element.removeClass(transitOutStyle)
+              PrefixedStyle raw, 'transition', null
+              PrefixedEvent element, "TransitionEnd", transitEnd, off
+              element.remove()
+
+          PrefixedEvent element, "TransitionEnd", transitEnd
+
+        else
+          element.remove()
+
+  )
