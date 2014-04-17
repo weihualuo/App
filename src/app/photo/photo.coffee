@@ -1,6 +1,53 @@
 
 angular.module('app.photo', ['NewGallery', 'Slide'])
 
+  .directive('imageThumb', (ImageUtil)->
+
+    restrict:'C'
+    link: (scope, element)->
+
+      image = null
+      element.on 'dynamic.remove', ->
+        #console.log "dynamic.remove", scope.obj.id
+        if image
+          image.remove()
+          image = null
+      element.on 'dynamic.add', ->
+        #console.log "dynamic.add", scope.obj.id
+        if not image
+          image = new Image()
+          image.src = ImageUtil.thumb(scope.obj)
+          image.onload = ->
+            element.append image
+      #image.onerror = ->
+      #console.log "onerror", scope.obj.id
+      element.triggerHandler 'dynamic.add'
+
+  )
+  .controller( 'PhotoCtrl', ($scope, $controller, $element, $timeout, $filter, Many, Popup, Nav) ->
+    console.log 'PhotoCtrl'
+
+    #extend from ListCtrl
+    $scope.listCtrl =  $controller('ListCtrl', {$scope:$scope, name: 'photos'})
+
+    $scope.onImageView = (e)->
+      #Delegate mode in large list
+      item = e.target
+      if item.tagName is 'IMG'
+        item = item.parentNode
+        obj = angular.element(item).scope().obj
+        data =
+          rect: item.getBoundingClientRect()
+          index: $scope.objects.indexOf(obj)
+        Nav.go
+          name: 'photoDetail'
+          data: data
+          push: yes
+          inherit: yes
+      return
+
+  )
+
   .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane, ImageSlide)->
     #extend from ListCtrl
     angular.extend($scope, Nav.data())

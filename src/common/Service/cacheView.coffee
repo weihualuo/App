@@ -110,7 +110,7 @@ angular.module( 'CacheView', [])
           current.scope.$broadcast('$scopeUpdate')
         return ret
 
-      changeView: (view, cached)->
+      changeView: (view, cached, params)->
         if not current
           current = view
           $element.after(view.element)
@@ -132,7 +132,12 @@ angular.module( 'CacheView', [])
           #console.log "enter #{view.name}, replace #{current.name}"
           current = view
 
-        current.scope.$broadcast('$scopeUpdate')
+        if not cached
+          current.scope.$broadcast('$scopeUpdate')
+        else if not angular.equals(current.params, params)
+          current.params = params
+          current.scope.$broadcast('$scopeUpdate')
+
         current.scope.$emit('$viewContentLoaded')
         
   )
@@ -159,7 +164,7 @@ angular.module( 'CacheView', [])
         view = viewCache.get(name)
         if view
           #console.log "hit cache"
-          ViewManager.changeView(view, true)
+          ViewManager.changeView(view, true, $route.current.params)
         else
           # scope maybe inherit from anthor view
           parentScope = scope

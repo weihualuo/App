@@ -1,117 +1,78 @@
 angular.module('app.home', ['restangular'])
+  .controller( 'ListCtrl', ($scope, name, $timeout, $routeParams, Many, Popup, Env, MESSAGE) ->
 
-  .directive('imageThumb', (ImageUtil)->
+    console.log 'ListCtrl'
 
-    restrict:'C'
-    link: (scope, element)->
+    #name = $route.current.name
+    $scope.updateFilters(name, $routeParams)
+    #uri = path.match(/\/(\w+)/)[1]
+    collection = Many(name)
+    objects = null
 
-      image = null
-      element.on 'dynamic.remove', ->
-        #console.log "dynamic.remove", scope.obj.id
-        if image
-          image.remove()
-          image = null
-      element.on 'dynamic.add', ->
-        #console.log "dynamic.add", scope.obj.id
-        if not image
-          image = new Image()
-          image.src = ImageUtil.thumb(scope.obj)
-          image.onload = ->
-            element.append image
-          #image.onerror = ->
-            #console.log "onerror", scope.obj.id
-      element.triggerHandler 'dynamic.add'
+    reloadObjects = ->
+      # Make sure there is a reflow of empty
+      # So that $last in ng-repeat works
+      $scope.objects = []
+      objects = collection.list($routeParams)
+      if !objects.$resolved
+        Popup.loading objects.$promise
+      objects.$promise.then -> $timeout ->
+        $scope.objects = objects
+        $scope.haveMore = objects.meta.more
+        Env[name].rightText = objects.length + $scope.haveMore + '张'
+        $scope.$broadcast('scroll.reload')
 
-  )
-  .controller( 'PhotoCtrl', ($scope, $controller, $element, $timeout, $filter, Many, Popup, Nav) ->
-    console.log 'PhotoCtrl'
-
-    #extend from ListCtrl
-    $scope.listCtrl =  $controller('ListCtrl', {$scope:$scope, name: 'photos'})
-
-    $scope.onImageView = (e)->
-      #Delegate mode in large list
-      item = e.target
-      if item.tagName is 'IMG'
-        item = item.parentNode
-        obj = angular.element(item).scope().obj
-        data =
-          rect: item.getBoundingClientRect()
-          index: $scope.objects.indexOf(obj)
-          scope: $scope
-        Nav.go
-          name: 'photoDetail'
-          data: data
-          push: yes
-          inherit: yes
+    #Load more objects
+    onMore = ->
+      if !$scope.haveMore
+        $scope.$broadcast('scroll.moreComplete')
+        console.log "no more"
         return
+      promise = collection.more()
+      if promise
+        $scope.loadingMore = true
+        promise.then( (data)->
+          $scope.haveMore = objects.meta.more
+        ).finally ->
+          $scope.loadingMore = false
+          $scope.$broadcast('scroll.moreComplete')
 
-  )
-  .directive('productThumb', (ImageUtil)->
+    #Refresh the list
+    onRefresh = ()->
+      promise = collection.refresh()
+      if promise
+        promise.catch(->
+          #Popup.alert(MESSAGE.LOAD_FAILED)
+        ).finally ->
+          $scope.$broadcast('scroll.refreshComplete')
 
-    restrict:'C'
-    link: (scope, element)->
+    $scope.$on '$scopeUpdate', reloadObjects
+    $scope.$on 'scroll.refreshStart', onRefresh
+    $scope.$on 'scroll.moreStart', onMore
 
-      image = null
-      element.on 'dynamic.remove', ->
-        #console.log "dynamic.remove", scope.obj.id
-        if image
-          image.remove()
-          image = null
-      element.on 'dynamic.add', ->
-        #console.log "dynamic.add", scope.obj.id
-        if not image
-          image = new Image()
-          image.src = ImageUtil.productThumb(scope.obj.params[0])
-          image.onload = ->
-            element.prepend image
-      #image.onerror = ->
-      #console.log "onerror", scope.obj.id
-      element.triggerHandler 'dynamic.add'
-
-  )
-  .directive('productView', (ImageUtil)->
-    restrict: 'E'
-    replace: true
-    template: """
-              <div class="product-view">
-                <img ng-src="{{src}}">
-                <h5 class='title'>{{obj.title}}</h5>
-                <p class='desc'>{{obj.desc}}</p>
-              </div>
-              """
-    link: (scope, element, attr) ->
-      obj = scope.obj
-      scope.src = ImageUtil.best(obj.params[0])
-
-  )
-  .controller( 'ProductCtrl', ($scope, $controller, Nav)->
-    #extend from ListCtrl
-    $controller('ListCtrl', {$scope:$scope, name: 'products'})
-
-    $scope.onProductView = (e, obj)->
-      Nav.go
-        name:'productDetail'
-        param: id:obj.id
-        push: yes
   )
   .controller( 'ProsCtrl', ($scope, $controller, Nav)->
     #extend from ListCtrl
     $controller('ListCtrl', {$scope:$scope, name: 'pros'})
 
+    this
   )
   .controller( 'IdeabookCtrl', ($scope, $controller, Nav)->
     #extend from ListCtrl
     $controller('ListCtrl', {$scope:$scope, name: 'ideabooks'})
 
+    this
+
   )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
     console.log 'AdviceCtrl'
 
+    this
+
   )
   .controller( 'MyCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
     console.log 'Myctrl'
-
+    this
   )
 
 
