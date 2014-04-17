@@ -58,10 +58,12 @@ module.exports = {
 
 //        'vendor/ionic-v0.9.26/js/ionic.js',
 //        'vendor/ionic-0.9.17-alpha/dist/js/ionic.js',
+//        'vendor/cordova/cordova.js',
+//        'vendor/cordova/cordova_plugins.js',
 
         'vendor2/ionicCustom/ionic.js',
         'vendor2/ionicCustom/scrollView.js',
-        'vendor2/ionicCustom/sliderView.js',
+//        'vendor2/ionicCustom/sliderView.js',
 
         'vendor/angular-1.2.14/angular.js',
         'vendor/angular-1.2.14/angular-animate.js',

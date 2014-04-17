@@ -114,7 +114,7 @@ angular.module( 'NewGallery', [])
           view.remove()
           view = null
       scope.$on 'slide.click', remove
-      scope.$on 'tag.view', remove
+      #scope.$on 'tag.view', remove
   )
   .controller('tagController', ($scope, Many, ImageUtil)->
 
@@ -129,7 +129,8 @@ angular.module( 'NewGallery', [])
       if not $scope.desc then $scope.desc = product.desc
 
     $scope.onClickView = (e)->
-      e.stopPropagation()
+      # stop propagation will make a swipe on slideview bug about ontouchend
+      #e.stopPropagation()
       $scope.$emit('tag.view', $scope.tag)
 
   )

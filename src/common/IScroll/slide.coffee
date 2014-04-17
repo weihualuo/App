@@ -56,6 +56,17 @@ angular.module( 'Slide', [])
     @enterForeground = ->
       current.onShow()
 
+    @setDirection = ->
+      if current.left and current.right
+        dir = 'both'
+      else if current.left
+        dir = 'right'
+      else if current.right
+        dir = 'left'
+      else
+        dir = 'none'
+      slideView.setDirection dir
+
     @initSlides = (factory, objs, index)->
 
       console.log 'initSlides'
@@ -113,15 +124,7 @@ angular.module( 'Slide', [])
           ref.onAttach()
 
       current.onShow()
-      if current.left and current.right
-        dir = 'both'
-      else if current.left
-        dir = 'right'
-      else if current.right
-        dir = 'left'
-      else
-        dir = 'none'
-      slideView.setDirection dir
+      @setDirection()
       $scope.$emit 'gallery.slide', current.index, x
 
       # make sure scope digest called
@@ -226,13 +229,14 @@ angular.module( 'Slide', [])
             current = current.right
           ctrl.onSlide(direction)
 
-      onStart = ()->
+      onStart = (x)->
         #@ctrl.pause()
         #width maybe vary on resize
         width = element[0].clientWidth
         current.setAnimate('none')
         current.left.setAnimate('none')
         current.right.setAnimate('none')
+        console.log "start move", x
 
       onMove = (offset)->
         current.updatePosition(offset)
@@ -240,6 +244,7 @@ angular.module( 'Slide', [])
         current.left.updatePosition(offset-width) if offset >= 0
 
       onEnd = (offset, ratio)->
+        console.log "end move", offset, ratio
         if offset > 0
           offset = 1
         else if offset < 0

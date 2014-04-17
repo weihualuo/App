@@ -35,7 +35,6 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
         $scope.$emit 'scroll.moreStart'
 
     $scope.$on 'tag.view', (e, tag)->
-      slideCtrl.enterBackground()
       Nav.go
         name: 'productDetail'
         param: id:tag.product
