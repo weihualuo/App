@@ -160,19 +160,22 @@ angular.module( 'Scroll', [])
             if i >= length then break
             #console.log "remove", i
             angular.element(children[i]).triggerHandler 'dynamic.remove'
-        else if newStart < start
-          #add = add.concat [newStart..(start-1)]
-          for i in [newStart..(start-1)]
-            if i >= length then break
-            #console.log "add", i
-            angular.element(children[i]).triggerHandler 'dynamic.add'
+
         if newEnd < end
           #remove = remove.concat [newEnd..(end-1)]
           for i in [newEnd..(end-1)]
             if i >= length then break
             #console.log "remove", i
             angular.element(children[i]).triggerHandler 'dynamic.remove'
-        else if newEnd > end
+
+        if newStart < start
+          #add = add.concat [newStart..(start-1)]
+          for i in [newStart..(start-1)]
+            if i >= length then break
+            #console.log "add", i
+            angular.element(children[i]).triggerHandler 'dynamic.add'
+
+        if newEnd > end
           #add = add.concat [end..(newEnd-1)]
           for i in [end..(newEnd-1)]
             if i >= length then break
@@ -229,6 +232,11 @@ angular.module( 'Scroll', [])
       #list reset
       scope.$on 'scroll.reload', ->
         start = end = lastTop =  0
+
+      scope.$on 'scroll.refreshComplete', ->
+        start = end = 0
+        #No way to listen to rendering complete now
+        $timeout update, 1000
 
       #list reset or more item loaded
       scope.$on 'list.rendered', ->
