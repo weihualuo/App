@@ -371,7 +371,7 @@ var Scroller;
                 penetrationAcceleration : 0.08,
 
                 // The ms interval for triggering scroll events
-                scrollEventInterval: 50
+                scrollEventInterval: 100
             };
 
             for (var key in options) {

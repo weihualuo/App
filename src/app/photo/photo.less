@@ -1,0 +1,177 @@
+
+.gallery-view{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  //  z-index: @z-index-popup;
+  > span{
+    display: none;
+  }
+
+}
+.gallery-slides{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  overflow: hidden;
+  //.preserve3d();
+}
+.gallery-page{
+  .gallery-slides;
+}
+
+.gallery-slide{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000000;
+  color: white;
+  .box-center;
+
+  &.active{
+  }
+  &.gallery-error{
+    background: url(img/error.png) center no-repeat;
+    background-size: 64px 64px;
+  }
+
+  > i{
+    color: white;
+    font-size: @icon-xl;
+  }
+}
+
+.gallery-img{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 1;
+
+}
+
+.gallery-loader{
+
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+
+  >.gallery-loader-spin{
+    position: absolute;
+    color: white;
+    left: 50%;
+    top: 50%;
+    font-size: @icon-large;
+    margin-top: -@icon-large/2;
+    margin-left: -@icon-large/2;
+  }
+  &.gallery-error{
+  }
+}
+
+.gallery-tag{
+  position: absolute;
+  color: bisque;
+  font-size: @icon-large;
+  .transform-origin(left top);
+  .rotateZ(45deg);
+  &.active{
+    .animation(shaking 1s linear 0 2);
+  }
+}
+
+@ctrlWidth: 60px;
+@ctrlMargin: 15px;
+.gallery-controls{
+  > span{
+    display: inherit;
+    position: absolute;
+    z-index: 3;
+    color: #fff;
+    text-align: center;
+    &.ng-click-active{
+      color: @color-active;
+    }
+  }
+  
+  > .title{
+    left: @ctrlMargin;
+    bottom: @ctrlMargin;
+    font-size: @icon-large;
+  }
+
+  > .expand{
+    top: @ctrlMargin;
+    left: @ctrlMargin;
+    width: @ctrlWidth;
+    font-size: @icon-xl;
+  }
+
+  > .close {
+    top: @ctrlMargin;
+    right: @ctrlMargin;
+    width: @ctrlWidth;
+    font-size: @icon-xl;
+  }
+
+  > .info {
+    right: @ctrlMargin;
+    bottom: @ctrlMargin;
+    width: @ctrlWidth;
+    font-size: @icon-xl;
+  }
+
+  > .play-pause {
+    right: @ctrlMargin;
+    bottom: @ctrlMargin;
+    font-size: @icon-large;
+    width: @ctrlWidth;
+    line-height: 40px;
+  }
+
+  >.prev, >.next{
+    top: 50%;
+    width: @ctrlWidth;
+    height: 40px;
+    margin-top: -20px;
+    font-size: 40px;
+  }
+  >.prev{
+    left: @ctrlMargin;
+  }
+  >.next{
+    right: @ctrlMargin;
+  }
+}
+
+
+.tag-view{
+  position: absolute;
+  background: rgba(0,0,0,0.7);
+  //  z-index: @z-index-popup+10;
+  >img{
+    width: 105px;
+    height: 105px;
+    margin: 10px;
+    float: left;
+  }
+  >h5{
+    font-size: 20px;
+    color: white;
+  }
+  >p{
+    font-size: 15px;
+    color: white;
+  }
+}

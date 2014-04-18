@@ -79,7 +79,15 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       else
         close()
 
+    $scope.toggleMenu = ->
+      $scope.hasMenu = env.noSide
+      env.noHeader = not env.noHeader
+      env.noSide = not env.noSide
+      $scope.$emit('envUpdate')
+
+
     $scope.$on 'gallery.slide', (e, index)->
+      $scope.title = $scope.objects[index].title
       if $scope.haveMore and index+6 > $scope.objects.length
         $scope.$emit 'scroll.moreStart'
 
@@ -126,6 +134,8 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           slideCtrl.next()
         when 'slide'
           $scope.displayCtrl = not $scope.displayCtrl
+          if not $scope.displayCtrl and $scope.hasMenu
+            $scope.toggleMenu()
           $scope.$broadcast('slide.click')
 
   )

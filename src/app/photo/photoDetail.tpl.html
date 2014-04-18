@@ -1,6 +1,10 @@
 
 <div class="gallery-view" ng-class="{'gallery-controls': displayCtrl}">
     <div slide-view rect-trans='rect' class="gallery-slides" ng-click="onCtrl($event, 'slide')"></div>
+    <span class="expand" ng-click="toggleMenu()" ng-hide="hasMenu">
+       <i class="icon ion-navicon"></i>
+    </span>
+    <span class="title">{{title}}</span>
     <span class="prev" ng-class="{'ng-hide': first}" ng-click="onCtrl($event, 'prev')">
        <i class="icon ion-chevron-left"></i>
     </span>
