@@ -128,8 +128,9 @@ angular.module( 'Scroll', [])
         enableRefersh = false
         enableMore = false
 
-      #disable for a while,
+      #disable for a while or if no more item
       #browser rendering is not finished in fact
+      #when loading more, if no item loaded, enableMore is off
       scope.$on 'list.rendered', ->
         $timeout (->
           enableRefersh = true
@@ -143,7 +144,7 @@ angular.module( 'Scroll', [])
 
       scope.dynamic = yes
       scroller = scope.scrollView
-      n = 3
+      n = 5
       start = end = lastTop =  0
       step = 200
 
@@ -216,7 +217,7 @@ angular.module( 'Scroll', [])
         #console.log "Items keep: #{newEnd-newStart}, row: #{(newEnd-newStart)/numPerRow}"
         notify(newStart, newEnd)
         lastTop = top
-        step =  itemHeight*2
+        step =  itemHeight*3
 
       element.on 'scroll', (e)->
         detail = (e.originalEvent || e).detail || {}
@@ -225,6 +226,11 @@ angular.module( 'Scroll', [])
           #console.log "onStep", top
           update()
 
+      #list reset
+      scope.$on 'scroll.reload', ->
+        start = end = lastTop =  0
+
+      #list reset or more item loaded
       scope.$on 'list.rendered', ->
         $timeout update, 100
   )

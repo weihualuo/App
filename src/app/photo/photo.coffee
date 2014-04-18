@@ -36,6 +36,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       item = e.target
       if item.tagName is 'IMG'
         item = item.parentNode
+      if item.tagName is 'LI'
         obj = angular.element(item).scope().obj
         data =
           rect: item.getBoundingClientRect()
