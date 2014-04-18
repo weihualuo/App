@@ -1,0 +1,22 @@
+
+
+<div class="popup-backdrop enabled" ng-click="onClose($event)">
+    <side-pane position='right'
+               trans-in-out="{in:'from-right', out:'from-right'}"
+               class='pane-image-info padding'
+               ng-click="$event.stopPropagation()">
+        <h5 style="text-align: center">{{image.title}}</h5>
+        <div>
+            {{desc}}
+        </div>
+        <div>
+            <h5>Other Photos in This Project</h5>
+        </div>
+        <button class="button button-block button-calm">
+            Ask a Question
+        </button>
+        <div>
+            <h5>People Who Liked This Photo also Liked</h5>
+        </div>
+    </side-pane>
+</div>

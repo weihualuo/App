@@ -181,6 +181,55 @@ angular.module('app.utils', [])
           PrefixedStyle raw, 'transition', null
           callback?()
   )
+  .directive('transInOut', (PrefixedStyle, PrefixedEvent)->
+    (scope, element, attr)->
+      option = scope.$eval(attr.transInOut)
+      transitInStyle = option.in
+      transitOutStyle = option.out
+      transition = option.transit or 'all 300ms ease-in'
+      raw = element[0]
+      entering = no
+      leaving = no
+
+      scope.transformer =
+
+        transBefore: ->
+          entering = yes
+          if angular.isString(transitInStyle)
+            element.addClass(transitInStyle)
+            PrefixedStyle raw, 'transition', transition
+
+        transIn: -> setTimeout (->
+          if angular.isString(transitInStyle)
+            element.removeClass(transitInStyle)
+            transitEnd = (e)->
+              if e.target is raw and entering
+                entering = no
+                PrefixedStyle raw, 'transition', null
+                PrefixedEvent element, "TransitionEnd", transitEnd, off
+
+            PrefixedEvent element, "TransitionEnd", transitEnd
+
+          ), 10
+
+        transOut: (done)->
+          if angular.isString(transitOutStyle)
+            leaving = yes
+            PrefixedStyle raw, 'transition', transition
+            setTimeout (->element.addClass(transitOutStyle)), 10
+
+            transitEnd = (e)->
+              if e.target is raw and leaving
+                leaving = no
+                element.removeClass(transitOutStyle)
+                PrefixedStyle raw, 'transition', null
+                PrefixedEvent element, "TransitionEnd", transitEnd, off
+                done()
+
+            PrefixedEvent element, "TransitionEnd", transitEnd
+          else
+            done()
+  )
   .factory('Tansformer', ($timeout, PrefixedStyle, PrefixedEvent)->
 
     api =

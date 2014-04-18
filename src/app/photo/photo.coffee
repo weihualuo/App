@@ -52,7 +52,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
   .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane, ImageSlide)->
     #extend from ListCtrl
-    angular.extend($scope, Nav.data())
+    #angular.extend($scope, Nav.data())
     $scope.index ?= 0
     $scope.listCtrl ?=  $controller('ListCtrl', {$scope:$scope, name: 'photos'})
     slideCtrl = null
@@ -77,18 +77,6 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     @enter = (done)->
       console.log "entering"
       done(-> console.log "complete")
-
-    $scope.onClose = (index)->
-      env.noHeader = false
-      env.noSide = false
-      $scope.$emit('envUpdate')
-
-      close = -> Nav.back({name:'photos'})
-      if trans = $scope.transformer
-        rect = $scope.scrollView?.getItemRect(index)
-        trans(rect, close)
-      else
-        close()
 
     $scope.toggleMenu = ->
       $scope.hasMenu = env.noSide
@@ -119,6 +107,11 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
 
     onImageInfo = (index)->
+      Nav.go
+        name: 'photoInfo'
+        push: yes
+        data: image: $scope.objects[index]
+      return
       TogglePane
         id: 'infoView'
         template: "<side-pane position='right' class='pane-image-info popup-in-right'></side-pane>"
@@ -150,6 +143,32 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           if not $scope.displayCtrl and $scope.hasMenu
             $scope.toggleMenu()
           $scope.$broadcast('slide.click')
+
+    this
+  )
+  .controller('PhotoInfoCtrl', ($scope, Env, Nav)->
+
+    Env.photoInfo = Env.photoDetail
+
+    $scope.$on 'destroyed', ->
+      $scope.destroyed = true
+      $scope.onClose()
+
+    $scope.onClose = ->
+      Nav.back name:'photoDetail'
+
+    @leave = (done)->
+      if not $scope.destroyed and trans = $scope.transformer
+        trans.transOut(done)
+      else
+        done()
+
+    @enter = (done)->
+      if trans = $scope.transformer
+        trans.transBefore()
+        done -> trans.transIn()
+      else
+        done()
 
     this
   )

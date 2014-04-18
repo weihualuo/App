@@ -179,6 +179,7 @@ angular.module( 'CacheView', [])
             parentScope = ViewManager.current().scope
             #console.log "scope inherit from", parentScope
           newScope = parentScope.$new()
+          angular.extend(newScope, Nav.data())
 
           # Create a new view
           current = $route.current

@@ -22,6 +22,13 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       class: 'no-background no-header no-side'
             
     )
+    .when( '/photoInfo',
+      name: 'photoInfo'
+      controller: 'PhotoInfoCtrl'
+      templateUrl: 'photo/photoInfo.tpl.html'
+      class: 'no-background no-header no-side'
+
+    )
     .when( '/products'
       name: 'products'
       controller: 'ProductCtrl'
