@@ -223,8 +223,19 @@ angular.module( 'CacheView', [])
         locals.$scope = scope
         locals.$element = $element
         scope.$controller = ctrl = $controller(current.controller, locals)
-        ctrl.enter ?= (enter)-> enter()
-        ctrl.leave ?= (leave)-> leave()
+
+        ctrl.leave ?= (done)->
+          if trans = scope.transformer
+            trans.transOut(done)
+          else
+            done()
+
+        ctrl.enter ?= (done)->
+          if trans = scope.transformer
+            trans.transBefore()
+            done -> trans.transIn()
+          else
+            done()
 
       link(scope)
   )

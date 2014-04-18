@@ -2,7 +2,9 @@
 
 <div class="popup-backdrop enabled" ng-click="onClose($event)">
     <side-pane position='right'
-               trans-in-out="{in:'from-right', out:'from-right'}"
+               trans-in-out
+               trans-in="'from-right'"
+               trans-out="'from-right'"
                class='pane-image-info padding'
                ng-click="$event.stopPropagation()">
         <h5 style="text-align: center">{{image.title}}</h5>

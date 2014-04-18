@@ -49,8 +49,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       return
     this
   )
-
-  .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane, ImageSlide)->
+  .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane, ImageSlide, TransUtil)->
     #extend from ListCtrl
     #angular.extend($scope, Nav.data())
     $scope.index ?= 0
@@ -67,16 +66,10 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       $scope.$emit('envUpdate')
     ), 1000
 
-    @leave = (done)->
-      if trans = $scope.transformer
-        rect = $scope.scrollView?.getItemRect($scope.index)
-        trans(rect, done)
-      else
-        done()
-
-    @enter = (done)->
-      console.log "entering"
-      done(-> console.log "complete")
+    $scope.transIn = TransUtil.rectTrans($scope.rect)
+    $scope.transOutFn = ->
+      rect = $scope.scrollView?.getItemRect($scope.index)
+      TransUtil.rectTrans(rect)
 
     $scope.toggleMenu = ->
       $scope.hasMenu = env.noSide
@@ -86,6 +79,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
 
     $scope.$on 'gallery.slide', (e, index)->
+      $scope.index = index
       $scope.title = $scope.objects[index].title
       if $scope.haveMore and index+6 > $scope.objects.length
         $scope.$emit 'scroll.moreStart'
@@ -123,7 +117,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     $scope.onCtrl = (e, id)->
 
       e.stopPropagation()
-      if not Service.noRepeat('slideCtrl', 600)
+      if not Service.noRepeat('slideCtrl', 500)
         return
 
       switch id
@@ -131,7 +125,6 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           onImageInfo(slideCtrl.getCurrentIndex())
         when 'close'
           $scope.displayCtrl = no
-          $scope.index = slideCtrl.getCurrentIndex()
           Nav.back({name:'photos'})
 
         when 'prev'
@@ -151,24 +144,11 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     Env.photoInfo = Env.photoDetail
 
     $scope.$on 'destroyed', ->
-      $scope.destroyed = true
+      $scope.transformer = null
       $scope.onClose()
 
     $scope.onClose = ->
       Nav.back name:'photoDetail'
-
-    @leave = (done)->
-      if not $scope.destroyed and trans = $scope.transformer
-        trans.transOut(done)
-      else
-        done()
-
-    @enter = (done)->
-      if trans = $scope.transformer
-        trans.transBefore()
-        done -> trans.transIn()
-      else
-        done()
 
     this
   )
