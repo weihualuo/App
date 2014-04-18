@@ -21,7 +21,8 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
             element.append image
       #image.onerror = ->
       #console.log "onerror", scope.obj.id
-      element.triggerHandler 'dynamic.add'
+      if not scope.dynamic
+        element.triggerHandler 'dynamic.add'
 
   )
   .controller( 'PhotoCtrl', ($scope, $controller, $element, $timeout, $filter, Many, Popup, Nav) ->

@@ -70,7 +70,11 @@ angular.module( 'CacheView', [])
       #in case of cached view, scope will be reused
       #i case of non-cached view, scope will be detroyed on remove
       #console.log "removing", view.name, view.scope
-      Service.disconnectScope(view.scope)
+      if view.cached
+        Service.disconnectScope(view.scope)
+      else
+        view.scope.$destroy()
+
       Tansformer.leave(view.element, view.ctrl.transitOut)
 
     enterView = (view, cached)->
@@ -184,6 +188,7 @@ angular.module( 'CacheView', [])
           if current.cache
             #console.log "Put to cache", name
             viewCache.put(name, view)
+            view.cached = yes
             #To avoid scope be detached from element
             clone.remove = ()->
               for i in [0..@length-1]

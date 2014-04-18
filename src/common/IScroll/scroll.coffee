@@ -5,7 +5,7 @@ angular.module( 'Scroll', [])
     (scope, element, attr)->
 
       render = (left, top, zoom)->
-        console.log "render", left, top. zoom
+        #console.log "render", left, top. zoom
         Popup.alert "rennder #{zoom}"
         PrefixedStyle element[0], 'transform', "scale(#{zoom})"
 
@@ -21,6 +21,10 @@ angular.module( 'Scroll', [])
       #Not everyone send a scroll.reload
       element.ready ->
         zoomView.resize()
+  )
+  .factory('Zoomable', (PrefixedStyle)->
+    (el)->
+      new EasyScroller(el, zooming:on)
   )
   .directive('scrollable', ($timeout)->
     (scope, element, attr)->
@@ -137,40 +141,46 @@ angular.module( 'Scroll', [])
   .directive('dynamic', ($timeout)->
     (scope, element)->
 
-      scroll = scope.$scroll
-      n = 5
+      scope.dynamic = yes
+      scroller = scope.scrollView
+      n = 3
       start = end = lastTop =  0
       step = 200
 
       notify = (newStart, newEnd)->
         #add = remove = []
-        children = element.children()
+        children = element.find('li')
         length = children.length
+        if newEnd > length then newEnd = length
+
         if newStart > start
           #remove = remove.concat [start..(newStart-1)]
           for i in [start..(newStart-1)]
             if i >= length then break
+            #console.log "remove", i
             angular.element(children[i]).triggerHandler 'dynamic.remove'
         else if newStart < start
           #add = add.concat [newStart..(start-1)]
           for i in [newStart..(start-1)]
             if i >= length then break
+            #console.log "add", i
             angular.element(children[i]).triggerHandler 'dynamic.add'
         if newEnd < end
           #remove = remove.concat [newEnd..(end-1)]
           for i in [newEnd..(end-1)]
             if i >= length then break
+            #console.log "remove", i
             angular.element(children[i]).triggerHandler 'dynamic.remove'
         else if newEnd > end
           #add = add.concat [end..(newEnd-1)]
           for i in [end..(newEnd-1)]
             if i >= length then break
+            #console.log "add", i
             angular.element(children[i]).triggerHandler 'dynamic.add'
 
         start = newStart
         end = newEnd
-         #console.log "remove", remove
-         #console.log "add", add
+        #console.log "start #{start}, end #{end}"
 #        children = element.children()
 #        length = children.length
 #        for i in remove
@@ -184,12 +194,12 @@ angular.module( 'Scroll', [])
         item = element[0].firstElementChild
 
         if not item then return
-        top = scroll.scroller.getValues().top
+        top = scroller.getValues().top
         itemHeight = item.offsetHeight
         containerHeight = element[0].parentNode.clientHeight
         numPerRow = Math.round element[0].clientWidth/item.offsetWidth
 
-         #console.log "top: #{top}, itemHeight: #{itemHeight}, containerHeight: #{containerHeight}, numPerRow: #{numPerRow}"
+        #console.log "top: #{top}, itemHeight: #{itemHeight}, containerHeight: #{containerHeight}, numPerRow: #{numPerRow}"
 
         # row above fully invisible
         rowHide = Math.floor top/itemHeight
@@ -202,22 +212,19 @@ angular.module( 'Scroll', [])
         bottomRow = Math.ceil (top+containerHeight)/itemHeight
         newEnd = (bottomRow+n)*numPerRow
 
-         #console.log "rowHide: #{rowHide}, bottomRow: #{bottomRow}, newStart is #{newStart}, newEnd is #{newEnd}"
-         #console.log "Items keep: #{newEnd-newStart}, row: #{(newEnd-newStart)/numPerRow}"
+        #console.log "rowHide: #{rowHide}, bottomRow: #{bottomRow}, newStart is #{newStart}, newEnd is #{newEnd}"
+        #console.log "Items keep: #{newEnd-newStart}, row: #{(newEnd-newStart)/numPerRow}"
         notify(newStart, newEnd)
         lastTop = top
-        step =  itemHeight
+        step =  itemHeight*2
 
-      scroll.onStep = (top)->
+      element.on 'scroll', (e)->
+        detail = (e.originalEvent || e).detail || {}
+        top = detail.scrollTop
         if Math.abs(top-lastTop) > step
-          console.log "onStep", top
+          #console.log "onStep", top
           update()
 
-#      scope.$on 'scroll.reload', ->
-#        start = end = lastTop =  0
-#        $timeout update, 1000
-
       scope.$on 'list.rendered', ->
-        start = end = lastTop =  0
-        $timeout update
+        $timeout update, 100
   )

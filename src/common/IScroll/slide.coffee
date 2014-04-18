@@ -217,9 +217,13 @@ angular.module( 'Slide', [])
         if direction <= 0
           current.right.setAnimate(prop) if ratio
           current.right.updatePosition offset+width
+          # put left in position, it may be moved
+          current.left.updatePosition -width
         if direction >=0
           current.left.setAnimate(prop) if ratio
           current.left.updatePosition offset-width
+          # put right in position, it may be moved
+          current.right.updatePosition width
 
         current.updatePosition offset
         if direction isnt 0
