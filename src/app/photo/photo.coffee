@@ -47,7 +47,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           push: yes
           inherit: yes
       return
-
+    this
   )
 
   .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane, ImageSlide)->
@@ -66,6 +66,17 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       env.noSide = true
       $scope.$emit('envUpdate')
     ), 1000
+
+    @leave = (done)->
+      if trans = $scope.transformer
+        rect = $scope.scrollView?.getItemRect($scope.index)
+        trans(rect, done)
+      else
+        done()
+
+    @enter = (done)->
+      console.log "entering"
+      done(-> console.log "complete")
 
     $scope.onClose = (index)->
       env.noHeader = false
@@ -127,7 +138,9 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           onImageInfo(slideCtrl.getCurrentIndex())
         when 'close'
           $scope.displayCtrl = no
-          $scope.onClose(slideCtrl.getCurrentIndex())
+          $scope.index = slideCtrl.getCurrentIndex()
+          Nav.back({name:'photos'})
+
         when 'prev'
           slideCtrl.prev()
         when 'next'
@@ -138,4 +151,5 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
             $scope.toggleMenu()
           $scope.$broadcast('slide.click')
 
+    this
   )

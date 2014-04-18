@@ -184,7 +184,7 @@ angular.module('app.utils', [])
   .factory('Tansformer', ($timeout, PrefixedStyle, PrefixedEvent)->
 
     api =
-      enter: (element, parent, after, transitInStyle)->
+      enter: (element, parent, after, transitInStyle, complete)->
         raw = element[0]
         transition = 'all 300ms ease-in'
 
@@ -209,8 +209,11 @@ angular.module('app.utils', [])
               entering = no
               PrefixedStyle raw, 'transition', null
               PrefixedEvent element, "TransitionEnd", transitEnd, off
+              complete?()
 
           PrefixedEvent element, "TransitionEnd", transitEnd
+        else
+          complete?()
 
       leave: (element, transitOutStyle)->
         raw = element[0]

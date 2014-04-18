@@ -75,14 +75,17 @@ angular.module( 'CacheView', [])
       else
         view.scope.$destroy()
 
-      Tansformer.leave(view.element, view.ctrl.transitOut)
+      view.ctrl.leave ->
+        Tansformer.leave(view.element, view.ctrl.transitOut)
 
     enterView = (view, cached)->
       #console.log "enter #{view.name} with cache=#{cached}"
       if cached
         Service.reconnectScope(view.scope)
         view.element.removeClass('replaced')
-      Tansformer.enter(view.element, null, current.element, view.ctrl.transitIn)
+
+      view.ctrl.enter (complete)->
+        Tansformer.enter(view.element, null, current.element, view.ctrl.transitIn, complete)
 
     api =
       init: (el)-> $element = el
@@ -218,7 +221,9 @@ angular.module( 'CacheView', [])
       if (current.controller)
         locals.$scope = scope
         locals.$element = $element
-        scope.$controller = $controller(current.controller, locals)
+        scope.$controller = ctrl = $controller(current.controller, locals)
+        ctrl.enter ?= (enter)-> enter()
+        ctrl.leave ?= (leave)-> leave()
 
       link(scope)
   )
