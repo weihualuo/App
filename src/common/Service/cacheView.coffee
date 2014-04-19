@@ -4,10 +4,45 @@ angular.module( 'CacheView', [])
   .value('viewStack',
     []
   )
-  .factory('ViewFactory', ()->
+  .factory('ViewFactory', ($animate, Service)->
     class View
       constructor: (@element, @name, @scope, @params) ->
         @ctrl = @scope.$controller
+
+      leave: ->
+        if @cached
+          Service.disconnectScope(@scope)
+        else
+          @scope.$destroy()
+        @element.addClass('replaced')
+        @ctrl.leave @element
+
+      enter: (after, parent)->
+        if @cached
+          Service.reconnectScope(@scope)
+          @element.removeClass('replaced')
+        @ctrl.enter @element, after, parent
+
+      stack: ->
+        $animate.addClass(@element, 'stacked')
+        @scope.$broadcast('enterBackground')
+
+      onPopup: ->
+        $animate.removeClass(@element, 'stacked')
+        @scope.$broadcast('enterForeground')
+        @scope.$emit('$viewContentLoaded')
+
+      update: (params, loaded)->
+
+        if loaded
+          console.log "content just loaded"
+          @scope.$emit('$viewContentLoaded')
+
+        if @cached and angular.equals(@params, params) then return
+        console.log "param update", @params, params
+        @params = params
+        @scope.$broadcast('$scopeUpdate')
+
     View
   )
   .factory('Nav', ($route, $location, viewStack)->
@@ -66,27 +101,6 @@ angular.module( 'CacheView', [])
     $element = null
     stack = viewStack
 
-    removeView = (view)->
-      #in case of cached view, scope will be reused
-      #i case of non-cached view, scope will be detroyed on remove
-      #console.log "removing", view.name, view.scope
-      if view.cached
-        Service.disconnectScope(view.scope)
-      else
-        view.scope.$destroy()
-
-      view.ctrl.leave ->
-        Tansformer.leave(view.element, view.ctrl.transitOut)
-
-    enterView = (view, cached)->
-      #console.log "enter #{view.name} with cache=#{cached}"
-      if cached
-        Service.reconnectScope(view.scope)
-        view.element.removeClass('replaced')
-
-      view.ctrl.enter (complete)->
-        Tansformer.enter(view.element, null, current.element, view.ctrl.transitIn, complete)
-
     api =
       init: (el)-> $element = el
 
@@ -100,53 +114,39 @@ angular.module( 'CacheView', [])
 
         else if view = _.find(stack, name:name)
           #console.log "view in stack", name, view.name
-          removeView(current)
+          current.leave()
           while current = stack.pop()
             if current isnt view
-              removeView(current)
+              current.leave()
             else
               break
-          $animate.removeClass(current.element, 'stacked')
-          current.scope.$broadcast('enterForeground')
-          current.scope.$emit('$viewContentLoaded')
+          current.onPopup()
           ret = true
 
-        if ret and not angular.equals(current.params, params)
-          #console.log "param update", current.params, params
-          current.params = params
-          current.scope.$broadcast('$scopeUpdate')
+        if ret then current.update(params)
         return ret
 
-      changeView: (view, cached, params)->
+      changeView: (view, params)->
         if not current
           current = view
           $element.after(view.element)
           #console.log "enter first view", view.name
 
         else if Nav.push()
-          $animate.addClass(current.element, 'stacked')
-          current.scope.$broadcast('enterBackground')
+          current.stack()
           stack.push(current)
-          enterView(view, cached)
+          view.enter(current.element)
           #console.log "push view #{view.name}, stacked #{current.name}"
           current = view
 
         # Replace the current view
         else
-          current.element.addClass('replaced')
-          enterView(view, cached)
-          removeView(current)
+          view.enter(current.element)
+          current.leave()
           #console.log "enter #{view.name}, replace #{current.name}"
           current = view
 
-        if not cached
-          current.scope.$broadcast('$scopeUpdate')
-        else if not angular.equals(current.params, params)
-          current.params = params
-          current.scope.$broadcast('$scopeUpdate')
-
-        current.scope.$emit('$viewContentLoaded')
-        
+        view.update(params, true)
   )
 
   .directive('cacheView', ($cacheFactory,  $route, ViewManager, Nav, ViewFactory)->
@@ -171,7 +171,7 @@ angular.module( 'CacheView', [])
         view = viewCache.get(name)
         if view
           #console.log "hit cache"
-          ViewManager.changeView(view, true, $route.current.params)
+          ViewManager.changeView(view, $route.current.params)
         else
           # scope maybe inherit from anthor view
           parentScope = scope
@@ -225,7 +225,7 @@ angular.module( 'CacheView', [])
           element.remove()
 
   )
-  .factory('ViewController', ($controller)->
+  .factory('ViewController', ($controller, Tansformer)->
 
     proto =
       #register child element transition
@@ -233,7 +233,10 @@ angular.module( 'CacheView', [])
         console.log "register child transition", @name
 
       #Perform view element leave
-      leave: (leave)->
+      leave: (element)->
+        leave = =>
+          #Perform any animimation on view element
+          Tansformer.leave(element, @transitOut)
         console.log "leave view", @name
         if @transOut
           console.log "find child transOut"
@@ -243,7 +246,10 @@ angular.module( 'CacheView', [])
           leave()
 
       #Perform view element enter
-      enter: (enter)->
+      enter: (element, after, parent)->
+        enter = (complete)=>
+          #Perform any animimation on view element
+          Tansformer.enter(element, parent, after, @transitIn, complete)
         console.log "enter view", @name
         if @transIn
           console.log "find child transIn"
