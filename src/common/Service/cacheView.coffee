@@ -38,10 +38,10 @@ angular.module( 'CacheView', [])
           console.log "content just loaded"
           @scope.$emit('$viewContentLoaded')
 
-        if @cached and angular.equals(@params, params) then return
-        console.log "param update", @params, params
-        @params = params
-        @scope.$broadcast('$scopeUpdate')
+        if not angular.equals(@params, params)
+          console.log "param update", @params, params
+          @params = params
+          @scope.$broadcast('$scopeUpdate')
 
     View
   )
