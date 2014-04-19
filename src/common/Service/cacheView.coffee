@@ -232,6 +232,10 @@ angular.module( 'CacheView', [])
       register: (@transIn, @transOut)->
         console.log "register child transition", @name
 
+      unregister: ->
+        console.log "unregistered", @name
+        @transIn = @transOut = null
+
       #Perform view element leave
       leave: (element)->
         leave = =>

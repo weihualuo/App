@@ -141,10 +141,11 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
   )
   .controller('PhotoInfoCtrl', ($scope, Env, Nav)->
 
+    ctrl = this
     Env.photoInfo = Env.photoDetail
 
     $scope.$on 'destroyed', ->
-      $scope.transformer = null
+      ctrl.unregister()
       $scope.onClose()
 
     $scope.onClose = ->

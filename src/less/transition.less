@@ -125,7 +125,7 @@
   opacity: 0;
   .translate3d(-100%, 0, 0);
 }
-.fade-to-side-add, .fade-to-side-remove{
+.fade-to-side-add, .fade-to-side-remove, .fade-to-hide-add, .fade-to-hide-remove{
   .transition(all linear 250ms);
 }
 
@@ -133,8 +133,16 @@
   opacity: 0;
   .translate3d(0, -100%, 0);
 }
-.fade-to-top-add, .fade-to-top-remove{
+.fade-to-top2, .fade-to-top2-add-active{
+  opacity: 0;
+  .translate3d(0, -200%, 0);
+}
+.fade-to-top-add, .fade-to-top-remove, .fade-to-top2-add, .fade-to-top2-remove,{
   .transition(all linear 250ms);
+}
+
+.fade-to-hide, .fade-to-hide-add-active{
+  opacity: 0;
 }
 
 .from-right{

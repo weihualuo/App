@@ -1,12 +1,12 @@
 
 
-<header class="bar bar-header bar-dark fade-to-hide" ng-class="{'fade-to-top': env.noHeader}">
+<header class="bar bar-header bar-dark" ng-class="{'fade-to-top': env.noHeader}">
     <button class="button button-clear icon ion-navicon"> 我的家居 </button>
     <h1 class="title">{{env.title}}</h1>
     <button class="button button-clear"> {{env.rightText}} </button>
 </header>
 
-<header class="bar bar-subheader res-has-side box-align-center" ng-show="env.filters">
+<header class="bar bar-subheader res-has-side box-align-center" ng-class="{'fade-to-top2': !env.filters}">
     <form class="flex1" ng-submit="onSearch(se)" ng-class="{focused:inFocus}">
         <label class="box-align-center">
             <i class="icon ion-ios7-search placeholder-icon"></i>
