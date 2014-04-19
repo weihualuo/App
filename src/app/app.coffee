@@ -93,7 +93,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     productDetail:
       title: '产品详情'
     photoDetail:
-      noHeader: false
+      style: opacity:'0.7'
   )
   .run( ($location, $document)->
     # simulate html5Mode
