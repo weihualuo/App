@@ -205,7 +205,61 @@ angular.module( 'CacheView', [])
       scope.$on('$routeChangeSuccess', update)
 
   )
-  .directive('cacheView', ($compile, $controller, $route)->
+  .factory('Tansformer', ($timeout, Transitor)->
+
+    api =
+      enter: (element, parent, after, transitInStyle, complete)->
+
+        perform = Transitor.transIn(element, transitInStyle)
+        console.log "append view"
+        if after
+          after.after(element)
+        else
+          parent.append(element)
+        perform complete
+
+      leave: (element, transitOutStyle)->
+        perform = Transitor.transOut(element, transitOutStyle)
+        perform ->
+          console.log "remove view"
+          element.remove()
+
+  )
+  .factory('ViewController', ($controller)->
+
+    proto =
+      #register child element transition
+      register: (@transIn, @transOut)->
+        console.log "register child transition", @name
+
+      #Perform view element leave
+      leave: (leave)->
+        console.log "leave view", @name
+        if @transOut
+          console.log "find child transOut"
+          @transOut(leave)
+        else
+          console.log "no child transOut, leave"
+          leave()
+
+      #Perform view element enter
+      enter: (enter)->
+        console.log "enter view", @name
+        if @transIn
+          console.log "find child transIn"
+          enter @transIn()
+        else
+          enter()
+        #enter(@transIn?())
+
+    (name, locals)->
+      ctrl = $controller(name, locals)
+      ctrl.name = name
+      angular.extend(ctrl, proto)
+      #Not work, this is the same object in proto
+      #ctrl.__proto__ = proto
+  )
+  .directive('cacheView', ($compile, ViewController, $route)->
     restrict: 'E',
     priority: -400,
     link: (scope, $element)->
@@ -222,20 +276,7 @@ angular.module( 'CacheView', [])
       if (current.controller)
         locals.$scope = scope
         locals.$element = $element
-        scope.$controller = ctrl = $controller(current.controller, locals)
-
-        ctrl.leave ?= (done)->
-          if trans = scope.transformer
-            trans.transOut(done)
-          else
-            done()
-
-        ctrl.enter ?= (done)->
-          if trans = scope.transformer
-            trans.transBefore()
-            done -> trans.transIn()
-          else
-            done()
+        scope.$controller = ctrl = ViewController(current.controller, locals)
 
       link(scope)
   )

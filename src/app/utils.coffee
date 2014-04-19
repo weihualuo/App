@@ -197,30 +197,28 @@ angular.module('app.utils', [])
           PrefixedStyle raw, 'transition', null
           callback?()
   )
-  .directive('transInOut', (PrefixedStyle, PrefixedEvent)->
-    (scope, element, attr)->
-      transitInStyle = transitOutStyle = null
-      transition = attr.transInOut or 'all 300ms ease-in'
-      raw = element[0]
-      entering = no
-      leaving = no
+  .factory('Transitor', (PrefixedStyle, PrefixedEvent)->
 
-      scope.transformer =
+    easeIn = 'all 300ms ease-in'
+    caller = (func)-> func?()
+    api =
+      transIn: (element, transitInStyle, transition=easeIn)->
 
-        transBefore: ->
-          transitInStyle = scope.$eval(attr.transIn)
-          if not transitInStyle then return
-          entering = yes
-          if angular.isString(transitInStyle)
-            element.addClass(transitInStyle)
-          else if angular.isObject(transitInStyle)
-            for key, value of transitInStyle
-              PrefixedStyle raw, key, value
-          PrefixedStyle raw, 'transition', transition
+        raw = element[0]
 
+        if angular.isString(transitInStyle)
+          element.addClass(transitInStyle)
+        else if angular.isObject(transitInStyle)
+          for key, value of transitInStyle
+            PrefixedStyle raw, key, value
+        else
+          return caller
 
-        transIn: ->
-          if not transitInStyle then return
+        console.log "Transitor transIn prepare", transitInStyle
+        PrefixedStyle raw, 'transition', transition
+
+        perform = (done)->
+          console.log "perform transIn", transitInStyle
           setTimeout (->
             if angular.isString(transitInStyle)
               element.removeClass(transitInStyle)
@@ -229,100 +227,74 @@ angular.module('app.utils', [])
               for key, value of transitInStyle
                 PrefixedStyle raw, key, null
 
+            else
+              return done?()
+
+            entering = yes
             transitEnd = (e)->
               if e.target is raw and entering
+                console.log "transIn transitEnd", transitInStyle
                 entering = no
                 PrefixedStyle raw, 'transition', null
                 PrefixedEvent element, "TransitionEnd", transitEnd, off
+                done?()
             PrefixedEvent element, "TransitionEnd", transitEnd
-            ), 10
+          ), 10
 
-        transOut: (done)->
-          transitOutStyle = scope.$eval(attr.transOut)
-          if not transitOutStyle then return done()
+      transOut: (element, transitOutStyle, transition=easeIn)->
 
-          leaving = yes
-          PrefixedStyle raw, 'transition', transition
-          if angular.isString(transitOutStyle)
-            setTimeout (->element.addClass(transitOutStyle)), 10
+        raw = element[0]
 
-          else if angular.isObject(transitOutStyle)
-            for key, value of transitOutStyle
-              PrefixedStyle raw, key, value
+        if not transitOutStyle then return caller
+        PrefixedStyle raw, 'transition', transition
+        console.log "Transitor transOut", transitOutStyle
 
-          transitEnd = (e)->
-            if e.target is raw and leaving
-              leaving = no
+        perform = (done)->
+          console.log "perform transOut", transitOutStyle
+          setTimeout (->
+            if angular.isString(transitOutStyle)
+              element.addClass(transitOutStyle)
 
-              if angular.isString(transitOutStyle)
-                element.removeClass(transitOutStyle)
-              else if angular.isObject(transitOutStyle)
-                for key, value of transitOutStyle
-                  PrefixedStyle raw, key, null
+            else if angular.isObject(transitOutStyle)
+              for key, value of transitOutStyle
+                PrefixedStyle raw, key, value
 
-              PrefixedStyle raw, 'transition', null
-              PrefixedEvent element, "TransitionEnd", transitEnd, off
-              done()
+            else return done?()
 
-          PrefixedEvent element, "TransitionEnd", transitEnd
+            leaving = yes
+            transitEnd = (e)->
+              if e.target is raw and leaving
+                console.log "transOut transitEnd", transitOutStyle
+                leaving = no
+                if angular.isString(transitOutStyle)
+                  element.removeClass(transitOutStyle)
+                else if angular.isObject(transitOutStyle)
+                  for key, value of transitOutStyle
+                    PrefixedStyle raw, key, null
+
+                PrefixedStyle raw, 'transition', null
+                PrefixedEvent element, "TransitionEnd", transitEnd, off
+                done?()
+            PrefixedEvent element, "TransitionEnd", transitEnd
+
+          ), 10
   )
-  .factory('Tansformer', ($timeout, PrefixedStyle, PrefixedEvent)->
 
-    api =
-      enter: (element, parent, after, transitInStyle, complete)->
-        raw = element[0]
-        transition = 'all 300ms ease-in'
+  .directive('transInOut', (Transitor)->
 
-        if transitInStyle
-          element.addClass(transitInStyle)
-          PrefixedStyle raw, 'transition', transition
+    link:(scope, element, attr, ctrl)->
 
-        if after
-          after.after(element)
-        else
-          parent.append(element)
+      ctrl = scope.$controller
+      if not ctrl then return
 
-        if transitInStyle
+      transIn = ->
+        console.log "transInOut before", scope.$eval(attr.transIn)
+        Transitor.transIn(element, scope.$eval(attr.transIn))
 
-          entering = yes
-          transit = ->
-            element.removeClass(transitInStyle)
-          setTimeout transit, 10
+      transOut = (done)->
+        console.log "transInOut out", scope.$eval(attr.transOut)
+        Transitor.transOut(element, scope.$eval(attr.transOut))(done)
 
-          transitEnd = (e)->
-            if e.target is raw and entering
-              entering = no
-              PrefixedStyle raw, 'transition', null
-              PrefixedEvent element, "TransitionEnd", transitEnd, off
-              complete?()
-
-          PrefixedEvent element, "TransitionEnd", transitEnd
-        else
-          complete?()
-
-      leave: (element, transitOutStyle)->
-        raw = element[0]
-        transition = 'all 300ms ease-in'
-
-        if transitOutStyle
-
-          leaving = yes
-          PrefixedStyle raw, 'transition', transition
-          transit = ->
-            element.addClass(transitOutStyle)
-          setTimeout transit, 10
-
-          transitEnd = (e)->
-            if e.target is raw and leaving
-              leaving = no
-              element.removeClass(transitOutStyle)
-              PrefixedStyle raw, 'transition', null
-              PrefixedEvent element, "TransitionEnd", transitEnd, off
-              element.remove()
-
-          PrefixedEvent element, "TransitionEnd", transitEnd
-
-        else
-          element.remove()
+      ctrl.register transIn, transOut
 
   )
