@@ -6,7 +6,7 @@ angular.module( 'CacheView', [])
   )
   .factory('ViewFactory', ($animate, Service)->
     class View
-      constructor: (@element, @name, @scope, @params) ->
+      constructor: (@element, @name, @scope) ->
         @ctrl = @scope.$controller
 
       leave: ->
@@ -185,8 +185,8 @@ angular.module( 'CacheView', [])
           current = $route.current
           clone = $transclude(newScope, ->)
           #console.log "Create a new view", name, current.params
-          view = new ViewFactory(clone, name, newScope, current.params)
-          ViewManager.changeView(view)
+          view = new ViewFactory(clone, name, newScope)
+          ViewManager.changeView(view, current.params)
 
           #Cache the view
           if current.cache
