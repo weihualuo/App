@@ -147,7 +147,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     ctrl = this
     Env.photoInfo = Env.photoDetail
 
-    $scope.$on 'destroyed', ->
+    $scope.$on 'content.closed', ->
       ctrl.unregister()
       $scope.onClose()
 

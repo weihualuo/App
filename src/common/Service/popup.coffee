@@ -107,18 +107,18 @@ angular.module( 'Popup', [])
       #return a end function to manully hide the view
       end: hidePopup
   )
-  .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $document, $window, PrefixedStyle)->
-    (locals, parentScope, template, hash, url, backdrop, parent)->
+  .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $controller, $document, $window)->
+    (locals, parentScope, controller, template, hash, url, backdrop, parent)->
 
       deferred = $q.defer()
 
-      backdrop ?= """
-                  <div class="popup-backdrop box-center enabled" ng-click="onClose($event)"></div>
-                  """
+      backdrop ?= angular.element '<div class="popup-backdrop box-center enabled"></div>'
       hash ?= 'modal'
       parentScope ?= $rootScope
       scope = parentScope.$new()
       angular.extend scope, locals
+      if controller
+        scope.$controller = $controller(controller, $scope:scope)
       param = undefined
       ready = false
       savedState = null
@@ -132,24 +132,24 @@ angular.module( 'Popup', [])
         $window.onpopstate = savedState
         $timeout removeModal
 
-      scope.$close = (ret)->
+      closeModal = (ret)->
         #popup hash history
         if ready and $window.onpopstate is onPopup
           param = ret
           history.back()
 
-      scope.$on 'destroyed', ->scope.$close()
+      #emit by sidepane or something
+      scope.$on 'content.closed', -> closeModal()
 
       body = $document[0].body
       parent ?= angular.element(body)
       if !!backdrop
-        backdrop = $compile(backdrop)(scope)
         parent.append(backdrop)
         parent = backdrop
-        scope.onClose = (e)->
+        #ng click not work with child form element
+        backdrop.on 'click', (e)->
           target = e.target || e.srcElement
-          if target is parent[0]
-            scope.$close()
+          if target is backdrop[0] then closeModal()
 
       removeModal = ->
         if param?
@@ -187,35 +187,24 @@ angular.module( 'Popup', [])
         enterModal()
 
       #Return
-      ret =
+      scope.modal =
+        close: closeModal
         promise: deferred.promise
-        end: scope.$close
-
   )
   .factory('TogglePane', (Modal)->
     panes = {}
     (param)->
-      {id, locals, scope, template, url, hash, backdrop, parent, success, fail, always} = param
+      {id, locals, scope, template, controller, url, hash, backdrop, parent} = param
       if panes[id]
         panes[id].end()
         panes[id] = null
       else if id
         hash ?= id
-        panes[id] = Modal locals, scope, template, hash, url, backdrop, parent
-        panes[id].promise.then(success, fail).finally ->
+        panes[id] = Modal locals, scope, controller, template, hash, url, backdrop, parent
+        panes[id].promise.then(param.success, param.fail).finally ->
           panes[id] = null
-          if always then always()
+          param.always?()
   )
-  .directive('popup', ()->
-    restrict: 'E'
-#    replace: true
-#    transclude: true
-#    template:  """
-#               <div class="popup-backdrop enabled " ng-click="onClose($event)">
-#                <div class="popup-win fade-in-out" ng-transclude></div>
-#               </div>
-#               """
-    link: (scope, element, attr) ->
-  )
+
 
 

@@ -111,6 +111,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         template: "<div class='popup-win fade-in-out'></div>"
         url: "modal/login.tpl.html"
         locals: url:location.href
+        controller: 'loginCtrl'
 
     $scope.onTestDevice = ->
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
@@ -220,6 +221,11 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         item = Config.$filter[type].any
       item
 
+  )
+  .controller('loginCtrl', ($scope)->
+    console.log  'loginCtrl'
+    $scope.onLogin = ->
+      console.log $scope.name
   )
 
 

@@ -1,13 +1,13 @@
 
 <div class="bar bar-header">
     <h2 class="title">{{title}}</h2>
-    <button class="button button-clear" ng-click="$close()">取消</button>
+    <button class="button button-clear" ng-click="modal.close()">取消</button>
 </div>
 <div class="content-view no-sub">
     <ul scrollable class="list">
         <li class="item"
             ng-class="{active: item.id==selected}"
-            ng-click="$close(item.id)"
+            ng-click="modal.close(item.id)"
             ng-repeat="item in items">{{item.cn || item.en}}</li>
     </ul>
 </div>

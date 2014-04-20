@@ -132,7 +132,7 @@ angular.module( 'Gallery', [])
       PrefixedStyle container[0], 'transition', 'all ease-in 300ms'
       ctrl.setTransform container[0], $scope.getItemRect(current.index)
       PrefixedEvent container, "TransitionEnd", ->
-        $scope.$emit 'destroyed'
+        $scope.$emit 'content.closed'
 
     @addTags = (tags, parent)->
       for tag in tags

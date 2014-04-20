@@ -97,7 +97,7 @@ angular.module( 'Widget', [])
           setAnimate(null)
         else
           setAnimate('none')
-          scope.$emit 'destroyed'
+          scope.$emit 'content.closed'
 
       options =
         direction: attr.position
