@@ -1,21 +1,36 @@
 
 
-    <header class="bar bar-header bar-dark">
-        <h1 class="title">登陆</h1>
-        <button class="button button-clear" ng-click="$dismiss()">取消</button>
-    </header>
-    <div class="content has-header">
+<header class="bar bar-header bar-light">
+    <h1 class="title">登陆</h1>
+    <button class="button button-clear" ng-click="$close()">取消</button>
+</header>
 
-        <button class="button button-full button-clear">
-            <a href= "/oauth/login?state={{url}}">
-                <img src="assets/img/sina-connect-32.png"/>
-            </a>
-        </button>
-        <button class="button button-full button-clear">
-            <a href= "/oauth/loginqq?state={{url}}">
-                <img src="assets/img/qq-connect-32.png"/>
-            </a>
-        </button>
+<form class="list list-inset" ng-submit="onLogin()">
+    <label class="item item-input">
+        <input type="text" placeholder="用户名">
+    </label>
+    <label class="item item-input">
+        <input type="password" placeholder="密码">
+    </label>
+    <label class="item item-input">
+        <input type="email" placeholder="邮件">
+    </label>
+    <button class="button button-block" ng-click="onLogin()">
+        登录
+    </button>
+    <button class="button button-block" ng-click="onRegister">
+        注册
+    </button>
+</form>
 
-    </div>
+<div class="hbox-justify">
+    <a href= "/oauth/login?state={{url}}">
+        <img src="assets/img/sina-connect-32.png"/>
+    </a>
+
+    <a href= "/oauth/loginqq?state={{url}}">
+        <img src="assets/img/qq-connect-32.png"/>
+    </a>
+</div>
+
 

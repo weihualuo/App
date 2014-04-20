@@ -92,7 +92,7 @@ angular.module( 'Widget', [])
       setAnimate = (prop)->
         PrefixedStyle pane, 'transition', prop
 
-      resetState = ->
+      resetState = ()->
         if x is 0
           setAnimate(null)
         else
@@ -112,60 +112,14 @@ angular.module( 'Widget', [])
             setAnimate "all #{time}ms ease-in"
             updatePosition offset
           else
+            updatePosition offset
             resetState()
 
       element.ready ->
-        options.width = pane.offsetWidth
         Swipe element, options
 
   )
-  .directive('xgalleryView', ($timeout)->
-    restrict: 'E'
-    replace: true
-    transclude: true
-    template: """
-              <div class="blueimp-gallery blueimp-gallery-controls fade-in-out" ng-click="onClick($event)">
-                <div class="slides"></div>
-                <h3 class="title">
-                <i class="icon ion-ios7-information-outline"></i>
-                </h3>
-                <span class="prev">‹</span>
-                <span class="next">›</span>
-                <span class="close"><i class="icon ion-ios7-close-outline"></i></span>
-                <span class="play-pause"></span>
-                <span class="info" ng-click="onInfo($event)">
-                <i class="icon ion-ios7-information-outline"></i>
-                </span>
-              </div>
-              """
 
-    link: (scope, element) ->
-
-      gallery = null
-      element.ready ->
-        gallery = blueimp.Gallery scope.links,
-          index: scope.index
-          container: element[0]
-#          startSlideshow: true
-          displayTransition: false
-          emulateTouchEvents: true
-          closeOnSlideClick: false
-          onclosed: ->
-            gallery = null
-            scope.$emit 'destroyed'
-
-        scope.$on '$destroy', ->
-          gallery.close() if gallery
-
-      scope.onClick = (e)->
-        e.stopPropagation()
-        gallery.handleClick(e)
-
-      scope.onInfo = (e)->
-        e.stopPropagation()
-        gallery.pause()
-        scope.onImageInfo(gallery.getIndex())
-  )
 
 
 

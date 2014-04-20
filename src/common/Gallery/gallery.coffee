@@ -72,8 +72,12 @@ angular.module( 'NewGallery', [])
 
     Slide::detach = ()->
       @attached = no
-      @loader.empty() if @imgLoad
+      if @imgLoad
+        for tag in @tagEl
+          tag.scope().$destroy()
+        @loader.empty()
       @element.remove()
+
 
     Slide::onShow = ()->
       @element.addClass('active')

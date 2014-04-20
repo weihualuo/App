@@ -165,38 +165,6 @@ angular.module('app.utils', [])
         ret =
           transform: "translate3d(#{offsetX}px, #{offsetY}px, 0) scale3d(#{ratioX}, #{ratioY}, 0)"
   )
-  .directive('rectTrans', (PrefixedStyle, PrefixedEvent)->
-
-    setTransform = (el, rect)->
-      offsetX = rect.left+rect.width/2-window.innerWidth/2
-      offsetY = rect.top+rect.height/2-window.innerHeight/2
-      ratioX = rect.width/window.innerWidth
-      ratioY = rect.height/window.innerHeight
-      PrefixedStyle el, 'transform', "translate3d(#{offsetX}px, #{offsetY}px, 0) scale3d(#{ratioX}, #{ratioY}, 0)"
-
-    (scope, element, attr)->
-      raw = element[0]
-      if rect = scope[attr.rectTrans]
-        setTransform raw, rect
-        element.ready ->
-          PrefixedStyle raw, 'transition', 'all 300ms ease-in'
-          PrefixedStyle raw, 'transform', null
-
-      scope.transformer =  (rect, callback)->
-        rect ?=
-          left: window.innerWidth/2 - 100
-          top: window.innerHeight/2 -100
-          width: 200
-          height: 200
-
-        PrefixedStyle raw, 'transition', 'all ease-in 300ms'
-        #TODO must use a timeout, why?
-        setTimeout (->setTransform raw, rect), 10
-        PrefixedEvent element, "TransitionEnd", ->
-          console.log "end"
-          PrefixedStyle raw, 'transition', null
-          callback?()
-  )
   .factory('Transitor', (PrefixedStyle, PrefixedEvent)->
 
     easeIn = 'all 300ms ease-in'

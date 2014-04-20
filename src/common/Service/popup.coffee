@@ -6,7 +6,7 @@ angular.module( 'Popup', [])
     alert : (message)->
       template =
                  '<div class="popup-backdrop box-center" ng-click="onClose()">' +
-                    '<div class="popup-win-msg box-center">'+message+'</div>'+
+                    '<div class="popup-msg box-center">'+message+'</div>'+
                  '</div>'
 
       scope = $rootScope.$new(true)
@@ -113,7 +113,7 @@ angular.module( 'Popup', [])
       deferred = $q.defer()
 
       backdrop ?= """
-                  <div class="popup-backdrop enabled" ng-click="onClose($event)"></div>
+                  <div class="popup-backdrop box-center enabled" ng-click="onClose($event)"></div>
                   """
       hash ?= 'modal'
       parentScope ?= $rootScope
@@ -200,10 +200,22 @@ angular.module( 'Popup', [])
         panes[id].end()
         panes[id] = null
       else if id
+        hash ?= id
         panes[id] = Modal locals, scope, template, hash, url, backdrop, parent
         panes[id].promise.then(success, fail).finally ->
           panes[id] = null
           if always then always()
+  )
+  .directive('popup', ()->
+    restrict: 'E'
+#    replace: true
+#    transclude: true
+#    template:  """
+#               <div class="popup-backdrop enabled " ng-click="onClose($event)">
+#                <div class="popup-win fade-in-out" ng-transclude></div>
+#               </div>
+#               """
+    link: (scope, element, attr) ->
   )
 
 

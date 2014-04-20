@@ -99,7 +99,6 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     else
       $scope.$on 'scroll.reload', initSlide
 
-
     onImageInfo = (index)->
       Nav.go
         name: 'photoInfo'
@@ -126,6 +125,10 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
         when 'close'
           $scope.displayCtrl = no
           Nav.back({name:'photos'})
+
+        when 'add'
+          if $scope.isLogin(yes)
+            no
 
         when 'prev'
           slideCtrl.prev()

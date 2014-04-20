@@ -105,13 +105,30 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
   )
   .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, Config, Env, $route) ->
 
+    popupLoginModal = ->
+      TogglePane
+        id: 'login'
+        template: "<div class='popup-win fade-in-out'></div>"
+        url: "modal/login.tpl.html"
+        locals: url:location.href
+
     $scope.onTestDevice = ->
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
+
+    $scope.onButton = (id)->
+      if $scope.isLogin(yes)
+        no
     
     #Load meta info first
     $scope.meta = Single('meta', Config.$meta).get()
     $scope.meta.$promise.then ->
       $scope.paramUpdateFlag++
+
+    $scope.isLogin = (popup)->
+      login = !!$scope.meta.user
+      if not login and popup
+        popupLoginModal()
+      login
 
     $scope.$watch 'paramUpdateFlag', ->
       if $route.current
