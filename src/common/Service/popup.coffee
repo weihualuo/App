@@ -191,19 +191,20 @@ angular.module( 'Popup', [])
         close: closeModal
         promise: deferred.promise
   )
-  .factory('TogglePane', (Modal)->
+  .factory('ToggleModal', (Modal)->
     panes = {}
     (param)->
       {id, locals, scope, template, controller, url, hash, backdrop, parent} = param
       if panes[id]
-        panes[id].end()
+        panes[id].close()
         panes[id] = null
       else if id
         hash ?= id
-        panes[id] = Modal locals, scope, controller, template, hash, url, backdrop, parent
-        panes[id].promise.then(param.success, param.fail).finally ->
+        panes[id] = modal = Modal locals, scope, controller, template, hash, url, backdrop, parent
+        modal.promise.then(param.success, param.fail).finally ->
           panes[id] = null
           param.always?()
+        modal
   )
 
 

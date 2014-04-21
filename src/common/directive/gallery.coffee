@@ -1,7 +1,7 @@
 
 
 angular.module( 'Gallery', [])
-  .controller('GalleryCtrl', ($scope, Slide, $timeout, PrefixedStyle, PrefixedEvent, Service, TogglePane, $compile)->
+  .controller('GalleryCtrl', ($scope, Slide, $timeout, PrefixedStyle, PrefixedEvent, Service, ToggleModal, $compile)->
 
     objects = null
     container = current = null

@@ -96,7 +96,7 @@ angular.module( 'CacheView', [])
 
 
   )
-  .factory('ViewManager', (Nav, $animate, Service, viewStack, Tansformer)->
+  .factory('ViewManager', (Nav, $animate, Service, viewStack)->
     current = null
     $element = null
     stack = viewStack

@@ -49,7 +49,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       return
     this
   )
-  .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, TogglePane, ImageSlide, TransUtil)->
+  .controller( 'PhotoDetailCtrl', ($scope, $controller, $element, $timeout, Nav, Env, Service, ToggleModal, ImageSlide, TransUtil)->
     #extend from ListCtrl
     #angular.extend($scope, Nav.data())
     $scope.index ?= 0
@@ -105,13 +105,13 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
         push: yes
         data: image: $scope.objects[index]
       return
-      TogglePane
-        id: 'infoView'
-        template: "<side-pane position='right' class='pane-image-info popup-in-right'></side-pane>"
-        url: "modal/imageInfo.tpl.html"
-        hash: 'info'
-        locals:
-          image: $scope.objects[index]
+#      ToggleModal
+#        id: 'infoView'
+#        template: "<side-pane position='right' class='pane-image-info popup-in-right'></side-pane>"
+#        url: "modal/imageInfo.tpl.html"
+#        hash: 'info'
+#        locals:
+#          image: $scope.objects[index]
 
     $scope.onCtrl = (e, id)->
 

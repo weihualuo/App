@@ -119,6 +119,23 @@ angular.module( 'Widget', [])
         Swipe element, options
 
   )
+  .directive('Navable', ($compile, $animate, $http, $templateCache)->
+    restrict: 'E'
+    replace: true
+    template:  """
+               <div>
+                 <div class='fill'></div>
+               </div>
+               """
+    link:(scope, element, attr)->
+
+      location = attr.Navable
+
+      scope.navCtrl =
+        go: (url)->
+
+  )
+
 
 
 

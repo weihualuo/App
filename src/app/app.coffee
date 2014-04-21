@@ -103,10 +103,10 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     #prevent webkit drag
     $document.on 'touchmove mousemove', (e)->e.preventDefault()
   )
-  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, TogglePane, $timeout, Config, Env, $route) ->
+  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, ToggleModal, $timeout, Config, Env, $route) ->
 
     popupLoginModal = ->
-      TogglePane
+      ToggleModal
         id: 'login'
         template: "<div class='popup-win fade-in-out'></div>"
         url: "modal/login.tpl.html"
@@ -187,7 +187,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         return
 
       name = $route.current.name
-      TogglePane
+      ToggleModal
         id: 'filters'
         template: "<side-pane position='right' class='pane-filter-bar popup-in-right'></side-pane>"
         url: "modal/filterBar.tpl.html"
@@ -222,10 +222,44 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       item
 
   )
-  .controller('loginCtrl', ($scope)->
-    console.log  'loginCtrl'
+  .controller('loginCtrl', ($scope, Popup, ToggleModal, $timeout)->
+
+    console.log 'loginCtrl'
+    validateMsg =
+      email:
+        email: '请输入正确的邮件地址'
+      minlength:
+        password: '密码最少长度为6'
+      required:
+        username: '请输入用户名'
+        email: '请输入邮件地址'
+        password: '请输入密码'
+
+    popupMsg = ($error)->
+      for error, inputs of $error
+        try
+          if msg =  validateMsg[error][inputs[0].$name]
+            break
+        catch error
+          continue
+      Popup.alert msg
+
     $scope.onLogin = ->
-      console.log $scope.name
+      console.log $scope.form
+      form = $scope.form
+      if form.$invalid
+        return popupMsg(form.$error)
+
+    $scope.goRegister = ->
+      history.back()
+      $timeout (-> ToggleModal
+        id: 'register'
+        template: "<div class='popup-win popup-in-right'></div>"
+        url: "modal/login.tpl.html"
+        locals: url:location.href
+        controller: 'loginCtrl'
+      ), 100
+
   )
 
 
