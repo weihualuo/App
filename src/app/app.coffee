@@ -4,10 +4,12 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
                          'CacheView', 'Service', 'Popup', 'Scroll', 'Widget'
                          'MESSAGE'
 ])
-  .config( ($routeProvider, $compileProvider) ->
+  .config( ($routeProvider, $compileProvider, $httpProvider) ->
 #    // Needed for phonegap routing
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/)
     #$locationProvider.html5Mode(true)
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken'
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken'
 
     $routeProvider.when( '/photos',
       name: 'photos'
@@ -109,9 +111,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       ToggleModal
         id: 'login'
         template: "<div navable='template' animation='popup-in-right' class='popup-win fade-in-out'></div>"
-        #url: "modal/login.tpl.html"
         locals: url:location.href
         controller: 'loginCtrl'
+        scope: $scope
 
     $scope.onTestDevice = ->
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
@@ -222,7 +224,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       item
 
   )
-  .controller('loginCtrl', ($scope, Popup, Service)->
+  .controller('loginCtrl', ($scope, Popup, Service, $http)->
 
     console.log 'loginCtrl'
     $scope.template = 'modal/login.tpl.html'
@@ -256,10 +258,36 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     $scope.onLogin = ->
       if Service.noRepeat('login') and validate($scope.loginForm)
         console.log "ok, now login"
+        $http.post('/auth/login', {username:$scope.username, password:$scope.password}).then(
+          (ret)->
+            Popup.alert '登录成功'
+            $scope.meta.user = ret.data.user
+            $scope.modal.close()
+            console.log "success", $scope.meta.user
+          (ret)->
+            if ret.data.error is 'invalid'
+              Popup.alert '不正确的用户名或密码'
+            console.log "fail", ret
+        )
 
     $scope.onRegister = ->
       if Service.noRepeat('login') and validate($scope.registerForm)
         console.log "ok, now register"
+        $http.post('/auth/register',
+          username:$scope.username
+          password:$scope.password
+          email:$scope.email
+        ).then(
+          (ret)->
+            Popup.alert '注册成功'
+            $scope.meta.user = ret.data.user
+            $scope.modal.close()
+            console.log "success", $scope.meta.user
+          (ret)->
+            if ret.data.error is 'exist'
+              Popup.alert '用户名已存在'
+            console.log "fail", ret
+        )
 
   )
 
