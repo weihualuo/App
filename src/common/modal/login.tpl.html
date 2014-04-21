@@ -6,20 +6,17 @@
 </header>
 
 <div style="padding: 44px 0 10px">
-    <form name='form' class="list list-inset" ng-submit="onLogin()">
+    <form name='loginForm' class="list list-inset" ng-submit="onLogin()">
         <label class="item item-input">
-            <input name='username' type="text" placeholder="用户名" ng-model="username" required maxlength="16">
+            <input name='username' type="text" placeholder="用户名或邮件" ng-model="username" required maxlength="16">
         </label>
         <label class="item item-input">
             <input name='password' type="password" placeholder="密码" ng-model="password" required ng-minlength='6' maxlength="20">
         </label>
-        <label class="item item-input">
-            <input name='email' type="email" placeholder="邮件" ng-model="email" required>
-        </label>
         <button class="button button-block" ng-click="onLogin()">
             登录
         </button>
-        <button class="button button-block" ng-click="goRegister()">
+        <button class="button button-block" ng-click="navCtrl.go('modal/register.tpl.html')">
             注册
         </button>
     </form>

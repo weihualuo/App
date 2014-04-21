@@ -119,21 +119,38 @@ angular.module( 'Widget', [])
         Swipe element, options
 
   )
-  .directive('Navable', ($compile, $animate, $http, $templateCache)->
-    restrict: 'E'
-    replace: true
-    template:  """
-               <div>
-                 <div class='fill'></div>
-               </div>
-               """
+  .directive('navable', ($compile, $animate, $http, $templateCache)->
+
     link:(scope, element, attr)->
 
-      location = attr.Navable
+      stack = []
+      container = angular.element "<div class='fill'></div>"
+      if ani = attr.animation
+        container.addClass(ani)
+
+      getContent = (url)->
+        template = $templateCache.get(url)
+        content = container.clone().html(template)
+        $compile(content)(scope)
+
+      current = getContent scope.$eval(attr.navable)
+      element.empty()
+      element.append(current)
 
       scope.navCtrl =
         go: (url)->
-
+          child = getContent url
+          stack.push current
+          $animate.addClass(current, 'stacked')
+          $animate.enter(child, element)
+          current = child
+          null
+        back: ->
+          if stack.length
+            $animate.leave(current)
+            current = stack.pop()
+            $animate.removeClass(current, 'stacked')
+          null
   )
 
 

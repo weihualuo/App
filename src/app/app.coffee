@@ -108,8 +108,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     popupLoginModal = ->
       ToggleModal
         id: 'login'
-        template: "<div class='popup-win fade-in-out'></div>"
-        url: "modal/login.tpl.html"
+        template: "<div navable='template' animation='popup-in-right' class='popup-win fade-in-out'></div>"
+        #url: "modal/login.tpl.html"
         locals: url:location.href
         controller: 'loginCtrl'
 
@@ -222,9 +222,11 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       item
 
   )
-  .controller('loginCtrl', ($scope, Popup, ToggleModal, $timeout)->
+  .controller('loginCtrl', ($scope, Popup, Service)->
 
     console.log 'loginCtrl'
+    $scope.template = 'modal/login.tpl.html'
+
     validateMsg =
       email:
         email: '请输入正确的邮件地址'
@@ -244,21 +246,20 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
           continue
       Popup.alert msg
 
-    $scope.onLogin = ->
-      console.log $scope.form
-      form = $scope.form
+    validate = (form)->
+      console.log form
       if form.$invalid
-        return popupMsg(form.$error)
+        popupMsg(form.$error)
+        return false
+      return true
 
-    $scope.goRegister = ->
-      history.back()
-      $timeout (-> ToggleModal
-        id: 'register'
-        template: "<div class='popup-win popup-in-right'></div>"
-        url: "modal/login.tpl.html"
-        locals: url:location.href
-        controller: 'loginCtrl'
-      ), 100
+    $scope.onLogin = ->
+      if Service.noRepeat('login') and validate($scope.loginForm)
+        console.log "ok, now login"
+
+    $scope.onRegister = ->
+      if Service.noRepeat('login') and validate($scope.registerForm)
+        console.log "ok, now register"
 
   )
 

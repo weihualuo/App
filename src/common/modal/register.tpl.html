@@ -1,0 +1,27 @@
+
+
+<header class="bar bar-header bar-light">
+    <button class="button button-clear icon ion-ios7-arrow-back" ng-click="navCtrl.back()"></button>
+    <h1 class="title">注册</h1>
+    <button class="button button-clear" ng-click="modal.close()">取消</button>
+</header>
+
+<div style="padding: 44px 0 10px">
+    <form name='registerForm' class="list list-inset" ng-submit="onRegister()">
+        <label class="item item-input">
+            <input name='username' type="text" placeholder="用户名" ng-model="username" required maxlength="16">
+        </label>
+        <label class="item item-input">
+            <input name='email' type="email" placeholder="邮件" ng-model="email" required>
+        </label>
+        <label class="item item-input">
+            <input name='password' type="password" placeholder="密码" ng-model="password" required ng-minlength='6' maxlength="20">
+        </label>
+        <button class="button button-block" ng-click="onRegister()">
+            注册
+        </button>
+    </form>
+
+</div>
+
+
