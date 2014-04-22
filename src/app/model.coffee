@@ -26,13 +26,13 @@ angular.module( 'Model', ['restangular'])
       @param = null
       this
 
-    Factory.prototype.list = (param)->
+    Factory.prototype.list = (param, cache=true)->
       if !angular.equals @param, param
         objs = @objects = _.extend [], Restangular.all @name
         @param = angular.copy param
         #resolved should be reset because collection will be different
         objs.$resolved = no
-        objs.$promise = objs.getList(param)
+        objs.$promise = objs.withHttpConfig({cache: cache}).getList(param)
         objs.$promise.then( (data)=>
           objs.meta = data.meta
           #if data is array, it  only copy array

@@ -133,7 +133,6 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
               template: "<div class='popup-win fade-in-out'></div>"
               controller: 'addIdeabookCtrl'
               url: 'modal/addIdeabook.tpl.html'
-              scope: $scope
               locals:
                 user: $scope.meta.user
                 image: $scope.objects[$scope.index]

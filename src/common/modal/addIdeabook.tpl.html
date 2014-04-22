@@ -20,8 +20,8 @@
                 </select>
                 <i class="icon ion-arrow-down-b"></i>
             </div>
-            <div class="ideabook-add-new">
-                <input type="text" placeholder="我的新灵感集" ng-model="name">
+            <div class="ideabook-add-new" ng-init="title='我的新灵感集'">
+                <input type="text" ng-model="title" ng-focus="ideabook=ideabooks[0]">
             </div>
 
         </div>
@@ -33,11 +33,11 @@
     </div>
 
     <div class="ideabook-add-button">
-        <button class="button button-stable">
+        <button class="button button-stable" ng-click="modal.close()">
             取消
         </button>
 
-        <button class="button button-positive">
+        <button class="button button-positive" ng-click="onSave()">
             保存
         </button>
     </div>
