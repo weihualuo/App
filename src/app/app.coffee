@@ -1,6 +1,6 @@
 angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
                          'templates-app', 'templates-common',
-                         'Model', 'app.utils', 'app.home', 'app.photo', 'app.product', 'app.discussion',
+                         'Model', 'app.utils', 'app.home', 'app.photo', 'app.product', 'app.ideabook', 'app.discussion',
                          'CacheView', 'Service', 'Popup', 'Scroll', 'Widget'
                          'MESSAGE'
 ])

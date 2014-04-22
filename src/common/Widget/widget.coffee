@@ -124,7 +124,7 @@ angular.module( 'Widget', [])
     link:(scope, element, attr)->
 
       stack = []
-      container = angular.element "<div class='fill'></div>"
+      container = angular.element "<div style='position: absolute; width:100%'></div>"
       if ani = attr.animation
         container.addClass(ani)
 
@@ -136,6 +136,13 @@ angular.module( 'Widget', [])
       current = getContent scope.$eval(attr.navable)
       element.empty()
       element.append(current)
+      element.ready ->
+        height = current[0].offsetHeight
+        #At present: only set the height to first view,
+        #the other view maybe hide if hight than first view
+        #In that case, to update the diretive
+        element.css
+          height: height+'px'
 
       scope.navCtrl =
         go: (url)->

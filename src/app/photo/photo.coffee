@@ -121,14 +121,22 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
       switch id
         when 'info'
-          onImageInfo(slideCtrl.getCurrentIndex())
+          onImageInfo($scope.index)
         when 'close'
           $scope.displayCtrl = no
           Nav.back({name:'photos'})
 
         when 'add'
           if $scope.isLogin(yes)
-            no
+            ToggleModal
+              id: 'add-to-ideabook'
+              template: "<div class='popup-win fade-in-out'></div>"
+              controller: 'addIdeabookCtrl'
+              url: 'modal/addIdeabook.tpl.html'
+              scope: $scope
+              locals:
+                user: $scope.meta.user
+                image: $scope.objects[$scope.index]
 
         when 'prev'
           slideCtrl.prev()

@@ -57,21 +57,17 @@ angular.module('app.home', ['restangular'])
 
     this
   )
-  .controller( 'IdeabookCtrl', ($scope, $controller, Nav)->
-    #extend from ListCtrl
-    $controller('ListCtrl', {$scope:$scope, name: 'ideabooks'})
-
-    this
-
-  )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
     console.log 'AdviceCtrl'
 
     this
 
   )
-  .controller( 'MyCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
+  .controller( 'MyCtrl', ($scope, $http) ->
     console.log 'Myctrl'
+    $scope.onLogout = ->
+      $http.post('/auth/logout').then ->
+        $scope.meta.user = null
     this
   )
 

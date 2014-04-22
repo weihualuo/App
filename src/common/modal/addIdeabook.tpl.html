@@ -1,0 +1,48 @@
+
+
+
+
+<header class="bar bar-header bar-light">
+    <h1 class="title">添加到灵感集</h1>
+    <button class="button button-clear" ng-click="modal.close()">取消</button>
+</header>
+
+<div style="padding: 44px 10px 10px 10px">
+
+    <div class="flex-box">
+        <div>
+            <img ng-src="{{image | thumbPath}}" width="140px" height="140px">
+        </div>
+        <div class="ideabook-add-select">
+            <h5>选择灵感集：</h5>
+            <div class="select-wrapper">
+                <select name="ideabook" ng-model="ideabook" ng-options="book.title for book in ideabooks" required>
+                </select>
+                <i class="icon ion-arrow-down-b"></i>
+            </div>
+            <div class="ideabook-add-new">
+                <input type="text" placeholder="我的新灵感集" ng-model="name">
+            </div>
+
+        </div>
+    </div>
+
+    <div class="ideabook-add-desc">
+        <h5>您觉得这张照片怎么样：</h5>
+        <textarea name="desc" ng-model="desc" rows="5"></textarea>
+    </div>
+
+    <div class="ideabook-add-button">
+        <button class="button button-stable">
+            取消
+        </button>
+
+        <button class="button button-positive">
+            保存
+        </button>
+    </div>
+
+</div>
+
+
+

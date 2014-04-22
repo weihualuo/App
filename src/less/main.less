@@ -147,6 +147,21 @@ button[disabled], input[disabled]{
   font-size: @icon-large;
 }
 
+select{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #484848;
+  cursor: pointer;
+  text-align: left;
+}
+
+
 //form.focused{
 //  .flex(99);
 //  .transition(all ease-in-out 300ms);
@@ -156,4 +171,5 @@ button[disabled], input[disabled]{
 @import "../app/home/home";
 @import "../app/photo/photo";
 @import "../app/product/product";
+@import "../app/ideabook/ideabook";
 @import "responsive";
