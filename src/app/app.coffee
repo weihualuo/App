@@ -224,20 +224,20 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       item
 
   )
-  .controller('loginCtrl', ($scope, Popup, Service, $http)->
+  .controller('loginCtrl', ($scope, Popup, Service, $http, MESSAGE)->
 
     console.log 'loginCtrl'
     $scope.template = 'modal/login.tpl.html'
 
     validateMsg =
       email:
-        email: '请输入正确的邮件地址'
+        email: MESSAGE.EMAIL_VALID
       minlength:
-        password: '密码最少长度为6'
+        password: MESSAGE.MINLEN_PWD
       required:
-        username: '请输入用户名'
-        email: '请输入邮件地址'
-        password: '请输入密码'
+        username: MESSAGE.REQ_USRNAME
+        email: MESSAGE.REQ_EMAIL
+        password: MESSAGE.REQ_PWD
 
     popupMsg = ($error)->
       for error, inputs of $error
@@ -260,13 +260,13 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         console.log "ok, now login"
         $http.post('/auth/login', {username:$scope.username, password:$scope.password}).then(
           (ret)->
-            Popup.alert '登录成功'
+            Popup.alert MESSAGE.LOGIN_OK
             $scope.meta.user = ret.data.user
             $scope.modal.close()
             console.log "success", $scope.meta.user
           (ret)->
             if ret.data.error is 'invalid'
-              Popup.alert '不正确的用户名或密码'
+              Popup.alert MESSAGE.LOGIN_NOK
             console.log "fail", ret
         )
 
@@ -279,13 +279,13 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
           email:$scope.email
         ).then(
           (ret)->
-            Popup.alert '注册成功'
+            Popup.alert MESSAGE.REGISTER_OK
             $scope.meta.user = ret.data.user
             $scope.modal.close()
             console.log "success", $scope.meta.user
           (ret)->
             if ret.data.error is 'exist'
-              Popup.alert '用户名已存在'
+              Popup.alert MESSAGE.USRNAME_EXIST
             console.log "fail", ret
         )
 
