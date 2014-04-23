@@ -1,5 +1,32 @@
 
 angular.module('app.ideabook', [])
+
+  .directive('ideabookThumb', (ImageUtil)->
+
+    restrict:'C'
+    link: (scope, element, attr)->
+      image = null
+      index = parseInt(attr.index)
+      pieces = scope.obj.pieces
+      if index >=  pieces.length then return
+      obj = pieces[index].image
+
+      element.on 'dynamic.remove', ->
+        #console.log "dynamic.remove", scope.obj.id
+        if image
+          image.remove()
+          image = null
+      element.on 'dynamic.add', ->
+        #console.log "dynamic.add", scope.obj.id
+        image = new Image()
+        image.src = ImageUtil.ideabookThumb(obj)
+        image.onload = ->
+          element.prepend image
+      #image.onerror = ->
+      #console.log "onerror", scope.obj.id
+      element.triggerHandler 'dynamic.add'
+
+  )
   .controller( 'IdeabookCtrl', ($scope, $controller, Nav)->
     #extend from ListCtrl
     $controller('ListCtrl', {$scope:$scope, name: 'ideabooks'})

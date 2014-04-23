@@ -1,0 +1,29 @@
+
+
+
+<ul scrollable refreshable class="container">
+    <li class="ideabook-list" list-render
+        ng-click="onIdeaBookView($event, obj)"
+        ng-repeat="obj in objects track by obj.id">
+        <div class="info">
+            <h3 no-watch="obj.title"></h3>
+            <p no-watch="obj.desc"></p>
+        </div>
+        <div class="author">
+            <span no-watch="obj.author.username"></span>
+        </div>
+        <div class="ideabook-thumbs">
+            <div class="ideabook-thumb" index='0'></div>
+            <div class="ideabook-thumb" index='1'></div>
+            <div class="ideabook-thumb" index='2'></div>
+            <div class="ideabook-thumb" index='3'></div>
+        </div>
+    </li>
+    <div class="list-more" ng-show="loadingMore">
+        <i class="icon ion-loading-d"></i>
+    </div>
+</ul>
+
+<div class="box-center fill" ng-show="objects.$resolved && !objects.length">
+    没有找到！
+</div>

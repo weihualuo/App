@@ -54,7 +54,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     .when( '/ideabooks'
       name: 'ideabooks'
       controller: 'IdeabookCtrl'
-      templateUrl: 'home/ideabooks.tpl.html'
+      templateUrl: 'ideabook/ideabooks.tpl.html'
       cache: yes
     )
     .when( '/advice'

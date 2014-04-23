@@ -20,7 +20,7 @@ angular.module('app.utils', [])
     productThumbTable =
       16: [310, 247]
       17: [262, 209]
-      18: [236, 188]
+      18: [230, 187]
       20: [105, 105]
 
     getThumbWidth = (width, n, r)->
@@ -95,6 +95,7 @@ angular.module('app.utils', [])
         paths[seq] or (paths[seq] = getPath(obj, seq))
       thumb: (obj)-> @path(obj, thumb_index)
       productThumb: (obj)-> @path(obj, product_thumb_index)
+      ideabookThumb: (obj)-> @path(obj, 17)
       small: (obj)-> @path(obj, 20)
       last: (obj)-> @path(obj, 10)
       best: (obj)->
