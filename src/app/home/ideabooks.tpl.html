@@ -2,6 +2,7 @@
 
 <ul scrollable>
     <li class="item item-thumbnail-left"
+        list-render
         ng-repeat="obj in objects track by obj.id">
         <img ng-src="{{meta.imgbase+obj.pieces[1].image.image}}">
         <h2>{{obj.title}}<span class="badge">{{obj.author.name}}</span></h2>

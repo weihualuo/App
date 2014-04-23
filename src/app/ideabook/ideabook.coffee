@@ -7,14 +7,14 @@ angular.module('app.ideabook', [])
     this
 
   )
-  .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, $q)->
+  .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, $q, MESSAGE)->
     console.log "addIdeabookCtrl"
     #$scope.template = 'modal/addIdeabook.tpl.html'
     # Operation on the collection will cause inconsistent of home list
     # due to listCtrl use cache mechanisam
     #collection = Many('ideabooks')
 
-    $scope.ideabooks = ideabooks = [{id:0, title: '新建灵感集', pieces:[]}]
+    $scope.ideabooks = ideabooks = [{id:0, title: MESSAGE.NEW_IDEABOOK, pieces:[]}]
     $scope.ideabook = ideabooks[0]
     param = author: $scope.user.id
     #Request the list without cache
@@ -24,17 +24,17 @@ angular.module('app.ideabook', [])
       angular.forEach data, (v)->ideabooks.push v
 
     saveToIdeabook =(ideabook, deferred)->
-      console.log "saveToIdeabook", ideabook
       data =
         image: $scope.image.id
         desc: $scope.desc
       ideabook.post('pieces', data).then(
-        (d)->
-          console.log "sucess", d
+        ()->
           deferred.resolve()
-          Popup.alert '保存成功'
+          Popup.alert MESSAGE.SAVE_OK
           $scope.modal.close()
-        ->
+        (error)->
+          msg = if error.data.image then MESSAGE.IMAGE_EXIST else  MESSAGE.SAVE_NOK
+          Popup.alert msg
           deferred.reject()
       )
 
@@ -43,15 +43,32 @@ angular.module('app.ideabook', [])
 
       ideabook = $scope.ideabook
       id = $scope.image.id
+      title = $scope.title
+
+      if ideabook.id is 0
+        if not title
+          return Popup.alert MESSAGE.REQ_TITLE
+        else if _.find(ideabooks, title:title)
+          return Popup.alert MESSAGE.TITLE_EXIST
+
       for p in ideabook.pieces
         if p.image.id is id
-          return Popup.alert '该照片已在此灵感集中'
+          return Popup.alert MESSAGE.IMAGE_EXIST
 
       deferred = $q.defer()
-      Popup.loading deferred.promise
+      Popup.loading deferred.promise, failMsg: no
+
       #Create a new ideabook
       if ideabook.id is 0
-        list.post(title:$scope.title).then ((ret)->saveToIdeabook(ret, deferred)), (->deferred.reject())
+        list.post(title:title).then(
+          (newObj)-> saveToIdeabook(newObj, deferred)
+
+          (error)->
+            msg = if error.data.title then MESSAGE.TITLE_EXIST else  MESSAGE.SAVE_NOK
+            Popup.alert msg
+            deferred.reject()
+
+        )
       else
         saveToIdeabook(ideabook, deferred)
   )

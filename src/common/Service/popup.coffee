@@ -86,7 +86,7 @@ angular.module( 'Popup', [])
       #Return a promise
       deferred.promise
 
-    loading : (promise, silent)->
+    loading : (promise, options={})->
 
       template = """
                  <div class="popup-backdrop box-center">
@@ -99,9 +99,11 @@ angular.module( 'Popup', [])
       parent = angular.element($document[0].body)
       $animate.enter element, parent
 
+
       if promise
-        if !silent
-          promise.catch => @alert MESSAGE.LOAD_FAILED
+        options.failMsg ?= MESSAGE.LOAD_FAILED
+        if options.failMsg
+          promise.catch => @alert options.failMsg
         promise.finally hidePopup
 
       #return a end function to manully hide the view

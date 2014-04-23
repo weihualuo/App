@@ -86,7 +86,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       filters: ['location']
       title: '设计师'
     ideabooks:
-      filters: ['style', 'room']
+      filters: []
       title: '灵感集'
     advice:
       title: '建议'
