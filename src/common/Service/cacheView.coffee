@@ -35,11 +35,11 @@ angular.module( 'CacheView', [])
       update: (params, loaded)->
 
         if loaded
-          console.log "content just loaded"
+          #console.log "content just loaded"
           @scope.$emit('$viewContentLoaded')
 
         if not angular.equals(@params, params)
-          console.log "param update", @params, params
+          #console.log "param update", @params, params
           @params = params
           @scope.$broadcast('$scopeUpdate')
 
@@ -67,10 +67,10 @@ angular.module( 'CacheView', [])
 
       back: (option)->
         if viewStack.length
-          #console.log "just history.back"
+          ##console.log "just history.back"
           history.back()
         else if option
-          #console.log "no stack, go", option.name
+          ##console.log "no stack, go", option.name
           @go option
 
       go: (option)->
@@ -92,7 +92,7 @@ angular.module( 'CacheView', [])
         $location.search search or {}
         $location.hash hash or null
 
-        #console.log "set url", $location.url(), replace
+        ##console.log "set url", $location.url(), replace
 
 
   )
@@ -109,11 +109,11 @@ angular.module( 'CacheView', [])
       popToView: (name, params)->
         ret = false
         if current and current.name is name
-          #console.log "nav to same view", name
+          ##console.log "nav to same view", name
           ret = true
 
         else if view = _.find(stack, name:name)
-          #console.log "view in stack", name, view.name
+          ##console.log "view in stack", name, view.name
           current.leave()
           while current = stack.pop()
             if current isnt view
@@ -130,20 +130,20 @@ angular.module( 'CacheView', [])
         if not current
           current = view
           $element.after(view.element)
-          #console.log "enter first view", view.name
+          ##console.log "enter first view", view.name
 
         else if Nav.push()
           current.stack()
           stack.push(current)
           view.enter(current.element)
-          #console.log "push view #{view.name}, stacked #{current.name}"
+          ##console.log "push view #{view.name}, stacked #{current.name}"
           current = view
 
         # Replace the current view
         else
           view.enter(current.element)
           current.leave()
-          #console.log "enter #{view.name}, replace #{current.name}"
+          ##console.log "enter #{view.name}, replace #{current.name}"
           current = view
 
         view.update(params, true)
@@ -164,33 +164,33 @@ angular.module( 'CacheView', [])
           return
         # if view is in stack, popup to it
         if ViewManager.popToView(name, $route.current.params)
-          #console.log "hit stack, return"
+          ##console.log "hit stack, return"
           return
 
         # Retrieve the view from cache
         view = viewCache.get(name)
         if view
-          #console.log "hit cache"
+          ##console.log "hit cache"
           ViewManager.changeView(view, $route.current.params)
         else
           # scope maybe inherit from anthor view
           parentScope = scope
           if Nav.inherit()
             parentScope = ViewManager.current().scope
-            #console.log "scope inherit from", parentScope
+            ##console.log "scope inherit from", parentScope
           newScope = parentScope.$new()
           angular.extend(newScope, Nav.data())
 
           # Create a new view
           current = $route.current
           clone = $transclude(newScope, ->)
-          #console.log "Create a new view", name, current.params
+          ##console.log "Create a new view", name, current.params
           view = new ViewFactory(clone, name, newScope)
           ViewManager.changeView(view, current.params)
 
           #Cache the view
           if current.cache
-            #console.log "Put to cache", name
+            ##console.log "Put to cache", name
             viewCache.put(name, view)
             view.cached = yes
             #To avoid scope be detached from element
@@ -211,7 +211,7 @@ angular.module( 'CacheView', [])
       enter: (element, parent, after, transitInStyle, complete)->
 
         perform = Transitor.transIn(element, transitInStyle)
-        console.log "append view"
+        #console.log "append view"
         if after
           after.after(element)
         else
@@ -221,7 +221,7 @@ angular.module( 'CacheView', [])
       leave: (element, transitOutStyle)->
         perform = Transitor.transOut(element, transitOutStyle)
         perform ->
-          console.log "remove view"
+          #console.log "remove view"
           element.remove()
 
   )
@@ -230,10 +230,10 @@ angular.module( 'CacheView', [])
     proto =
       #register child element transition
       register: (@transIn, @transOut)->
-        console.log "register child transition", @name
+        #console.log "register child transition", @name
 
       unregister: ->
-        console.log "unregistered", @name
+        #console.log "unregistered", @name
         @transIn = @transOut = null
 
       #Perform view element leave
@@ -241,12 +241,12 @@ angular.module( 'CacheView', [])
         leave = =>
           #Perform any animimation on view element
           Tansformer.leave(element, @transitOut)
-        console.log "leave view", @name
+        #console.log "leave view", @name
         if @transOut
-          console.log "find child transOut"
+          #console.log "find child transOut"
           @transOut(leave)
         else
-          console.log "no child transOut, leave"
+          #console.log "no child transOut, leave"
           leave()
 
       #Perform view element enter
@@ -254,9 +254,9 @@ angular.module( 'CacheView', [])
         enter = (complete)=>
           #Perform any animimation on view element
           Tansformer.enter(element, parent, after, @transitIn, complete)
-        console.log "enter view", @name
+        #console.log "enter view", @name
         if @transIn
-          console.log "find child transIn"
+          #console.log "find child transIn"
           enter @transIn()
         else
           enter()

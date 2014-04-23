@@ -258,34 +258,37 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     $scope.onLogin = ->
       if Service.noRepeat('login') and validate($scope.loginForm)
         console.log "ok, now login"
-        $http.post('/auth/login', {username:$scope.username, password:$scope.password}).then(
+        promise = $http.post('/auth/login', {username:$scope.username, password:$scope.password})
+        Popup.loading promise
+        promise.then(
           (ret)->
             Popup.alert MESSAGE.LOGIN_OK
             $scope.meta.user = ret.data.user
             $scope.modal.close()
             console.log "success", $scope.meta.user
           (ret)->
-            if ret.data.error is 'invalid'
-              Popup.alert MESSAGE.LOGIN_NOK
+            msg = if ret.data.error is 'invalid' then MESSAGE.LOGIN_INVALID else MESSAGE.LOGIN_NOK
+            Popup.alert msg
             console.log "fail", ret
         )
 
     $scope.onRegister = ->
       if Service.noRepeat('login') and validate($scope.registerForm)
         console.log "ok, now register"
-        $http.post('/auth/register',
+        promise = $http.post '/auth/register',
           username:$scope.username
           password:$scope.password
           email:$scope.email
-        ).then(
+        Popup.loading promise
+        promise.then(
           (ret)->
             Popup.alert MESSAGE.REGISTER_OK
             $scope.meta.user = ret.data.user
             $scope.modal.close()
             console.log "success", $scope.meta.user
           (ret)->
-            if ret.data.error is 'exist'
-              Popup.alert MESSAGE.USRNAME_EXIST
+            msg = if ret.data.error is 'exist' then MESSAGE.USRNAME_EXIST else MESSAGE.REGISTER_NOK
+            Popup.alert msg
             console.log "fail", ret
         )
 

@@ -56,7 +56,7 @@ angular.module('app.ideabook', [])
           return Popup.alert MESSAGE.IMAGE_EXIST
 
       deferred = $q.defer()
-      Popup.loading deferred.promise, failMsg: no
+      Popup.loading deferred.promise
 
       #Create a new ideabook
       if ideabook.id is 0

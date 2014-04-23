@@ -15,7 +15,7 @@ angular.module('app.home', ['restangular'])
       $scope.objects = []
       objects = collection.list($routeParams)
       if !objects.$resolved
-        Popup.loading objects.$promise
+        Popup.loading objects.$promise, failMsg:MESSAGE.LOAD_FAILED
       objects.$promise.then -> $timeout ->
         $scope.objects = objects
         $scope.haveMore = objects.meta.more

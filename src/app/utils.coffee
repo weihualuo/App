@@ -37,7 +37,7 @@ angular.module('app.utils', [])
 
     #Get the index most close to width
     getThumbIndex = (width, table)->
-      console.log width
+      #console.log width
       seq = 0
       match = 3000
       for i, v of table
@@ -80,7 +80,7 @@ angular.module('app.utils', [])
     w = Math.max(window.innerWidth, window.innerHeight)*window.devicePixelRatio
     h = Math.min(window.innerWidth, window.innerHeight)*window.devicePixelRatio
     best_index = getBestIndexs w, h
-    console.log best_index, thumb_index
+    #console.log best_index, thumb_index
 
     meta = Single('meta').get()
     reg = new RegExp(/\d+\/(.+?)-\d+\.(\w+)/)
@@ -117,7 +117,7 @@ angular.module('app.utils', [])
     (scope)->
       if scope.$last
         scope.$emit 'list.rendered'
-        console.log "I am last", scope.obj.id
+        #console.log "I am last", scope.obj.id
   )
   .directive('noWatch', ($parse)->
     (scope, element, attr)->
@@ -182,11 +182,11 @@ angular.module('app.utils', [])
         else
           return caller
 
-        console.log "Transitor transIn prepare", transitInStyle
+        #console.log "Transitor transIn prepare", transitInStyle
         PrefixedStyle raw, 'transition', transition
 
         perform = (done)->
-          console.log "perform transIn", transitInStyle
+          #console.log "perform transIn", transitInStyle
           setTimeout (->
             if angular.isString(transitInStyle)
               element.removeClass(transitInStyle)
@@ -201,7 +201,7 @@ angular.module('app.utils', [])
             entering = yes
             transitEnd = (e)->
               if e.target is raw and entering
-                console.log "transIn transitEnd", transitInStyle
+                #console.log "transIn transitEnd", transitInStyle
                 entering = no
                 PrefixedStyle raw, 'transition', null
                 PrefixedEvent element, "TransitionEnd", transitEnd, off
@@ -215,10 +215,10 @@ angular.module('app.utils', [])
 
         if not transitOutStyle then return caller
         PrefixedStyle raw, 'transition', transition
-        console.log "Transitor transOut", transitOutStyle
+        #console.log "Transitor transOut", transitOutStyle
 
         perform = (done)->
-          console.log "perform transOut", transitOutStyle
+          #console.log "perform transOut", transitOutStyle
           setTimeout (->
             if angular.isString(transitOutStyle)
               element.addClass(transitOutStyle)
@@ -232,7 +232,7 @@ angular.module('app.utils', [])
             leaving = yes
             transitEnd = (e)->
               if e.target is raw and leaving
-                console.log "transOut transitEnd", transitOutStyle
+                #console.log "transOut transitEnd", transitOutStyle
                 leaving = no
                 if angular.isString(transitOutStyle)
                   element.removeClass(transitOutStyle)
@@ -256,11 +256,11 @@ angular.module('app.utils', [])
       if not ctrl then return
 
       transIn = ->
-        console.log "transInOut before", scope.$eval(attr.transIn)
+        #console.log "transInOut before", scope.$eval(attr.transIn)
         Transitor.transIn(element, scope.$eval(attr.transIn))
 
       transOut = (done)->
-        console.log "transInOut out", scope.$eval(attr.transOut)
+        #console.log "transInOut out", scope.$eval(attr.transOut)
         Transitor.transOut(element, scope.$eval(attr.transOut))(done)
 
       ctrl.register transIn, transOut
