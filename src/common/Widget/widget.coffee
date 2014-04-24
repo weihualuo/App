@@ -121,12 +121,8 @@ angular.module( 'Widget', [])
   )
   .directive('modal', ()->
     restrict: 'E'
-    replace: true
-    transclude: true
-    priority: -400
-    template: '<div class="modal-win" ng-transclude></div>'
     link:(scope, element)->
-      console.log window.innerWidth
+      element.addClass 'modal-win'
       if window.innerWidth < 400
         element.css
           width: '100%'
