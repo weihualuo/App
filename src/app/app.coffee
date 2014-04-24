@@ -105,6 +105,23 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     #prevent webkit drag
     $document.on 'touchmove mousemove', (e)->e.preventDefault()
   )
+  .directive('listFilter', ()->
+    restrict: 'E'
+    replace: true
+    template: """
+              <a class="filter-menu res-display-l" ng-click="toggleFilter(filter)">
+                {{item.cn || item.en}} <i class="icon ion-arrow-down-b"></i>
+              </a>
+              """
+    link: (scope, element) ->
+      #Should use with ng-repeat
+      scope.$watch 'paramUpdateFlag', ->
+        scope.item = scope.getFilterItem(scope.filter)
+        if scope.item.id
+          element.addClass 'active'
+        else
+          element.removeClass 'active'
+  )
   .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, ToggleModal, $timeout, Config, Env, $route) ->
 
     popupLoginModal = ->

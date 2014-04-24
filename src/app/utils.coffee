@@ -133,23 +133,6 @@ angular.module('app.utils', [])
         element.html(content)
         $compile(element.contents())(scope)
   )
-  .directive('listFilter', ()->
-    restrict: 'E'
-    replace: true
-    template: """
-              <a class="filter-menu res-display-l" ng-click="toggleFilter(filter)">
-                {{item.cn || item.en}} <i class="icon ion-arrow-down-b"></i>
-              </a>
-              """
-    link: (scope, element) ->
-      #Should use with ng-repeat
-      scope.$watch 'paramUpdateFlag', ->
-        scope.item = scope.getFilterItem(scope.filter)
-        if scope.item.id
-          element.addClass 'active'
-        else
-          element.removeClass 'active'
-  )
   .factory('TransUtil', ()->
     api =
       rectTrans: (rect)->
