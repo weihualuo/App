@@ -276,7 +276,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       if Service.noRepeat('login') and validate($scope.loginForm)
         console.log "ok, now login"
         promise = $http.post('/auth/login', {username:$scope.username, password:$scope.password})
-        Popup.loading promise
+        Popup.loading promise, showWin:yes
         promise.then(
           (ret)->
             Popup.alert MESSAGE.LOGIN_OK
@@ -296,7 +296,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
           username:$scope.username
           password:$scope.password
           email:$scope.email
-        Popup.loading promise
+        Popup.loading promise, showWin:yes
         promise.then(
           (ret)->
             Popup.alert MESSAGE.REGISTER_OK

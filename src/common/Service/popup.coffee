@@ -1,28 +1,29 @@
 
 angular.module( 'Popup', [])
 
-  .factory('Popup', ($rootScope, $location, $compile, $animate, $timeout, $q, $document, MESSAGE)->
+  .factory('Popup', ($rootScope, $location, $compile, $animate, $timeout, $q, $document)->
 
     alert : (message)->
       template =
-                 '<div class="popup-backdrop box-center" ng-click="onClose()">' +
+                 '<div class="popup-backdrop box-center">' +
                     '<div class="popup-msg box-center">'+message+'</div>'+
                  '</div>'
 
-      scope = $rootScope.$new(true)
-      angularDomEl = angular.element(template)
-      element = $compile(angularDomEl)(scope)
-
+      element = angular.element(template)
+      ready = no
+      $timeout (->ready = yes), 1000
       hidePopup = ->
+        ready = no
         $animate.leave(element)
-        scope.$destroy()
-
       parent = angular.element($document[0].body)
       $animate.enter element, parent
-      scope.onClose = -> hidePopup()
-
+      #enable event after 1second
+      element.on 'touchend mouseup', ->
+        if ready
+          ready = no
+          $timeout hidePopup
       #Hide the popup after 2second
-      $timeout (->hidePopup()), 2000
+      $timeout hidePopup, 2000
 
     confirm : (message)->
 
@@ -86,21 +87,21 @@ angular.module( 'Popup', [])
       #Return a promise
       deferred.promise
 
-    loading : (promise, options)->
+    loading : (promise, options={})->
 
-      template = """
-                 <div class="popup-backdrop box-center">
-                  <div><i class="icon icon-large ion-loading-d"></i></div>
-                 </div>
-                 """
-      element = angular.element(template)
+      element = angular.element('<div class="popup-backdrop box-center"></div>')
+      win = angular.element('<div class="loading-win box-center"><i class="icon icon-large ion-loading-d"></i></div>')
+      element.append(win)
+
+      if options.showWin
+        win.addClass('enabled')
       hidePopup = ->
         $animate.leave(element)
       parent = angular.element($document[0].body)
       $animate.enter element, parent
 
       if promise
-        if options and options.failMsg
+        if options.failMsg
           promise.catch => @alert options.failMsg
         promise.finally hidePopup
 
