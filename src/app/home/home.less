@@ -120,5 +120,22 @@
   font-size: @icon-large;
 }
 
+.ctrl-back{
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 48px;
+  height: 48px;
+  padding: 8px 0;
+  font-size: 32px;
+  color: white;
+  text-align: center;
+  background: rgba(0,0,0,0.5);
+  border-radius: 24px;
 
+  &.ng-click-active{
+    color: @color-active;
+    background: @bg-active-state;
+  }
+}
 

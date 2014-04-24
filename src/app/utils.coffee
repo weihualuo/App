@@ -114,6 +114,9 @@ angular.module('app.utils', [])
   .filter( 'thumbPath',  (ImageUtil)->
     (obj)-> ImageUtil.thumb(obj)
   )
+  .filter( 'imagePath',  (ImageUtil)->
+    (obj)-> ImageUtil.best(obj)
+  )
   .directive('listRender', ()->
     (scope)->
       if scope.$last

@@ -43,7 +43,6 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'ProductDetailCtrl'
       templateUrl: 'product/product.tpl.html'
       class: 'no-sub'
-      cache: yes
     )
     .when( '/pros'
       name: 'pros'
@@ -56,6 +55,12 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'IdeabookCtrl'
       templateUrl: 'ideabook/ideabooks.tpl.html'
       cache: yes
+    )
+    .when( '/ideabooks/:id'
+      name: 'ideabookDetail'
+      controller: 'IdeabookDetailCtrl'
+      templateUrl: 'ideabook/ideabook.tpl.html'
+      class: 'no-sub'
     )
     .when( '/advice'
       name: 'advice'

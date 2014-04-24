@@ -29,14 +29,42 @@ angular.module('app.ideabook', [])
   )
   .controller( 'IdeabookCtrl', ($scope, $controller, Nav)->
     #extend from ListCtrl
-    $controller('ListCtrl', {$scope:$scope, name: 'ideabooks'})
+    $scope.listCtrl = $controller('ListCtrl', {$scope:$scope, name: 'ideabooks'})
+
+    $scope.onIdeaBookView = (obj)->
+      Nav.go
+        name: 'ideabookDetail'
+        param: id:obj.id
+        push: yes
+
 
     this
 
   )
+  .controller('IdeabookDetailCtrl', ($scope, $routeParams, Many, Nav, Popup)->
+
+    @transitIn = @transitOut ='from-right'
+
+    console.log 'IdeabookDetailCtrl'
+    # Init locals
+    collection = Many('ideabooks')
+    obj = null
+
+    $scope.$on '$scopeUpdate', ->
+      $scope.obj = obj = collection.get parseInt($routeParams.id)
+      if not obj.$resolved
+        #Loading will end automatically when promise resolved or rejected
+        Popup.loading obj.$promise
+      #reset the tab state
+      obj.$promise.then ->
+        console.log "loaded", obj
+
+
+    $scope.onBack = ->
+      Nav.back({name:'ideabooks'})
+
+  )
   .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, $q, MESSAGE)->
-    console.log "addIdeabookCtrl"
-    #$scope.template = 'modal/addIdeabook.tpl.html'
     # Operation on the collection will cause inconsistent of home list
     # due to listCtrl use cache mechanisam
     #collection = Many('ideabooks')

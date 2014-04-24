@@ -3,7 +3,7 @@
 
 <ul scrollable refreshable class="container">
     <li class="ideabook-list" list-render
-        ng-click="onIdeaBookView($event, obj)"
+        ng-click="onIdeaBookView(obj)"
         ng-repeat="obj in objects track by obj.id">
         <div class="info">
             <h3 no-watch="obj.title"></h3>

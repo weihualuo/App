@@ -1,0 +1,18 @@
+
+
+<div scrollable class="ideabook-view" ng-show="obj.$resolved">
+
+    <h1>{{obj.title}}</h1>
+    <p>{{obj.desc}}</p>
+    <div class="ideabook-image" ng-repeat="p in obj.pieces track by p.id">
+       <img ng-src='{{p.image | imagePath}}'>
+        <div class="info">
+            <span no-watch="p.image.title"></span>
+            <span no-watch="p.desc || p.image.desc"></span>
+        </div>
+    </div>
+
+</div>
+<div class="ctrl-back" ng-click="onBack()">
+    <i class="icon ion-chevron-right"></i>
+</div>
