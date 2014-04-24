@@ -109,21 +109,23 @@ angular.module( 'Popup', [])
       end: hidePopup
   )
   .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $controller, $document, $window)->
-    (locals, parentScope, controller, template, hash, url, backdrop, parent)->
+    (options)->
 
-      deferred = $q.defer()
-
+      {locals, scope, template, controller, url, hash, backdrop, parent} = options
       backdrop ?= angular.element '<div class="popup-backdrop box-center enabled"></div>'
-      hash ?= 'modal'
-      parentScope ?= $rootScope
-      scope = parentScope.$new()
+      parent ?= angular.element($document[0].body)
+      hash ?= options.id
+      scope ?= $rootScope
+      scope = scope.$new()
       angular.extend scope, locals
       if controller
         scope.$controller = $controller(controller, $scope:scope)
+
       param = undefined
       ready = false
       savedState = null
       element = null
+      deferred = $q.defer()
       onPopup = ->
         # Re-push if entering or removing
         if !ready
@@ -142,15 +144,15 @@ angular.module( 'Popup', [])
       #emit by sidepane or something
       scope.$on 'content.closed', -> closeModal()
 
-      body = $document[0].body
-      parent ?= angular.element(body)
-      if !!backdrop
+
+      if backdrop
         parent.append(backdrop)
         parent = backdrop
         #ng click not work with child form element
-        backdrop.on 'click', (e)->
-          target = e.target || e.srcElement
-          if target is backdrop[0] then closeModal()
+        if options.closeOnBackdrop
+          backdrop.on 'touchend mouseup', (e)->
+            target = e.target || e.srcElement
+            if target is backdrop[0] then closeModal()
 
       removeModal = ->
         if param?
@@ -161,18 +163,20 @@ angular.module( 'Popup', [])
         #console.log 'leaving'
         $animate.leave element, ->
           #console.log 'leaved'
-          parent.remove() if backdrop
+          backdrop.remove() if backdrop
 
       angularDomEl = angular.element(template)
 
       enterModal = ->
         element = $compile(angularDomEl)(scope)
         $animate.enter element, parent, null, ->
+          scope.$broadcast 'modal.ready'
           ready = true
           #To be compatible with browser and android back button
         $location.hash(hash)
         savedState = $window.onpopstate
         $window.onpopstate = onPopup
+        scope.$broadcast 'modal.enter'
 
       if url
         $http.get(url, cache: $templateCache).then(
@@ -195,13 +199,12 @@ angular.module( 'Popup', [])
   .factory('ToggleModal', (Modal)->
     panes = {}
     (param)->
-      {id, locals, scope, template, controller, url, hash, backdrop, parent} = param
+      id = param.id
       if panes[id]
         panes[id].close()
         panes[id] = null
       else if id
-        hash ?= id
-        panes[id] = modal = Modal locals, scope, controller, template, hash, url, backdrop, parent
+        panes[id] = modal = Modal param
         modal.promise.then(param.success, param.fail).finally ->
           panes[id] = null
           param.always?()
