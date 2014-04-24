@@ -119,6 +119,20 @@ angular.module( 'Widget', [])
         Swipe element, options
 
   )
+  .directive('modal', ()->
+    restrict: 'E'
+    replace: true
+    transclude: true
+    priority: -400
+    template: '<div class="modal-win" ng-transclude></div>'
+    link:(scope, element)->
+      console.log window.innerWidth
+      if window.innerWidth < 400
+        element.css
+          width: '100%'
+          height: '100%'
+          'border-radius': '0'
+  )
   .directive('navable', ($compile, $animate, $http, $templateCache)->
 
     link:(scope, element, attr)->
@@ -141,8 +155,10 @@ angular.module( 'Widget', [])
         #At present: only set the height to first view,
         #the other view maybe hide if hight than first view
         #In that case, to update the diretive
-        element.css
-          height: height+'px'
+        #height maybe set already
+        if not element[0].style.height
+          element.css
+            height: height+'px'
 
       scope.navCtrl =
         go: (url)->

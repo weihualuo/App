@@ -130,7 +130,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           if $scope.isLogin(yes)
             ToggleModal
               id: 'add-to-ideabook'
-              template: "<div class='popup-win fade-in-out'></div>"
+              template: "<modal class='fade-in-out'></modal>"
               controller: 'addIdeabookCtrl'
               url: 'modal/addIdeabook.tpl.html'
               locals:
