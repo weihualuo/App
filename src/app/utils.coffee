@@ -261,8 +261,12 @@ angular.module('app.utils', [])
 
       options = scope.$eval(attr.aniHide)
       style = options.class or options.style
+      flag = $parse(options.flag)
+      #Set initial status
+      if scope.$eval(flag)
+        element.css display: 'none'
 
-      scope.$watch $parse(options.flag), (value, old)->
+      scope.$watch flag, (value, old)->
         if !value is !old then return
         #perform hide
         if value

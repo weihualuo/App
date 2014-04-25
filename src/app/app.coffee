@@ -101,7 +101,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       title: '产品详情'
       noSide: true
     photoDetail:
-      style: opacity:'0.7'
+      title: '照片详情'
     ideabookDetail:
       noSide: true
   )
