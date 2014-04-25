@@ -110,10 +110,9 @@
   }
   >.info{
     position: absolute;
-    overflow: hidden;
     color: white;
     padding: 10px 0;
-    bottom: 0;
+    top: 0;
     left: @idea-unit-padding;
     right: @idea-unit-padding;
     background: rgba(0,0,0,0.5);
@@ -122,6 +121,21 @@
     }
     >p{
       color: white;
+    }
+  }
+
+  >.ctrl{
+    position: absolute;
+    color: white;
+    left: @idea-unit-padding;
+    right: @idea-unit-padding;
+    bottom: 0;
+    >span{
+      font-size: @icon-medium;
+      background: rgba(0,0,0,0.5);
+      float: right;
+      padding: 10px 15px;
+      margin: 0 10px;
     }
   }
 }
