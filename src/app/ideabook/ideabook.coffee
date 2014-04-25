@@ -88,12 +88,16 @@ angular.module('app.ideabook', [])
   .controller('IdeabookUnitCtrl', ($scope, $timeout, Env, Nav, Many, $routeParams, ImageSlide, TransUtil, Service)->
 
     #Set env to hide or show side & header
-#    env = Env.ideabookUnit
-#    env.noHeader = false
-#    $timeout (->
-#      env.noHeader = true
-#      $scope.$emit('envUpdate')
-#    ), 1000
+    env = Env.ideabookUnit
+    env.noHeader = false
+    $timeout (->
+      env.noHeader = true
+      $scope.$emit('envUpdate')
+    ), 500
+
+    #Wait for 1 second to enable ctrl
+    ready = no
+    $timeout (-> ready = yes), 1000
 
     collection = Many('ideabooks')
     $scope.obj ?= collection.get parseInt($routeParams.id)
@@ -121,7 +125,7 @@ angular.module('app.ideabook', [])
       return no if not Service.noRepeat('slideCtrl', 500)
       switch id
         when 'slide'
-          Nav.back(name:'ideabooks')
+          if ready then Nav.back(name:'ideabooks')
 
     this
   )

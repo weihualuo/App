@@ -58,13 +58,17 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
     #Set env to hide or show side & header
     env = Env.photoDetail
-#    env.noHeader = false
-#    env.noSide = false
-#    $timeout (->
-#      env.noHeader = true
-#      env.noSide = true
-#      $scope.$emit('envUpdate')
-#    ), 1000
+    env.noHeader = false
+    env.noSide = false
+    $timeout (->
+      env.noHeader = true
+      env.noSide = true
+      $scope.$emit('envUpdate')
+    ), 500
+
+    #Wait for 1 second to enable ctrl
+    ready = no
+    $timeout (-> ready = yes), 1000
 
     $scope.transFn = ->
       rect = $scope.scrollView?.getItemRect($scope.index)
@@ -122,6 +126,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
         when 'info'
           onImageInfo($scope.index)
         when 'close'
+          if not ready then return
           $scope.displayCtrl = no
           Nav.back({name:'photos'})
 
