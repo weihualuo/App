@@ -68,6 +68,12 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         $aniIn: 'from-right'
         $aniOut: 'from-right'
     )
+    .when( '/ideabooks/:id/unit'
+      name: 'ideabookUnit'
+      controller: 'IdeabookUnitCtrl'
+      templateUrl: 'ideabook/ideabookUnit.tpl.html'
+      class: 'no-background no-header no-side'
+    )
     .when( '/advice'
       name: 'advice'
       controller: 'AdviceCtrl'
@@ -110,6 +116,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       title: '照片详情'
     ideabookDetail:
       noSide: true
+    ideabookUnit:
+      title: ''
+
   )
   .run( ($location, $document)->
     # simulate html5Mode

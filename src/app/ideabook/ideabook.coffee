@@ -59,7 +59,7 @@ angular.module('app.ideabook', [])
     this
 
   )
-  .controller('IdeabookDetailCtrl', ($scope, $routeParams, Many, Nav, Popup)->
+  .controller('IdeabookDetailCtrl', ($scope, $routeParams, Many, Nav, Popup, ToggleModal)->
 
     console.log 'IdeabookDetailCtrl'
     # Init locals
@@ -77,7 +77,52 @@ angular.module('app.ideabook', [])
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})
 
+    $scope.onUnitView = (p)->
+      Nav.go
+        name: 'ideabookUnit'
+        param: $routeParams
+        data: index: $scope.obj.pieces.indexOf(p)
+        push: yes
+        inherit: yes
+      return
+      ToggleModal
+        id: 'ideabook-unit'
+        backdrop: false
+        template: "<div class='gallery-view'></div>"
+        controller: 'IdeabookUnitCtrl'
+        url: 'ideabook/ideabookUnit.tpl.html'
+        scope: $scope
+        locals:
+          #rect: item.getBoundingClientRect()
+          index: $scope.obj.pieces.indexOf(p)
+
     this
+  )
+  .controller('IdeabookUnitCtrl', ($scope, $timeout, Env, Many, $routeParams, ImageSlide, TransUtil)->
+
+    #Set env to hide or show side & header
+    env = Env.ideabookUnit
+    $timeout (->
+      env.noHeader = true
+      env.noSide = true
+      $scope.$emit('envUpdate')
+    ), 1000
+
+    collection = Many('ideabooks')
+    $scope.obj ?= collection.get parseInt($routeParams.id)
+    $scope.index ?= 0
+
+    $scope.transFn = ->
+      rect = $scope.scrollView?.getItemRect($scope.index+1)
+      TransUtil.rectTrans(rect)
+
+    $scope.$on 'gallery.slide', (e, index)->
+      $scope.index = index
+
+    $scope.obj.$promise.then ->
+      images = (p.image for p in $scope.obj.pieces)
+      slideCtrl = $scope.slideCtrl
+      slideCtrl.initSlides(ImageSlide, images, $scope.index)
   )
   .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, $q, MESSAGE)->
     # Operation on the collection will cause inconsistent of home list

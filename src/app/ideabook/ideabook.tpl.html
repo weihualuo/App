@@ -10,7 +10,9 @@
             </div>
         </div>
 
-        <div class="ideabook-unit" ng-repeat="p in obj.pieces track by p.id">
+        <div class="ideabook-unit"
+             ng-click="onUnitView(p)"
+             ng-repeat="p in obj.pieces track by p.id">
             <div class="info">
                 <h3 no-watch="p.image.title"></h3>
                 <p no-watch="p.desc || p.image.desc"></p>
