@@ -121,7 +121,7 @@ angular.module('app.ideabook', [])
       return no if not Service.noRepeat('slideCtrl', 500)
       switch id
         when 'slide'
-          Nav.back({name:'ideabookDetail', param:{id:0}})
+          Nav.back(name:'ideabooks')
 
     this
   )

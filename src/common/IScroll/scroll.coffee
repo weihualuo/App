@@ -55,16 +55,18 @@ angular.module( 'Scroll', [])
 
       scrollView.getItemRect = (index)->
         item = element.children()[index]
-        top = scrollView.getValues().top
-        itemTop = item.offsetTop
-        itemHeight = item.offsetHeight
-        containerHeight = element[0].parentNode.clientHeight
-        #above
-        if top > itemTop
-          scrollView.scrollTo(0, itemTop)
-          #below
-        else if top < itemTop+itemHeight-containerHeight
-          scrollView.scrollTo(0, itemTop+itemHeight-containerHeight)
+        rect = item.getBoundingClientRect()
+        x = 0
+        if rect.left < 0
+          x = rect.left
+        else if rect.right > window.innerWidth
+          x = rect.right - window.innerWidth
+        y = 0
+        if rect.top < 0
+          y = rect.top
+        else if rect.bottom > window.innerHeight
+          y = rect.bottom - window.innerHeight
+        @scrollBy(x, y)
         item.getBoundingClientRect()
 
   )
