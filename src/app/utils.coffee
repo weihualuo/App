@@ -253,3 +253,30 @@ angular.module('app.utils', [])
       ctrl.register transIn, transOut
 
   )
+  .directive('aniHide', (Transitor, $parse)->
+    #ani-hide="{class: 'from-top', style: 'opacity: 0', flag: 'env.noHeader', transition: 'all 300ms ease-in'}"
+    #ani-hide="{class: 'from-top', flag: '!env.filters'}">
+    #class and style can not use at same
+    link:(scope, element, attr)->
+
+      options = scope.$eval(attr.aniHide)
+      style = options.class or options.style
+
+      scope.$watch $parse(options.flag), (value, old)->
+        if !value is !old then return
+        #perform hide
+        if value
+          #console.log "perform hide", style
+          Transitor.transOut(element, style, options.transition)(->
+            #console.log "hide end", style
+            element.css display: 'none'
+          )
+        #perform show
+        else
+          #console.log "perform show", style
+          element.css display: null
+          Transitor.transIn(element, style, options.transition)(->
+            #console.log "show end ", style
+          )
+
+  )

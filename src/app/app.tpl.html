@@ -1,12 +1,12 @@
 
 
-<header class="bar bar-header bar-dark" ng-class="{'fade-to-top': env.noHeader}">
+<header class="bar bar-header bar-dark" ani-hide="{class: 'from-top', flag: 'env.noHeader'}">
     <button class="button button-clear icon ion-navicon"> 我的家居 </button>
     <h1 class="title">{{env.title}}</h1>
     <button class="button button-clear icon ion-ios7-upload-outline" ng-click="onButton('plus')"></button>
 </header>
 
-<header class="bar bar-subheader res-has-side box-align-center" ng-class="{'fade-to-top2': !env.filters}">
+<header class="bar bar-subheader res-has-side box-align-center" ani-hide="{class: 'from-top', flag: '!env.filters'}">
     <form class="flex1" ng-submit="onSearch(se)" ng-class="{focused:inFocus}">
         <label class="box-align-center">
             <i class="icon ion-ios7-search placeholder-icon"></i>
@@ -26,7 +26,7 @@
 
 </header>
 
-<ul class="side-pane res-side-pane" include="modal/sideMenu.tpl.html" ng-class="{'fade-to-side': env.noSide}"></ul>
+<ul class="side-pane res-side-pane" include="modal/sideMenu.tpl.html" ani-hide="{class: 'res-from-side', flag: 'env.noSide'}"></ul>
 
 <cache-view class="content-view res-has-side"></cache-view>
 
