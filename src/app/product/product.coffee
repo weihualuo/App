@@ -53,8 +53,6 @@ angular.module('app.product', [])
 
   .controller( 'ProductDetailCtrl', ($scope, $routeParams, Many, ImageUtil, Popup, Nav) ->
 
-    @transitIn = @transitOut ='from-right'
-
     console.log 'ProductDetailCtrl'
     # Init locals
     collection = Many('products')

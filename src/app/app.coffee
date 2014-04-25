@@ -43,6 +43,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'ProductDetailCtrl'
       templateUrl: 'product/product.tpl.html'
       class: 'no-sub no-side'
+      extends:
+        $aniIn: 'from-right'
+        $aniOut: 'from-right'
     )
     .when( '/pros'
       name: 'pros'
@@ -61,6 +64,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       controller: 'IdeabookDetailCtrl'
       templateUrl: 'ideabook/ideabook.tpl.html'
       class: 'no-sub no-side'
+      extends:
+        $aniIn: 'from-right'
+        $aniOut: 'from-right'
     )
     .when( '/advice'
       name: 'advice'

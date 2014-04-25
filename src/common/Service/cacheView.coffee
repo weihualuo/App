@@ -240,7 +240,7 @@ angular.module( 'CacheView', [])
       leave: (element)->
         leave = =>
           #Perform any animimation on view element
-          Tansformer.leave(element, @transitOut)
+          Tansformer.leave(element, @$aniOut)
         #console.log "leave view", @name
         if @transOut
           #console.log "find child transOut"
@@ -253,7 +253,7 @@ angular.module( 'CacheView', [])
       enter: (element, after, parent)->
         enter = (complete)=>
           #Perform any animimation on view element
-          Tansformer.enter(element, parent, after, @transitIn, complete)
+          Tansformer.enter(element, parent, after, @$aniIn, complete)
         #console.log "enter view", @name
         if @transIn
           #console.log "find child transIn"
@@ -262,10 +262,10 @@ angular.module( 'CacheView', [])
           enter()
         #enter(@transIn?())
 
-    (name, locals)->
+    (name, locals, adds)->
       ctrl = $controller(name, locals)
       ctrl.name = name
-      angular.extend(ctrl, proto)
+      angular.extend(ctrl, proto, adds)
       #Not work, this is the same object in proto
       #ctrl.__proto__ = proto
   )
@@ -286,7 +286,7 @@ angular.module( 'CacheView', [])
       if (current.controller)
         locals.$scope = scope
         locals.$element = $element
-        scope.$controller = ctrl = ViewController(current.controller, locals)
+        scope.$controller = ctrl = ViewController(current.controller, locals, current.extends)
 
       link(scope)
   )

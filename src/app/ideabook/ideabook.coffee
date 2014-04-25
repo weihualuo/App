@@ -43,8 +43,6 @@ angular.module('app.ideabook', [])
   )
   .controller('IdeabookDetailCtrl', ($scope, $routeParams, Many, Nav, Popup)->
 
-    @transitIn = @transitOut ='from-right'
-
     console.log 'IdeabookDetailCtrl'
     # Init locals
     collection = Many('ideabooks')
@@ -63,6 +61,7 @@ angular.module('app.ideabook', [])
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})
 
+    this
   )
   .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, $q, MESSAGE)->
     # Operation on the collection will cause inconsistent of home list
@@ -126,4 +125,6 @@ angular.module('app.ideabook', [])
         )
       else
         saveToIdeabook(ideabook, deferred)
+
+    this
   )
