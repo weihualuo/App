@@ -1,11 +1,11 @@
 
-<div class="product-view" ng-show="obj.$resolved">
+<div class="res-detail-view product-view" ng-show="obj.$resolved">
     <img ng-src="{{src}}">
     <h5 class='title'>{{obj.title}}</h5>
     <p class='desc'>{{obj.desc}}</p>
-
-    <div class="ctrl-back" ng-click="onBack()">
-       <i class="icon ion-chevron-right"></i>
-    </div>
-
+</div>
+<div class="res-side-ctrl">
+    <span class="ctrl-item" ng-click="onBack()">
+       <i class="icon ion-chevron-left"></i>
+    </span>
 </div>

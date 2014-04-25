@@ -42,7 +42,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       name: 'productDetail'
       controller: 'ProductDetailCtrl'
       templateUrl: 'product/product.tpl.html'
-      class: 'no-sub'
+      class: 'no-sub no-side'
     )
     .when( '/pros'
       name: 'pros'
@@ -60,7 +60,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       name: 'ideabookDetail'
       controller: 'IdeabookDetailCtrl'
       templateUrl: 'ideabook/ideabook.tpl.html'
-      class: 'no-sub'
+      class: 'no-sub no-side'
     )
     .when( '/advice'
       name: 'advice'
@@ -99,8 +99,11 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       title: '我的家居'
     productDetail:
       title: '产品详情'
+      noSide: true
     photoDetail:
       style: opacity:'0.7'
+    ideabookDetail:
+      noSide: true
   )
   .run( ($location, $document)->
     # simulate html5Mode

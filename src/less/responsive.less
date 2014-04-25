@@ -41,14 +41,23 @@
     .hbox-justify;
   }
 
+  .res-detail-view{
+    left: 0;
+    bottom: @side-ctrl-width;
+  }
+
+  .res-side-ctrl{
+    bottom: 0;
+    width: 100%;
+    height: @side-ctrl-width;
+    padding: (@side-ctrl-width - @ctrl-item-width)/2 15px;
+  }
+
   .fade-to-side, .fade-to-side-add-active{
     opacity: 0;
     .translate3d(0, 100%, 0);
   }
 
-  .product-view>.back{
-    bottom: 10+@side-pane-height;
-  }
 }
 
 //  <= 640
