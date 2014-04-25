@@ -7,23 +7,18 @@
          class="gallery-slides"
          ng-click="onCtrl($event, 'slide')">
     </div>
-    <span class="expand" ng-click="toggleMenu()" ng-hide="hasMenu">
-       <i class="icon ion-navicon"></i>
-    </span>
-    <span class="title">{{title}}</span>
-    <span class="prev" ng-class="{'ng-hide': first}" ng-click="onCtrl($event, 'prev')">
-       <i class="icon ion-chevron-left"></i>
-    </span>
-    <span class="next" ng-class="{'ng-hide': last}" ng-click="onCtrl($event, 'next')">
-        <i class="icon ion-chevron-right"></i>
-    </span>
-    <span class="close" ng-click="onCtrl($event, 'close')">
-        <i class="icon ion-ios7-close-outline"></i>
-    </span>
-    <span class="add" ng-click="onCtrl($event, 'add')">
-        <i class="icon ion-ios7-plus-outline"></i>
-    </span>
-    <span class="info" ng-click="onCtrl($event, 'info')">
-      <i class="icon ion-ios7-information-outline"></i>
-    </span>
+
+    <div class="ideabook-info">
+        <h3>{{p.image.title}}</h3>
+        <p>{{p.desc || p.image.desc}}</p>
+    </div>
+    <div class="ideabook-ctrl">
+        <span>
+           <i class="icon ion-ios7-heart-outline"></i>
+        </span>
+        <span>
+           <i class="icon ion-ios7-chatbubble-outline"></i>
+        </span>
+    </div>
+
 </div>

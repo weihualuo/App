@@ -58,16 +58,15 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
     #Set env to hide or show side & header
     env = Env.photoDetail
-    env.noHeader = false
-    env.noSide = false
-    $timeout (->
-      env.noHeader = true
-      env.noSide = true
-      $scope.$emit('envUpdate')
-    ), 1000
+#    env.noHeader = false
+#    env.noSide = false
+#    $timeout (->
+#      env.noHeader = true
+#      env.noSide = true
+#      $scope.$emit('envUpdate')
+#    ), 1000
 
-    $scope.transIn = TransUtil.rectTrans($scope.rect)
-    $scope.transOutFn = ->
+    $scope.transFn = ->
       rect = $scope.scrollView?.getItemRect($scope.index)
       TransUtil.rectTrans(rect)
 

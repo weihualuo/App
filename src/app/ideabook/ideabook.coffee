@@ -55,7 +55,6 @@ angular.module('app.ideabook', [])
         param: id:obj.id
         push: yes
 
-
     this
 
   )
@@ -84,29 +83,17 @@ angular.module('app.ideabook', [])
         data: index: $scope.obj.pieces.indexOf(p)
         push: yes
         inherit: yes
-      return
-      ToggleModal
-        id: 'ideabook-unit'
-        backdrop: false
-        template: "<div class='gallery-view'></div>"
-        controller: 'IdeabookUnitCtrl'
-        url: 'ideabook/ideabookUnit.tpl.html'
-        scope: $scope
-        locals:
-          #rect: item.getBoundingClientRect()
-          index: $scope.obj.pieces.indexOf(p)
-
     this
   )
-  .controller('IdeabookUnitCtrl', ($scope, $timeout, Env, Many, $routeParams, ImageSlide, TransUtil)->
+  .controller('IdeabookUnitCtrl', ($scope, $timeout, Env, Nav, Many, $routeParams, ImageSlide, TransUtil, Service)->
 
     #Set env to hide or show side & header
-    env = Env.ideabookUnit
-    $timeout (->
-      env.noHeader = true
-      env.noSide = true
-      $scope.$emit('envUpdate')
-    ), 1000
+#    env = Env.ideabookUnit
+#    env.noHeader = false
+#    $timeout (->
+#      env.noHeader = true
+#      $scope.$emit('envUpdate')
+#    ), 1000
 
     collection = Many('ideabooks')
     $scope.obj ?= collection.get parseInt($routeParams.id)
@@ -118,11 +105,25 @@ angular.module('app.ideabook', [])
 
     $scope.$on 'gallery.slide', (e, index)->
       $scope.index = index
+      $scope.p = $scope.obj.pieces[index]
 
     $scope.obj.$promise.then ->
       images = (p.image for p in $scope.obj.pieces)
+      index = $scope.index
+      $scope.p = $scope.obj.pieces[index]
+      #console.log images, $scope.index
       slideCtrl = $scope.slideCtrl
       slideCtrl.initSlides(ImageSlide, images, $scope.index)
+
+    $scope.onCtrl = (e, id)->
+
+      e.stopPropagation()
+      return no if not Service.noRepeat('slideCtrl', 500)
+      switch id
+        when 'slide'
+          Nav.back({name:'ideabookDetail', param:{id:0}})
+
+    this
   )
   .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, $q, MESSAGE)->
     # Operation on the collection will cause inconsistent of home list

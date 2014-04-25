@@ -113,12 +113,13 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       title: '产品详情'
       noSide: true
     photoDetail:
-      title: '照片详情'
+      noSide: true
+      noHeader: true
     ideabookDetail:
       noSide: true
     ideabookUnit:
-      title: ''
-
+      noSide: true
+      noHeader: true
   )
   .run( ($location, $document)->
     # simulate html5Mode

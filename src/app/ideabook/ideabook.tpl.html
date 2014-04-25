@@ -13,11 +13,11 @@
         <div class="ideabook-unit"
              ng-click="onUnitView(p)"
              ng-repeat="p in obj.pieces track by p.id">
-            <div class="info">
+            <div class="ideabook-info">
                 <h3 no-watch="p.image.title"></h3>
                 <p no-watch="p.desc || p.image.desc"></p>
             </div>
-            <div class="ctrl">
+            <div class="ideabook-ctrl">
                 <span>
                    <i class="icon ion-ios7-heart-outline"></i>
                 </span>
