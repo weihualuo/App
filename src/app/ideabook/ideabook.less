@@ -83,27 +83,54 @@
 }
 
 .ideabook-view{
+  .box;
+  position: relative;
+  height: 100%;
+  padding: 60px 15px;
+
+}
+
+@idea-unit-padding: 20px;
+
+.ideabook-unit{
+
+  position: relative;
+  height: 100%;
+  padding: 0 @idea-unit-padding;
+  overflow: hidden;
+
+  &.text{
+    .box-center;
+    width: 75%;
+    min-width: 310px;
+  }
+  >img{
+    height: 100%;
+    width: auto;
+  }
+  >.info{
+    position: absolute;
+    overflow: hidden;
+    color: white;
+    padding: 10px 0;
+    bottom: 0;
+    left: @idea-unit-padding;
+    right: @idea-unit-padding;
+    background: rgba(0,0,0,0.5);
+    >h3{
+      color: white;
+    }
+    >p{
+      color: white;
+    }
+  }
+}
+
+.ideabook-text{
   >h1{
     text-align: center;
   }
   >p{
     text-indent: 2em;
-  }
-}
-
-.ideabook-image{
-  position: relative;
-  >img{
-    width: 100%;
-    height: auto;
-  }
-  >.info{
-    position: absolute;
-    width: 100%;
-    color: white;
-    padding: 10px 5px;
-    top: 0;
-    left: 0;
-    background: rgba(0,0,0,0.5);
   }
 }

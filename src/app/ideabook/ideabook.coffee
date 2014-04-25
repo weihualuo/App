@@ -27,6 +27,24 @@ angular.module('app.ideabook', [])
       element.triggerHandler 'dynamic.add'
 
   )
+  .directive('ideabookUnit', (ImageUtil)->
+    restrict:'C'
+    link: (scope, element, attr)->
+      obj = scope.p?.image
+      if not obj then return
+      image = new Image()
+      image.src = ImageUtil.best(obj)
+      image.onload = ->
+        element.prepend image
+
+      #console.log element[0].offsetHeight
+#      element.ready ->
+#        height = element[0].offsetHeight
+#        width = Math.round obj.width*(height/obj.height)
+#        #element.css width: width+'px'
+#        console.log height, width, obj.height, obj.width
+  )
+
   .controller( 'IdeabookCtrl', ($scope, $controller, Nav)->
     #extend from ListCtrl
     $scope.listCtrl = $controller('ListCtrl', {$scope:$scope, name: 'ideabooks'})
@@ -55,8 +73,6 @@ angular.module('app.ideabook', [])
         Popup.loading obj.$promise
       #reset the tab state
       obj.$promise.then ->
-        console.log "loaded", obj
-
 
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})

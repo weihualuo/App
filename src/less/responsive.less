@@ -21,7 +21,7 @@
 }
 
 // >= 850
-@media (min-width: 850px){
+@media (min-width: @res-has-side){
 
   .res-has-side{
     left: @side-pane-width;
@@ -29,7 +29,7 @@
 }
 
 //  < 850
-@media (max-width: 849px){
+@media (max-width: @res-no-side){
   .res-side-pane{
     left: 0;
     bottom: 0;
@@ -51,6 +51,10 @@
     width: 100%;
     height: @side-ctrl-width;
     padding: (@side-ctrl-width - @ctrl-item-width)/2 15px;
+
+  }
+  .ctrl-item{
+    margin:  0 15px;
   }
 
   .res-from-side{
@@ -65,13 +69,9 @@
 
 }
 
-//  <= 640
-@media (max-width: 640px){
-
-}
 
 //   <=400
-@media (max-width: 400px){
+@media (max-width: @res-small-screen){
   .res-display-l{
     display: none;
   }

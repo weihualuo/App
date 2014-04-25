@@ -17,9 +17,10 @@
 @import "animation";
 
 // fix soft keyboard bug:
-body{
+body, html{
   position: static;
   overflow: auto;
+  height: 100%;
 }
 
 .bar-subheader{
@@ -108,6 +109,7 @@ body{
   width: @ctrl-item-width;
   height: @ctrl-item-width;
   padding: (@ctrl-item-width - @icon-large)/2;
+  margin:  15px 0;
   font-size: @icon-large;
   color: white;
   text-align: center;

@@ -1,14 +1,19 @@
 
 
 <div class="res-detail-view" ng-show="obj.$resolved">
-    <div scrollable class="ideabook-view">
-        <h1>{{obj.title}}</h1>
-        <p>{{obj.desc}}</p>
-        <div class="ideabook-image" ng-repeat="p in obj.pieces track by p.id">
-            <img ng-src='{{p.image | imagePath}}'>
+    <div scrollable='x' class="ideabook-view">
+
+        <div class="ideabook-unit text">
+            <div class="ideabook-text">
+                <h1>{{obj.title}}</h1>
+                <p>{{obj.desc}}</p>
+            </div>
+        </div>
+
+        <div class="ideabook-unit" ng-repeat="p in obj.pieces track by p.id">
             <div class="info">
-                <span no-watch="p.image.title"></span>
-                <span no-watch="p.desc || p.image.desc"></span>
+                <h3 no-watch="p.image.title"></h3>
+                <p no-watch="p.desc || p.image.desc"></p>
             </div>
         </div>
     </div>
@@ -17,4 +22,14 @@
     <span class="ctrl-item" ng-click="onBack()">
        <i class="icon ion-chevron-left"></i>
     </span>
+    <span class="ctrl-item" ng-click="marked=!marked" ng-class="{active:marked}">
+       <i class="icon ion-ios7-star"></i>
+    </span>
+    <span class="ctrl-item" ng-click="onComment()">
+       <i class="icon ion-ios7-chatbubble"></i>
+    </span>
+    <span class="ctrl-item" ng-click="onEdit()">
+       <i class="icon ion-ios7-compose"></i>
+    </span>
+
 </div>
