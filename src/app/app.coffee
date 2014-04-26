@@ -24,13 +24,6 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       class: 'no-background no-header no-side'
             
     )
-    .when( '/photoInfo',
-      name: 'photoInfo'
-      controller: 'PhotoInfoCtrl'
-      templateUrl: 'photo/photoInfo.tpl.html'
-      class: 'no-background no-header no-side'
-
-    )
     .when( '/products'
       name: 'products'
       controller: 'ProductCtrl'
@@ -112,12 +105,14 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     productDetail:
       title: '产品详情'
       noSide: true
+      back: '产品'
     photoDetail:
-      title: ''
+      back: '照片'
       #noSide: true
       #noHeader: true
     ideabookDetail:
       noSide: true
+      back: '灵感集'
     ideabookUnit:
       noSide: true
       #noHeader: true
@@ -160,9 +155,12 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     $scope.onTestDevice = ->
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
 
-    $scope.onButton = (id)->
+    $scope.onRight = (id)->
       if $scope.isLogin(yes)
         no
+
+    $scope.onBack = ->
+      Nav.back(name:'photos')
     
     #Load meta info first
     $scope.meta = Single('meta', Config.$meta).get()

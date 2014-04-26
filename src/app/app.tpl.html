@@ -1,9 +1,18 @@
 
 
 <header class="bar bar-header bar-dark" ani-hide="{class: 'from-top', flag: 'env.noHeader'}">
-    <button class="button button-clear icon ion-navicon"> 我的家居 </button>
+    <button class="button button-clear" ng-click="onBack()">
+        <span ng-show="env.back">
+            <i class="icon ion-ios7-arrow-back"></i> {{env.back}}
+        </span>
+        <span ng-hide="env.back">
+            我的家居
+        </span>
+    </button>
     <h1 class="title">{{env.title}}</h1>
-    <button class="button button-clear icon ion-ios7-upload-outline" ng-click="onButton('plus')"></button>
+    <button class="button button-clear" ng-click="onRight()">
+        {{env.rightText}}
+    </button>
 </header>
 
 <header class="bar bar-subheader res-has-side box-align-center" ani-hide="{class: 'from-top', flag: '!env.filters'}">
