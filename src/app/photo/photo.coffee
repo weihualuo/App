@@ -38,12 +38,9 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
         item = item.parentNode
       if item.tagName is 'LI'
         obj = angular.element(item).scope().obj
-        data =
-          rect: item.getBoundingClientRect()
-          index: $scope.objects.indexOf(obj)
         Nav.go
           name: 'photoDetail'
-          data: data
+          data: index: $scope.objects.indexOf(obj)
           push: yes
           inherit: yes
       return
@@ -103,18 +100,13 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       $scope.$on 'scroll.reload', initSlide
 
     onImageInfo = (index)->
-      Nav.go
-        name: 'photoInfo'
-        push: yes
-        data: image: $scope.objects[index]
-      return
-#      ToggleModal
-#        id: 'infoView'
-#        template: "<side-pane position='right' class='pane-image-info popup-in-right'></side-pane>"
-#        url: "modal/imageInfo.tpl.html"
-#        hash: 'info'
-#        locals:
-#          image: $scope.objects[index]
+      ToggleModal
+        id: 'info'
+        template: "<side-pane position='right' class='pane-image-info popup-in-right'></side-pane>"
+        url: "photo/photoInfo.tpl.html"
+        closeOnBackdrop: yes
+        locals:
+          image: $scope.objects[index]
 
     $scope.onCtrl = (e, id)->
 

@@ -235,7 +235,6 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         id: 'filters'
         template: "<side-pane position='right' class='pane-filter-bar popup-in-right'></side-pane>"
         url: "modal/filterBar.tpl.html"
-        hash: 'filters'
         closeOnBackdrop: yes
         locals:
           title: Config.$filter[type].title

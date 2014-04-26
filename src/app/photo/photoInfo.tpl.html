@@ -1,24 +1,18 @@
 
 
-<div class="popup-backdrop enabled" ng-click="onClose($event)">
-    <side-pane position='right'
-               trans-in-out
-               trans-in="'from-right'"
-               trans-out="'from-right'"
-               class='pane-image-info padding'
-               ng-click="$event.stopPropagation()">
-        <h5 style="text-align: center">{{image.title}}</h5>
-        <div>
-            {{desc}}
-        </div>
-        <div>
-            <h5>Other Photos in This Project</h5>
-        </div>
-        <button class="button button-block button-calm">
-            Ask a Question
-        </button>
-        <div>
-            <h5>People Who Liked This Photo also Liked</h5>
-        </div>
-    </side-pane>
+<div class="bar bar-header">
+    <h2 class="title">照片信息</h2>
+    <button class="button button-clear" ng-click="modal.close()">取消</button>
+</div>
+<div class="content-view no-sub padding">
+    <h5 style="text-align: center">{{image.title}}</h5>
+    <div>
+        {{desc}}
+    </div>
+    <div>
+        <h5>相关灵感集：</h5>
+    </div>
+    <button class="button button-block button-calm">
+        评论
+    </button>
 </div>
