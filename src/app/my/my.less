@@ -1,0 +1,41 @@
+
+
+@menu-width: 270px;
+.my-menu{
+  position: absolute;
+  padding: @thumb-padding;
+  background: @bodyBackground;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: @menu-width;
+  border-right: 1px solid gray;
+}
+
+.my-detail{
+  position: absolute;
+  padding: @thumb-padding;
+  background: @bodyBackground;
+  top: 0;
+  bottom: 0;
+  left: @menu-width;
+  right: 0;
+  >.bar{
+    display: none;
+  }
+}
+
+@media (max-width: @res-no-side){
+  .my-menu{
+    display: none;
+  }
+  .my-detail{
+    left: 0;
+    >.bar{
+      display: inherit;
+    }
+    >.fill{
+      top: @headerHeight;
+    }
+  }
+}

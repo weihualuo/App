@@ -171,6 +171,24 @@ angular.module( 'Widget', [])
             $animate.removeClass(current, 'stacked')
           null
   )
+  .directive('subView', ($templateCache, $controller, $compile)->
+    link: (scope, element, attr)->
+
+      childScope = null
+      update = (config)->
+        console.log 'update', config
+        if not config then return
+        element.empty()
+        childScope.$destroy() if childScope
+        template = $templateCache.get(config.url)
+        element.html(template)
+        childScope = scope.$new()
+        childScope.$controller = $controller(config.controller, $scope:childScope)
+        $compile(element.contents())(childScope)
+
+      scope.$watch(attr.subView, update)
+
+  )
 
 
 

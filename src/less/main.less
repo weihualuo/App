@@ -102,41 +102,6 @@ body, html{
   }
 }
 
-.res-detail-view{
-  position: absolute;
-  padding: @thumb-padding;
-  background: @bodyBackground;
-  top: 0;
-  bottom: 0;
-  left: @side-ctrl-width;
-  right: 0;
-}
-
-.res-side-ctrl{
-  position: absolute;
-  left: 0;
-  width: @side-ctrl-width;
-  height: 100%;
-  padding: 15px (@side-ctrl-width - @ctrl-item-width)/2;
-}
-
-.ctrl-item{
-  display: inline-block;
-  width: @ctrl-item-width;
-  height: @ctrl-item-width;
-  padding: (@ctrl-item-width - @icon-large)/2;
-  margin:  15px 0;
-  font-size: @icon-large;
-  color: white;
-  text-align: center;
-  background: rgba(0,0,0,0.5);
-  border-radius: @ctrl-item-width/2;
-  &.ng-click-active{
-    color: @color-active;
-    background: @bg-active-state;
-  }
-}
-
 .side-menu-item{
   text-align: center;
   color: white;
@@ -179,7 +144,7 @@ button{
   }
 }
 
-a{
+a, .item{
 //  font-size: 18px;
   &.ng-click-active{
     background: @bg-active-click;
@@ -227,4 +192,5 @@ ul:first-child{
 @import "../app/photo/photo";
 @import "../app/product/product";
 @import "../app/ideabook/ideabook";
+@import "../app/my/my";
 @import "responsive";
