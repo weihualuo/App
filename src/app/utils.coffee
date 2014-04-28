@@ -145,10 +145,10 @@ angular.module('app.utils', [])
           width: 200
           height: 200
 
-        offsetX = rect.left+rect.width/2-window.innerWidth/2
-        offsetY = rect.top+rect.height/2-window.innerHeight/2
-        ratioX = rect.width/window.innerWidth
-        ratioY = rect.height/window.innerHeight
+        offsetX = (rect.left+rect.width/2-window.innerWidth/2).toFixed(2)
+        offsetY = (rect.top+rect.height/2-window.innerHeight/2).toFixed(2)
+        ratioX = (rect.width/window.innerWidth).toFixed(2)
+        ratioY = (rect.height/window.innerHeight).toFixed(2)
         ret =
           transform: "translate3d(#{offsetX}px, #{offsetY}px, 0) scale3d(#{ratioX}, #{ratioY}, 0)"
   )
@@ -157,23 +157,29 @@ angular.module('app.utils', [])
     easeIn = 'all 300ms ease-in'
     caller = (func)-> func?()
     api =
-      transIn: (element, transitInStyle, transition=easeIn)->
+      transIn: (element, transitInStyle, options={})->
 
         raw = element[0]
+        transition = options.transition or easeIn
+        attached = options.attached
 
         if angular.isString(transitInStyle)
-          element.addClass(transitInStyle)
+          element.addClass(transitInStyle) unless attached
         else if angular.isObject(transitInStyle)
-          for key, value of transitInStyle
-            PrefixedStyle raw, key, value
+          unless attached
+            for key, value of transitInStyle
+              PrefixedStyle(raw, key, value)
         else
           return caller
 
         #console.log "Transitor transIn prepare", transitInStyle
-        PrefixedStyle raw, 'transition', transition
+
 
         perform = (done)->
           #console.log "perform transIn", transitInStyle
+          PrefixedStyle raw, 'transition', transition
+          element.data('entering', yes)
+
           setTimeout (->
             if angular.isString(transitInStyle)
               element.removeClass(transitInStyle)
@@ -187,26 +193,31 @@ angular.module('app.utils', [])
 
             entering = yes
             transitEnd = (e)->
-              if e.target is raw and entering
+              if e.target is raw and element.data('entering')
                 #console.log "transIn transitEnd", transitInStyle
-                entering = no
-                PrefixedStyle raw, 'transition', null
+                element.data('entering', no)
+                #Element maybe leaving before entered
+                PrefixedStyle(raw, 'transition', null) unless element.data('leaving')
                 PrefixedEvent element, "TransitionEnd", transitEnd, off
                 done?()
             PrefixedEvent element, "TransitionEnd", transitEnd
           ), 10
 
-      transOut: (element, transitOutStyle, transition=easeIn)->
+      transOut: (element, transitOutStyle, options={})->
 
         raw = element[0]
+        transition = options.transition or easeIn
+        attached = options.attached
 
         if not transitOutStyle then return caller
-        PrefixedStyle raw, 'transition', transition
         #console.log "Transitor transOut", transitOutStyle
 
         perform = (done)->
-          #console.log "perform transOut", transitOutStyle
+
+          PrefixedStyle raw, 'transition', transition
+          element.data('leaving', yes)
           setTimeout (->
+            #console.log "perform transOut", transitOutStyle, raw.style['transition']
             if angular.isString(transitOutStyle)
               element.addClass(transitOutStyle)
 
@@ -216,18 +227,19 @@ angular.module('app.utils', [])
 
             else return done?()
 
-            leaving = yes
             transitEnd = (e)->
-              if e.target is raw and leaving
+              if e.target is raw and element.data('leaving')
                 #console.log "transOut transitEnd", transitOutStyle
-                leaving = no
-                if angular.isString(transitOutStyle)
-                  element.removeClass(transitOutStyle)
-                else if angular.isObject(transitOutStyle)
-                  for key, value of transitOutStyle
-                    PrefixedStyle raw, key, null
+                element.data('leaving', no)
+                if not attached
+                  if angular.isString(transitOutStyle)
+                    element.removeClass(transitOutStyle)
+                  else if angular.isObject(transitOutStyle)
+                    for key, value of transitOutStyle
+                      PrefixedStyle raw, key, null
 
-                PrefixedStyle raw, 'transition', null
+                #Element maybe entering before entered
+                PrefixedStyle(raw, 'transition', null) unless element.data('entering')
                 PrefixedEvent element, "TransitionEnd", transitEnd, off
                 done?()
             PrefixedEvent element, "TransitionEnd", transitEnd
@@ -256,30 +268,34 @@ angular.module('app.utils', [])
   .directive('aniHide', (Transitor, $parse)->
     #ani-hide="{class: 'from-top', style: 'opacity: 0', flag: 'env.noHeader', transition: 'all 300ms ease-in'}"
     #ani-hide="{class: 'from-top', flag: '!env.filters'}">
-    #class and style can not use at same
+    #class and style can not use at same time
     link:(scope, element, attr)->
 
       options = scope.$eval(attr.aniHide)
+      options.attached = yes
       style = options.class or options.style
       flag = $parse(options.flag)
       #Set initial status
       if scope.$eval(flag)
         element.css display: 'none'
 
+      saved = null
       scope.$watch flag, (value, old)->
         if !value is !old then return
+        saved = value
         #perform hide
         if value
           #console.log "perform hide", style
-          Transitor.transOut(element, style, options.transition)(->
-            #console.log "hide end", style
-            element.css display: 'none'
+          Transitor.transOut(element, style, options)(->
+            console.log "hide end", style
+            #value maybe changed during transition
+            if saved then element.css display: 'none'
           )
         #perform show
         else
           #console.log "perform show", style
           element.css display: null
-          Transitor.transIn(element, style, options.transition)(->
+          Transitor.transIn(element, style, options)(->
             #console.log "show end ", style
           )
 

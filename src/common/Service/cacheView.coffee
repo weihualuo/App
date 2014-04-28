@@ -45,7 +45,7 @@ angular.module( 'CacheView', [])
 
     View
   )
-  .factory('Nav', ($route, $location, viewStack)->
+  .factory('Nav', ($route, $location, viewStack, Service)->
 
     push = inherit = false
     data = null
@@ -66,6 +66,8 @@ angular.module( 'CacheView', [])
       data: -> data
 
       back: (option)->
+        #throttle the Navigation by 500ms
+        return no unless Service.noRepeat('nav', 600)
         if viewStack.length
           ##console.log "just history.back"
           history.back()
@@ -74,6 +76,9 @@ angular.module( 'CacheView', [])
           @go option
 
       go: (option)->
+
+        #throttle the Navigation by 500ms
+        return no unless Service.noRepeat('nav', 600)
         {name, data, param, search, hash, push, inherit} = option
 
         route = _.find $route.routes, name:name
