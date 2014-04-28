@@ -1,8 +1,7 @@
 angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
-                         'templates-app', 'templates-common',
-                         'Model', 'app.utils', 'app.home', 'app.photo', 'app.product', 'app.ideabook', 'app.discussion',
+                         'templates-app', 'templates-common', 'Model', 'MESSAGE'
+                         'app.utils', 'app.home', 'app.photo', 'app.product', 'app.ideabook', 'app.my',
                          'CacheView', 'Service', 'Popup', 'Scroll', 'Widget'
-                         'MESSAGE'
 ])
   .config( ($routeProvider, $compileProvider, $httpProvider) ->
 #    // Needed for phonegap routing
@@ -77,7 +76,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     .when( '/my'
       name: 'my'
       controller: 'MyCtrl'
-      templateUrl: 'home/my.tpl.html'
+      templateUrl: 'my/my.tpl.html'
       class: 'no-sub'
       cache: yes
     )

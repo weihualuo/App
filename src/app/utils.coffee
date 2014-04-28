@@ -287,7 +287,7 @@ angular.module('app.utils', [])
         if value
           #console.log "perform hide", style
           Transitor.transOut(element, style, options)(->
-            console.log "hide end", style
+            #console.log "hide end", style
             #value maybe changed during transition
             if saved then element.css display: 'none'
           )

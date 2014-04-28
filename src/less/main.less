@@ -23,13 +23,26 @@ body, html{
   height: 100%;
 }
 
+.main-bar{
+  height: @mainHeaderHeight;
+  padding-top: @statusBarHeight;
+  .box-align-center;
+  >a{
+    font-size: @icon-normal;
+    padding: 5px 5px;
+    margin: 0 5px;
+    border-radius: 10px;
+  }
+}
+
 .bar-subheader{
   z-index: 9;
+  top: @mainHeaderHeight;
 }
 
 .content-view{
   position: absolute;
-  top: @headerHeight*2;
+  top: @mainHeaderHeight+@headerHeight;
   right: 0;
   bottom: 0;
   left: 0;
@@ -37,10 +50,13 @@ body, html{
   background: #fff;
 
   &.no-sub{
-    top: @headerHeight !important;
+    top: @mainHeaderHeight !important;
   }
   &.no-header{
     top: 0 !important;
+  }
+  &.has-header{
+    top:@headerHeight;
   }
   &.no-side{
     left: 0 !important;
@@ -63,7 +79,7 @@ body, html{
 
   &.pane-side-menu{
     left: 0;
-    top: @headerHeight;
+    top: @mainHeaderHeight;
     bottom: 0;
     width: @side-pane-width;
     background: rgba(0,0,0,0.7);
@@ -71,7 +87,7 @@ body, html{
   &.pane-filter-bar{
     .opacity(98);
     right: 0;
-    top: @headerHeight;
+    top: @mainHeaderHeight;
     bottom: 0;
     width: @pane-filter-bar-width;
     background: @bodyBackground;

@@ -67,10 +67,11 @@ angular.module( 'CacheView', [])
 
       back: (option)->
         #throttle the Navigation by 500ms
-        return no unless Service.noRepeat('nav', 600)
+
         if viewStack.length
           ##console.log "just history.back"
-          history.back()
+          if Service.noRepeat('nav', 600)
+            history.back()
         else if option
           ##console.log "no stack, go", option.name
           @go option
