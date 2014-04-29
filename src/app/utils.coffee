@@ -300,3 +300,21 @@ angular.module('app.utils', [])
           )
 
   )
+  .directive('delegateWatch', ()->
+    controller: ->
+      @map = {}
+      @register = (element, value)-> @map[value] = element
+      this
+    link:(scope, element, attr, ctrl)->
+      className = attr.delegateClass
+      current = null
+      scope.$watch attr.delegateWatch, (value)->
+        current.removeClass(className) if current
+        current = ctrl.map[value]
+        current.addClass(className) if current
+  )
+  .directive('delegateWhen', ()->
+    require: '^delegateWatch'
+    link:(scope, element, attr, ctrl)->
+      ctrl.register(element, attr.delegateWhen)
+  )

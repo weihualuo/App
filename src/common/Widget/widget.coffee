@@ -172,7 +172,12 @@ angular.module( 'Widget', [])
           null
   )
   .directive('subView', ($templateCache, $controller, $compile)->
-    link: (scope, element, attr)->
+    restrict: 'E'
+    terminal: true
+    priority: 400
+    controller: angular.noop
+    transclude: 'element'
+    link: (scope, element, attr, ctrl)->
 
       childScope = null
       update = (config)->

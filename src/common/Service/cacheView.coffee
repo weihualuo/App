@@ -1,9 +1,7 @@
 
 
 angular.module( 'CacheView', [])
-  .value('viewStack',
-    []
-  )
+
   .factory('ViewFactory', ($animate, Service)->
     class View
       constructor: (@element, @name, @scope) ->
@@ -45,13 +43,15 @@ angular.module( 'CacheView', [])
 
     View
   )
-  .factory('Nav', ($route, $location, viewStack, Service)->
+  .factory('Nav', ($route, $location, Service)->
 
     push = inherit = false
     data = null
+    viewStack = []
 
     api =
 
+      stack: -> viewStack
       reset: ->
         push = inherit = false
         data = null
@@ -99,77 +99,97 @@ angular.module( 'CacheView', [])
         $location.hash hash or null
 
         ##console.log "set url", $location.url(), replace
-
-
   )
-  .factory('ViewManager', (Nav, $animate, Service, viewStack)->
-    current = null
-    $element = null
-    stack = viewStack
+  .factory('ViewManager', ->
 
-    api =
-      init: (el)-> $element = el
+    class Manager
 
-      current: -> current
+      constructor: (@$element, @stack)->
 
       popToView: (name, params)->
         ret = false
-        if current and current.name is name
-          ##console.log "nav to same view", name
+        if @current and @current.name is name
+          console.log "nav to same view", name
           ret = true
 
-        else if view = _.find(stack, name:name)
-          ##console.log "view in stack", name, view.name
-          current.leave()
-          while current = stack.pop()
-            if current isnt view
-              current.leave()
+        else if view = _.find(@stack, name:name)
+          console.log "view in stack", name, view.name
+          @current.leave()
+          while @current = @stack.pop()
+            if @current isnt view
+              @current.leave()
             else
               break
-          current.onPopup()
+          @current.onPopup()
           ret = true
 
-        if ret then current.update(params)
+        if ret then @current.update(params)
         return ret
 
-      changeView: (view, params)->
-        if not current
-          current = view
-          $element.after(view.element)
-          ##console.log "enter first view", view.name
+      changeView: (view, params, push)->
+        if not @current
+          @current = view
+          @$element.after(view.element)
+          console.log "enter first view", view.name
 
-        else if Nav.push()
-          current.stack()
-          stack.push(current)
-          view.enter(current.element)
-          ##console.log "push view #{view.name}, stacked #{current.name}"
-          current = view
+        else if push
+          @current.stack()
+          @stack.push(@current)
+          view.enter(@current.element)
+          console.log "push view #{view.name}, stacked #{@current.name}"
+          @current = view
 
-        # Replace the current view
+        # Replace the @current view
         else
-          view.enter(current.element)
-          current.leave()
-          ##console.log "enter #{view.name}, replace #{current.name}"
-          current = view
+          view.enter(@current.element)
+          @current.leave()
+          console.log "enter #{view.name}, replace #{@current.name}"
+          @current = view
 
         view.update(params, true)
-  )
 
+    Manager
+  )
+  .controller('NavCtrl', ()->
+    push = inherit = false
+    data = null
+    viewStack = []
+    @stack = -> viewStack
+    @reset = ->
+      push = inherit = false
+      data = null
+
+    @inherit = (value)->
+      inherit = value if value?
+      inherit
+    @push = (value)->
+      push = value if value?
+      push
+
+    @data = -> data
+    this
+  )
   .directive('cacheView', ($cacheFactory,  $route, ViewManager, Nav, ViewFactory)->
-    restrict: 'E'
+    restrict: 'AE'
     terminal: true
     priority: 400
+    controller: 'NavCtrl'
     transclude: 'element'
     link: (scope, $element, attr, ctrl, $transclude)->
 
-      viewCache = $cacheFactory('viewCache')
-      ViewManager.init($element)
-      update = ->
-        name = $route.current && $route.current.name
-        if not name
-          return
+      scope.cacheViewCtrl = ctrl
+      nav = if attr.cacheView then ctrl else Nav
+      viewCache = $cacheFactory('viewCache'+attr.cacheView)
+      manager = new ViewManager($element, nav.stack())
+
+      update = (current)->
+        
+        name = current?.name
+        if not name then return
+
+        ctrl.current = current
         # if view is in stack, popup to it
-        if ViewManager.popToView(name, $route.current.params)
+        if manager.popToView(name, current.params)
           ##console.log "hit stack, return"
           return
 
@@ -177,22 +197,21 @@ angular.module( 'CacheView', [])
         view = viewCache.get(name)
         if view
           ##console.log "hit cache"
-          ViewManager.changeView(view, $route.current.params)
+          manager.changeView(view, current.params, nav.push())
         else
           # scope maybe inherit from anthor view
           parentScope = scope
-          if Nav.inherit()
-            parentScope = ViewManager.current().scope
+          if nav.inherit()
+            parentScope = manager.current.scope
             ##console.log "scope inherit from", parentScope
           newScope = parentScope.$new()
-          angular.extend(newScope, Nav.data())
+          angular.extend(newScope, nav.data())
 
           # Create a new view
-          current = $route.current
           clone = $transclude(newScope, ->)
           ##console.log "Create a new view", name, current.params
           view = new ViewFactory(clone, name, newScope)
-          ViewManager.changeView(view, current.params)
+          manager.changeView(view, current.params, nav.push())
 
           #Cache the view
           if current.cache
@@ -206,9 +225,12 @@ angular.module( 'CacheView', [])
                 parent = node.parentNode
                 parent?.removeChild(node)
 
-        Nav.reset()
-      update()
-      scope.$on('$routeChangeSuccess', update)
+        nav.reset()
+
+      if attr.cacheView
+        scope.$watch attr.cacheView, update
+      else
+        scope.$on '$routeChangeSuccess', (e, current)-> update(current)
 
   )
   .factory('Tansformer', ($timeout, Transitor)->
@@ -275,14 +297,16 @@ angular.module( 'CacheView', [])
       #Not work, this is the same object in proto
       #ctrl.__proto__ = proto
   )
-  .directive('cacheView', ($compile, ViewController, $route)->
-    restrict: 'E',
+  .directive('cacheView', ($compile, ViewController, $templateCache)->
+    restrict: 'AE',
     priority: -400,
-    link: (scope, $element)->
-      current = $route.current
+    require: 'cacheView'
+    link: (scope, $element, attr, ctrl)->
+      current = ctrl.current
       locals = current.locals
-
-      $element.html(locals.$template)
+      locals ?= {}
+      template = locals.$template or $templateCache.get(current.url)
+      $element.html(template)
 
       link = $compile($element.contents())
 
@@ -292,7 +316,7 @@ angular.module( 'CacheView', [])
       if (current.controller)
         locals.$scope = scope
         locals.$element = $element
-        scope.$controller = ctrl = ViewController(current.controller, locals, current.extends)
+        scope.$controller = ViewController(current.controller, locals, current.extends)
 
       link(scope)
   )
