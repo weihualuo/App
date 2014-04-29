@@ -10,9 +10,7 @@
         </span>
     </a>
     <h3 class="flex1"></h3>
-    <a class="right" ng-click="onRight()">
-        {{env.rightText}}
-    </a>
+    <a class="right" ng-click="onRight($index)" ng-repeat="r in env.right">{{r}}</a>
 </header>
 
 <header class="bar bar-subheader res-has-side box-align-center" ani-hide="{class: 'from-top', flag: '!env.filters'}">

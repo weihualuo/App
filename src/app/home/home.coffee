@@ -19,7 +19,7 @@ angular.module('app.home', ['restangular'])
       objects.$promise.then -> $timeout ->
         $scope.objects = objects
         $scope.haveMore = objects.meta.more
-        Env[name].rightText = objects.length + $scope.haveMore + '张'
+        Env[name].right = [objects.length + $scope.haveMore + '张']
         $scope.$broadcast('scroll.reload')
 
     #Load more objects

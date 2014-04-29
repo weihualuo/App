@@ -100,7 +100,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     advice:
       title: '建议'
     my:
-      title: '我的家居'
+      right: []
     productDetail:
       title: '产品详情'
       noSide: true
@@ -154,9 +154,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     $scope.onTestDevice = ->
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
 
-    $scope.onRight = (id)->
-      if $scope.isLogin(yes)
-        no
+    $scope.onRight = (index)->
+      console.log "onright", index, $scope.cacheViewCtrl
+      $scope.$broadcast 'rightButton', index
 
     $scope.onBack = ->
       Nav.back(name:'photos')

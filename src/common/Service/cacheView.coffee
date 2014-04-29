@@ -225,6 +225,7 @@ angular.module( 'CacheView', [])
                 parent = node.parentNode
                 parent?.removeChild(node)
 
+        ctrl.scope = view.scope
         nav.reset()
 
       if attr.cacheView

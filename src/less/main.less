@@ -20,7 +20,7 @@
 body, html{
   position: static;
   overflow: auto;
-  height: 100%;
+//  height: 100%;
 }
 
 .main-bar{
@@ -186,6 +186,43 @@ ul:first-child{
 //  .flex(99);
 //  .transition(all ease-in-out 300ms);
 //}
+
+.input-label.error{
+  color: red;
+}
+
+
+input[type=file]{
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.file-select{
+  position: relative;
+}
+.image-preview{
+  position: relative;
+  width: @thumb-width;
+  height: @thumb-height;
+  .box-center;
+
+  >.image-loading{
+    position: absolute;
+    font-size: @icon-large;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    margin-left: -15px;
+    margin-top: -15px;
+  }
+  >img{
+    max-height: @thumb-height;
+    max-width: @thumb-width;
+  }
+}
+
 
 
 @import "../app/home/home";

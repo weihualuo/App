@@ -9,7 +9,7 @@ angular.module( 'Widget', [])
       file: "="
     template: '<div>
                 <div class="image-preview">
-                  <div ng-show="reading" class="image-loading"><i class="icon icon-large ion-load-a loading-rotate"></i></div>
+                  <div ng-show="reading" class="image-loading"><i class="icon ion-load-a loading-rotate"></i></div>
                   <img ng-hide="reading" ng-src="{{imgsrc}}">
                 </div>
                 <input type="file"/>

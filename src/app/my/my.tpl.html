@@ -1,12 +1,12 @@
 
-<div class="my-menu">
+<div class="my-menu" ng-show="user">
     <div class="bar bar-header bar-light">
         <h2 class="title">我的家居</h2>
     </div>
     <div class="fill has-header">
         <ul scrollable class="list" delegate-watch='myView.name' delegate-class='active'>
             <li class="item item-avatar" ng-click="onItem('profile')" delegate-when='profile'>
-                <img ng-src='{{user.image}}'>
+                <img ng-src='{{profile.image}}'>
                 <h2>{{user.username}}</h2>
                 <p>修改资料</p>
             </li>
@@ -18,7 +18,7 @@
     </div>
 </div>
 
-<div class="my-detail">
+<div class="my-detail" ng-show="user">
     <div class="bar bar-header bar-light box-align-center">
         <a class="flex1"></a>
         <a class="filter-menu" ng-click="">
