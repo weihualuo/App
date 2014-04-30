@@ -1,6 +1,6 @@
 angular.module('app.my', [])
 
-  .controller( 'MyCtrl', ($scope, $http, Popup, Env) ->
+  .controller( 'MyCtrl', ($scope, $http, Popup, Env, ToggleModal) ->
     console.log 'Myctrl'
 
     subviews =
@@ -59,6 +59,13 @@ angular.module('app.my', [])
 
     $scope.onMenu = ->
 
+    $scope.onEditProfile = ->
+      ToggleModal
+        id: 'editProfile'
+        template: "<modal navable='my/profile.tpl.html' animation='popup-in-right' class='fade-in-out'></modal>"
+        controller: 'myProfileCtrl'
+        scope: $scope
+
     this
   )
   .controller('myIdeabooksCtrl', ($scope, Restangular)->
@@ -76,7 +83,7 @@ angular.module('app.my', [])
 
     this
   )
-  .controller('myProfileCtrl', ($scope, $http, Service, MESSAGE, Popup, $timeout)->
+  .controller('myProfileCtrl', ($scope, $http, Service, MESSAGE, Popup)->
 
     data = $scope.data = {}
     $scope.$watch 'user', (user)->
@@ -96,6 +103,7 @@ angular.module('app.my', [])
           data.image = null
           $scope.profile.image = $scope.meta.imgbase + JSON.parse(ret).image
           Popup.alert MESSAGE.UPDATE_OK
+          $scope.modal.close()
         (ret)->
           Popup.alert MESSAGE.UPLOAD_FAILED
       )
@@ -133,6 +141,7 @@ angular.module('app.my', [])
                 return uploadImage(user.userprofile.id)
               else
                 Popup.alert MESSAGE.UPDATE_OK
+                $scope.modal.close()
                 null
             (ret)->
               console.log ret

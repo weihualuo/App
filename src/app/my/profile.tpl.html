@@ -1,5 +1,11 @@
 
-<form name="form" class="list list-inset">
+<header class="bar bar-header bar-light">
+    <button class="button button-clear" ng-click="onSubmit()">更新</button>
+    <h1 class="title">修改资料</h1>
+    <button class="button button-clear" ng-click="modal.close()">取消</button>
+</header>
+
+<form name="form" class="list list-inset padding-header">
     <label class="item item-input">
         <span class="input-label">头像：</span>
         <file-select class="file-select"
@@ -30,7 +36,6 @@
         <span class="input-label">我的签名：</span>
         <textarea name="desc" ng-model="data.desc" rows="5"></textarea>
     </label>
-    <button class="button button-full button-positive" ng-click="onSubmit()">更新</button>
 </form>
 
 

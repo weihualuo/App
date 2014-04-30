@@ -146,7 +146,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     popupLoginModal = ->
       ToggleModal
         id: 'login'
-        template: "<modal navable='template' animation='popup-in-right' class='fade-in-out'></modal>"
+        template: "<modal navable='modal/login.tpl.html' animation='popup-in-right' class='fade-in-out'></modal>"
         locals: url:location.href
         controller: 'loginCtrl'
         scope: $scope
@@ -266,7 +266,6 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
   .controller('loginCtrl', ($scope, Popup, Service, $http, MESSAGE)->
 
     console.log 'loginCtrl'
-    $scope.template = 'modal/login.tpl.html'
 
     validateMsg =
       email:

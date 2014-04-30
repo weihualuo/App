@@ -144,7 +144,7 @@ angular.module( 'Widget', [])
         content = container.clone().html(template)
         $compile(content)(scope)
 
-      current = getContent scope.$eval(attr.navable)
+      current = getContent attr.navable
       element.empty()
       element.append(current)
       element.ready ->
