@@ -278,25 +278,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         email: MESSAGE.REQ_EMAIL
         password: MESSAGE.REQ_PWD
 
-    popupMsg = ($error)->
-      for error, inputs of $error
-        try
-          if msg =  validateMsg[error][inputs[0].$name]
-            break
-        catch error
-          continue
-      Popup.alert msg
-
-    validate = (form)->
-      console.log form
-      if form.$invalid
-        popupMsg(form.$error)
-        return false
-      return true
-
     $scope.onLogin = ->
-      if Service.noRepeat('login') and validate($scope.loginForm)
-        console.log "ok, now login"
+      if Service.noRepeat('login') and Service.validate($scope.loginForm, validateMsg)
         promise = $http.post('/auth/login', {username:$scope.username, password:$scope.password})
         Popup.loading promise, showWin:yes
         promise.then(
@@ -304,16 +287,13 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
             Popup.alert MESSAGE.LOGIN_OK
             $scope.meta.user = ret.data.user
             $scope.modal.close()
-            console.log "success", $scope.meta.user
           (ret)->
             msg = if ret.data.error is 'invalid' then MESSAGE.LOGIN_INVALID else MESSAGE.LOGIN_NOK
             Popup.alert msg
-            console.log "fail", ret
         )
 
     $scope.onRegister = ->
       if Service.noRepeat('login') and validate($scope.registerForm)
-        console.log "ok, now register"
         promise = $http.post '/auth/register',
           username:$scope.username
           password:$scope.password
@@ -324,11 +304,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
             Popup.alert MESSAGE.REGISTER_OK
             $scope.meta.user = ret.data.user
             $scope.modal.close()
-            console.log "success", $scope.meta.user
           (ret)->
             msg = if ret.data.error is 'exist' then MESSAGE.USRNAME_EXIST else MESSAGE.REGISTER_NOK
             Popup.alert msg
-            console.log "fail", ret
         )
 
   )

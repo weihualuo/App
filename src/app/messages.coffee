@@ -5,6 +5,7 @@ angular.module('MESSAGE', [])
     LOAD_FAILED: '加载失败'
     SAVE_NOK: '保存失败'
     SAVE_OK: '保存成功'
+    UPDATE_OK: '更新成功'
     NO_MORE:     '没有更多了'
     SUBMITTING:   '正在提交...'
     UPLOADING:   '正在上传图片...'

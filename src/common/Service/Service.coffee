@@ -1,6 +1,6 @@
 angular.module( 'Service', [])
 
-.factory('Service', ($q, $timeout)->
+.factory('Service', ($q, $timeout, Popup)->
 
   _objs={}
   Service =
@@ -12,14 +12,14 @@ angular.module( 'Service', [])
         $timeout (-> _objs[name] = false), time
         _objs[name] = true
 
-    uploadFile : (name, file, url)->
+    uploadFile : (name, file, url, method='POST')->
       deferred = $q.defer()
       xhr = new XMLHttpRequest()
       formData = new FormData()
       formData.append(name, file)
       formData.append('formuid', new Date().valueOf())
       #Open the AJAX call
-      xhr.open('post', url, true)
+      xhr.open(method, url, true)
       xhr.upload.onprogress = (e)->
         deferred.notify e
       xhr.onreadystatechange = (e)->
@@ -82,6 +82,18 @@ angular.module( 'Service', [])
       child.$parent = parent
       child.__proto__ = parent
       @reconnectScope(child)
+
+    validate: (form, msgs)->
+      if form.$invalid
+        for error, inputs of form.$error
+          try
+            if msg =  msgs[error][inputs[0].$name]
+              Popup.alert msg
+              break
+          catch error
+            continue
+        return false
+      return true
   )
   .factory('PrefixedEvent', ->
     pfx = ["webkit", "moz", "MS", "o", ""]

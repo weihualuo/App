@@ -179,6 +179,25 @@ select{
 }
 
 
+.select-wrapper{
+  position: relative;
+  >select{
+    width: 100%;
+  }
+  >i{
+    position: absolute;
+    right: 5px;
+    // (34 -14) /2
+    top: 10px;
+  }
+}
+
+.item-input{
+  >.select-wrapper{
+    flex: 1 0 220px;
+  }
+}
+
 ul:first-child{
   border-top: 1px solid #dddddd;
 }

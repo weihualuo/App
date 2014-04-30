@@ -5,28 +5,32 @@
         <file-select class="file-select"
                      imgsrc="{{profile.image}}"
                      file="data.image"
+                     name='image'
                 >
         </file-select>
     </label>
     <label class="item item-input">
-        <span class="input-label" ng-class="{error: failed && form.name.$invalid}">姓名：</span>
+        <span class="input-label">姓名：</span>
         <input maxlength="50" name="name" type="text" ng-model="data.name">
     </label>
     <label class="item item-input">
-        <span class="input-label" ng-class="{error: failed && form.location.$invalid}">位置：</span>
-        <select name="location" ng-model="data.location" ng-options="l.cn for l in meta.location">
-        </select>
+        <span class="input-label">位置：</span>
+        <div class="select-wrapper">
+            <select name="location" ng-model="data.location" ng-options="l.cn for l in meta.location">
+            </select>
+            <i class="icon ion-arrow-down-b"></i>
+        </div>
     </label>
     <label class="item item-input">
-        <span class="input-label" ng-class="{error: failed && form.email.$invalid}">邮件：</span>
-        <input maxlength="50" name="email" type="email" ng-model="data.email">
+        <span class="input-label">邮件：</span>
+        <input maxlength="50" name="email" type="email" ng-model="data.email" required>
     </label>
 
     <label class="item item-input">
-        <span class="input-label" ng-class="{error: failed && form.desc.$invalid}">我的签名：</span>
+        <span class="input-label">我的签名：</span>
         <textarea name="desc" ng-model="data.desc" rows="5"></textarea>
     </label>
-    <button class="button button-full button-dark" ng-click="onSubmit()">确定</button>
+    <button class="button button-full button-positive" ng-click="onSubmit()">更新</button>
 </form>
 
 

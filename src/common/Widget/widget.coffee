@@ -7,12 +7,13 @@ angular.module( 'Widget', [])
     scope:
       imgsrc: "@"
       file: "="
+      name: '@'
     template: '<div>
                 <div class="image-preview">
                   <div ng-show="reading" class="image-loading"><i class="icon ion-load-a loading-rotate"></i></div>
                   <img ng-hide="reading" ng-src="{{imgsrc}}">
                 </div>
-                <input type="file"/>
+                <input name="{{name}}" type="file"/>
                </div>'
 
     link: (scope, element) ->
