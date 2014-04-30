@@ -1,6 +1,6 @@
 angular.module( 'Service', [])
 
-.factory('Service', ($q, $timeout, Popup)->
+.factory('Service', ($q, $timeout, Popup, $browser)->
 
   _objs={}
   Service =
@@ -17,15 +17,19 @@ angular.module( 'Service', [])
       xhr = new XMLHttpRequest()
       formData = new FormData()
       formData.append(name, file)
-      formData.append('formuid', new Date().valueOf())
       #Open the AJAX call
       xhr.open(method, url, true)
+
+      csrfToken = $browser.cookies()['csrftoken']
+      if csrfToken
+        xhr.setRequestHeader('X-CSRFToken', csrfToken)
+
       xhr.upload.onprogress = (e)->
         deferred.notify e
       xhr.onreadystatechange = (e)->
         if (this.readyState is 4)
           #created
-          if this.status is 201
+          if this.status is 200 or this.status is 201
             deferred.resolve this.responseText
           # 504 is sae gateway timeout error, most of the case the file is created
           else if this.status is 504

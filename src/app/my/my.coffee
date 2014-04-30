@@ -70,14 +70,21 @@ angular.module('app.my', [])
         data.desc = profile.desc
 
     # timeout to digest over
-    afterUpdate = -> $timeout ->
-      if data.image
-        url = '/api/profile/'+ $scope.profile.id
-        Service.uploadFile('image', data.image, url, 'PATCH')
+    uploadImage = (id)->
+      url = '/api/profile/'+ id
+      promise = Service.uploadFile('image', data.image, url, 'PATCH')
+      promise.then(
+        (ret)->
+          data.image = null
+          $scope.profile.image = $scope.meta.imgbase + JSON.parse(ret).image
+          Popup.alert MESSAGE.UPDATE_OK
+        (ret)->
+          Popup.alert MESSAGE.UPLOAD_FAILED
+      )
+      promise
 
     $scope.onSubmit = ->
 
-      console.log $scope.form
       validateMsg =
         email:
           email: MESSAGE.EMAIL_VALID
@@ -86,7 +93,7 @@ angular.module('app.my', [])
 
       if Service.noRepeat('updateProfile') and Service.validate($scope.form, validateMsg)
 
-        if $scope.form.$dirty
+        if $scope.form.$dirty or data.image
           param = {}
           param.first_name = data.name
           param.email = data.email
@@ -98,23 +105,25 @@ angular.module('app.my', [])
           # Set if no profile created
           profile.status = 1 unless $scope.profile.status
 
-          promise = $http.post '/auth/update', param
-          Popup.loading promise, showWin:yes
-          promise.then(
+          promise = $http.post('/auth/update', param).then(
             (ret)->
-              console.log ret
-              Popup.alert MESSAGE.UPDATE_OK
-              $scope.meta.user = ret.data.user
+              user = ret.data.user
+              $scope.meta.user = user
               $scope.form.$setPristine()
-              afterUpdate()
+              if data.image
+                # Retrur a chained promise
+                return uploadImage(user.userprofile.id)
+              else
+                Popup.alert MESSAGE.UPDATE_OK
+                null
             (ret)->
               console.log ret
               #django backend use diffrent email validation strategy with angular
               msg = if ret.data.error?.email then MESSAGE.EMAIL_VALID else MESSAGE.SUBMIT_FAILED
               Popup.alert msg
+              null
           )
-        else
-          afterUpdate()
+          Popup.loading promise, showWin:yes
 
     this
   )

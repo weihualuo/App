@@ -116,7 +116,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       noSide: true
       #noHeader: true
   )
-  .run( ($location, $document)->
+  .run( ($location, $document, $q)->
+    window.$q = $q
     # simulate html5Mode
     if !location.hash
       $location.path(location.pathname)
