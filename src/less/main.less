@@ -23,9 +23,7 @@ body, html{
 //  height: 100%;
 }
 
-.main-bar{
-  height: @mainHeaderHeight;
-  padding-top: @statusBarHeight;
+.bar{
   .box-align-center;
   >a{
     font-size: @icon-normal;
@@ -33,6 +31,12 @@ body, html{
     margin: 0 5px;
     border-radius: 10px;
   }
+}
+
+.main-bar{
+  height: @mainHeaderHeight;
+  padding-top: @statusBarHeight;
+
 }
 
 .bar-subheader{
@@ -64,6 +68,10 @@ body, html{
   &.no-background{
     background: transparent;
   }
+}
+
+.has-form{
+  overflow: scroll;
 }
 
 .container{
@@ -123,9 +131,6 @@ body, html{
   border-radius: 10px;
 }
 
-.scroll{
-  background: @bodyBackground;
-}
 .refresher{
   position: absolute;
   left: 50%;
@@ -194,7 +199,7 @@ select{
 
 .item-input{
   >.select-wrapper{
-    flex: 1 0 220px;
+    .flex(1 0 220px);
   }
 }
 

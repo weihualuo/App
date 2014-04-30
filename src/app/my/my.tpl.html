@@ -19,11 +19,20 @@
 </div>
 
 <div class="my-detail" ng-show="user">
-    <div class="bar bar-header bar-light box-align-center">
-        <a class="flex1"></a>
-        <a class="filter-menu" ng-click="">
+    <div class="bar bar-header bar-light">
+        <a ng-click="onLeft()">
+            <span ng-show="env.left">
+                <i class="icon ion-ios7-arrow-back"></i> {{env.left}}
+            </span>
+        </a>
+        <h3 class="flex1"></h3>
+
+        <a class="right" ng-click="onRight($index)" ng-repeat="r in env.right">{{r}}</a>
+
+        <a id="my-menu-drop" class="filter-menu" ng-click="onMenu()">
             我的菜单 <i class="icon ion-arrow-down-b"></i>
         </a>
+
     </div>
     <div cache-view='myView' class="fill"></div>
 </div>

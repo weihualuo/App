@@ -8,14 +8,22 @@ angular.module('app.my', [])
         name: 'ideabook'
         url: 'ideabook/ideabooks.tpl.html'
         controller: 'myIdeabooksCtrl'
+        env:
+          right: ['新建灵感集']
       profile:
         name: 'profile'
         url: 'my/profile.tpl.html'
         controller: 'myProfileCtrl'
+        class: 'has-form'
+        env:
+          right: ['更新']
 
     $scope.myView = subviews.ideabook
     $scope.onItem = (item)->
       $scope.myView = subviews[item]
+
+    $scope.$watch 'myView', (view)->
+      $scope.env = view?.env
 
     if not $scope.meta.$resolved
       Popup.loading $scope.meta.$promise
@@ -36,12 +44,20 @@ angular.module('app.my', [])
       if e.targetScope is $scope
         $scope.meta.$promise.then -> $scope.isLogin(yes)
 
+    #right button of main bar
     $scope.$on 'rightButton', (e, index)->
       if $scope.isLogin(yes) then $scope.onLogout()
 
     $scope.onLogout = ->
       $http.post('/auth/logout').then ->
         $scope.meta.user = null
+
+
+    $scope.onRight = (index)->
+
+    $scope.onLeft = ()->
+
+    $scope.onMenu = ->
 
     this
   )
@@ -52,8 +68,11 @@ angular.module('app.my', [])
     $scope.$watch 'user', (user)->
       if user
         param = author: user.id
-        Restangular.all('ideabooks').withHttpConfig({cache: false}).getList(param).then (data)->
-          $scope.objects = data
+        Restangular.all('ideabooks').withHttpConfig({cache: false}).getList(param).then(
+          (data)->
+            $scope.objects = data
+        ).finally ->
+          $scope.objects.$resolved = true
 
     this
   )
@@ -69,7 +88,6 @@ angular.module('app.my', [])
         data.location= _.find($scope.meta.location, id: profile.location)
         data.desc = profile.desc
 
-    # timeout to digest over
     uploadImage = (id)->
       url = '/api/profile/'+ id
       promise = Service.uploadFile('image', data.image, url, 'PATCH')

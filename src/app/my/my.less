@@ -20,9 +20,13 @@
   bottom: 0;
   left: @menu-width;
   right: 0;
-  >.bar{
-    display: none;
+  >.fill{
+    top: @headerHeight;
   }
+}
+
+#my-menu-drop{
+  display: none;
 }
 
 @media (max-width: @res-no-side){
@@ -31,11 +35,8 @@
   }
   .my-detail{
     left: 0;
-    >.bar{
-      display: inherit;
-    }
-    >.fill{
-      top: @headerHeight;
-    }
+  }
+  #my-menu-drop{
+    display: inherit;
   }
 }

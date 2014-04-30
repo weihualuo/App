@@ -77,7 +77,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       name: 'my'
       controller: 'MyCtrl'
       templateUrl: 'my/my.tpl.html'
-      class: 'no-sub'
+      class: 'no-sub has-form'
       cache: yes
     )
     .otherwise(
@@ -116,8 +116,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       noSide: true
       #noHeader: true
   )
-  .run( ($location, $document, $q)->
-    window.$q = $q
+  .run( ($location, $document)->
     # simulate html5Mode
     if !location.hash
       $location.path(location.pathname)
@@ -157,7 +156,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
 
     $scope.onRight = (index)->
       console.log "onright", index, $scope.cacheViewCtrl
-      $scope.$broadcast 'rightButton', index
+      $scope.cacheViewCtrl.scope.$broadcast 'rightButton', index
 
     $scope.onBack = ->
       Nav.back(name:'photos')
@@ -294,7 +293,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
         )
 
     $scope.onRegister = ->
-      if Service.noRepeat('login') and validate($scope.registerForm)
+      if Service.noRepeat('login') and Service.validate($scope.registerForm, validateMsg)
         promise = $http.post '/auth/register',
           username:$scope.username
           password:$scope.password

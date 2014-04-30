@@ -13,7 +13,7 @@
     <a class="right" ng-click="onRight($index)" ng-repeat="r in env.right">{{r}}</a>
 </header>
 
-<header class="bar bar-subheader res-has-side box-align-center" ani-hide="{class: 'from-top', flag: '!env.filters'}">
+<header class="bar bar-subheader res-has-side" ani-hide="{class: 'from-top', flag: '!env.filters'}">
     <form class="flex1" ng-submit="onSearch(se)" ng-class="{focused:inFocus}">
         <label class="box-align-center">
             <i class="icon ion-ios7-search placeholder-icon"></i>
