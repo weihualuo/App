@@ -1,5 +1,13 @@
 
 
-<button ng-click="onLogout()" ng-show="!!meta.user">
-    注销
-</button>
+<ul scrollable class="list" delegate-watch='myView.name' delegate-class='active'>
+    <li class="item item-avatar" ng-click="onEditProfile()">
+        <img ng-src='{{profile.image}}'>
+        <h2>{{user.username}}</h2>
+        <p>修改资料</p>
+    </li>
+    <li class="item" ng-click="onItem('ideabook')" delegate-when='ideabook'>我的灵感集</li>
+    <li class="item">我的收藏</li>
+    <li class="item">我的话题</li>
+    <li class="item">上传照片</li>
+</ul>

@@ -58,11 +58,18 @@ angular.module('app.my', [])
     $scope.onLeft = ()->
 
     $scope.onMenu = ->
+      ToggleModal
+        id: 'myMenu'
+        template: "<side-pane position='right' class='pane-my-menu popup-in-right'></side-pane>"
+        url: "my/myMenu.tpl.html"
+        closeOnBackdrop: yes
+        scope: $scope
+        success: (id)->
 
     $scope.onEditProfile = ->
       ToggleModal
         id: 'editProfile'
-        template: "<modal navable='my/profile.tpl.html' animation='popup-in-right' class='fade-in-out'></modal>"
+        template: "<modal navable='my/profile.tpl.html' animation='popup-in-right' class='fade-in-out profile-win'></modal>"
         controller: 'myProfileCtrl'
         scope: $scope
 
@@ -110,6 +117,8 @@ angular.module('app.my', [])
       promise
 
     $scope.onSubmit = ->
+
+      console.log $scope.form, $scope.formPro
 
       validateMsg =
         email:

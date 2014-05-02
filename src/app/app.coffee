@@ -159,7 +159,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       $scope.cacheViewCtrl.scope.$broadcast 'rightButton', index
 
     $scope.onBack = ->
-      Nav.back(name:'photos')
+      Nav.back(name:'my')
     
     #Load meta info first
     $scope.meta = Single('meta', Config.$meta).get()

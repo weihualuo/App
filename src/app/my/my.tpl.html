@@ -1,25 +1,14 @@
 
 <div class="my-menu" ng-show="user">
-    <div class="bar bar-header bar-light">
+    <div class="bar bar-header bar-stable">
         <h2 class="title">我的家居</h2>
     </div>
-    <div class="fill has-header">
-        <ul scrollable class="list" delegate-watch='myView.name' delegate-class='active'>
-            <li class="item item-avatar" ng-click="onEditProfile()">
-                <img ng-src='{{profile.image}}'>
-                <h2>{{user.username}}</h2>
-                <p>修改资料</p>
-            </li>
-            <li class="item" ng-click="onItem('ideabook')" delegate-when='ideabook'>我的灵感集</li>
-            <li class="item">我的收藏</li>
-            <li class="item">我的话题</li>
-            <li class="item">上传照片</li>
-        </ul>
+    <div class="fill has-header" include="my/myMenu.tpl.html">
     </div>
 </div>
 
 <div class="my-detail" ng-show="user">
-    <div class="bar bar-header bar-light">
+    <div class="bar bar-header bar-stable">
         <a ng-click="onLeft()">
             <span ng-show="env.left">
                 <i class="icon ion-ios7-arrow-back"></i> {{env.left}}

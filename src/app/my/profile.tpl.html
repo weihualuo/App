@@ -1,14 +1,13 @@
 
-<header class="bar bar-header bar-light">
-    <button class="button button-clear" ng-click="onSubmit()">更新</button>
-    <h1 class="title">修改资料</h1>
+<header class="bar bar-header bar-stable">
     <button class="button button-clear" ng-click="modal.close()">取消</button>
+    <h1 class="title">修改资料</h1>
+    <button class="button button-clear" ng-click="onSubmit()">更新</button>
 </header>
 
 <form name="form" class="list list-inset padding-header">
     <label class="item item-input">
-        <span class="input-label">头像：</span>
-        <file-select class="file-select"
+        <file-select class="file-select box-center"
                      imgsrc="{{profile.image}}"
                      file="data.image"
                      name='image'
@@ -16,11 +15,11 @@
         </file-select>
     </label>
     <label class="item item-input">
-        <span class="input-label">姓名：</span>
+        <span class="input-label">姓名</span>
         <input maxlength="50" name="name" type="text" ng-model="data.name">
     </label>
     <label class="item item-input">
-        <span class="input-label">位置：</span>
+        <span class="input-label">位置</span>
         <div class="select-wrapper">
             <select name="location" ng-model="data.location" ng-options="l.cn for l in meta.location">
             </select>
@@ -28,14 +27,15 @@
         </div>
     </label>
     <label class="item item-input">
-        <span class="input-label">邮件：</span>
+        <span class="input-label">邮件</span>
         <input maxlength="50" name="email" type="email" ng-model="data.email" required>
     </label>
 
     <label class="item item-input">
-        <span class="input-label">我的签名：</span>
+        <span class="input-label">我的签名</span>
         <textarea name="desc" ng-model="data.desc" rows="5"></textarea>
     </label>
+    <button class="button button-block" ng-click="navCtrl.go('my/proProfile.tpl.html')">升级为设计师账号</button>
 </form>
 
 
