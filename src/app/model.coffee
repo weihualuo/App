@@ -38,7 +38,7 @@ angular.module( 'Model', ['restangular'])
           #if data is array, it  only copy array
           angular.copy(data, objs)
           objs.$resolved = yes
-        ).finally ->
+        )
 
       #Return the colletion
       @objects
@@ -69,8 +69,12 @@ angular.module( 'Model', ['restangular'])
       promise
 
       #Should set to @cursor if create successfuls
-    Factory.prototype.new = (param)->
-      @objects.post(param)
+    Factory.prototype.new = (param, prepend)->
+      promise = @objects.post(param)
+      if prepend
+        promise.then (data)=>
+          @objects.unshift data
+      promise
 
     Factory.prototype.get = (id, force)->
       #If the request id is not the last one, reset cursor
@@ -89,7 +93,7 @@ angular.module( 'Model', ['restangular'])
 
       @cursor
 
-    (name)->  _objects[name] ?=  new Factory name
+    (name, sub='')->  _objects[name+sub] ?=  new Factory name
 
   )
   #Single factory guaranteed only one object is created for the same identifier

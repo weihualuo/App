@@ -78,6 +78,13 @@ angular.module( 'Widget', [])
       snaping = false
       pane = element[0]
 
+      if attr.closeOnResize?
+        onResize = ->
+          setAnimate('none')
+          scope.$emit 'content.closed'
+          window.removeEventListener 'resize', onResize
+        window.addEventListener "resize", onResize
+
       PrefixedEvent element, "TransitionEnd", ->
         if snaping
           snaping = false

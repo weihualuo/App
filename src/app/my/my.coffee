@@ -6,7 +6,7 @@ angular.module('app.my', [])
     subviews =
       ideabook:
         name: 'ideabook'
-        url: 'ideabook/ideabooks.tpl.html'
+        url: 'my/myIdeabooks.tpl.html'
         controller: 'myIdeabooksCtrl'
         env:
           right: ['新建灵感集']
@@ -59,7 +59,7 @@ angular.module('app.my', [])
     $scope.onMenu = ->
       ToggleModal
         id: 'myMenu'
-        template: "<side-pane position='right' class='pane-my-menu popup-in-right'></side-pane>"
+        template: "<side-pane close-on-resize position='right' class='pane-my-menu popup-in-right'></side-pane>"
         url: "my/myMenu.tpl.html"
         closeOnBackdrop: yes
         scope: $scope
@@ -74,18 +74,49 @@ angular.module('app.my', [])
 
     this
   )
-  .controller('myIdeabooksCtrl', ($scope, Restangular)->
+  .controller('myIdeabooksCtrl', ($scope, Many, MESSAGE, Popup, Nav)->
     console.log 'myIdeabooksCtrl'
+
+    collection = Many('ideabooks', 'my')
 
     $scope.objects = []
     $scope.$watch 'user', (user)->
       if user
-        param = author: user.id
-        Restangular.all('ideabooks').withHttpConfig({cache: false}).getList(param).then(
-          (data)->
-            $scope.objects = data
+        $scope.objects = objects = collection.list(author:user.id)
+        if not objects .$resolved
+          Popup.loading objects.$promise, failMsg:MESSAGE.LOAD_FAILED
+        objects.$promise.then (data)->
+          $scope.haveMore = objects.meta.more
+          $scope.myView.env.left = user.username + "的灵感集(#{data.length})"
+          $scope.$broadcast('scroll.reload')
+
+    #Load more objects
+    onMore = ->
+      if !$scope.haveMore
+        $scope.$broadcast('scroll.moreComplete')
+      return
+      promise = collection.more()
+      if promise
+        $scope.loadingMore = true
+        promise.then( (data)->
+          $scope.haveMore = objects.meta.more
         ).finally ->
-          $scope.objects.$resolved = true
+          $scope.loadingMore = false
+          $scope.$broadcast('scroll.moreComplete')
+
+    #Refresh the list
+    onRefresh = ()->
+      collection.refresh().finally ->
+        $scope.$broadcast('scroll.refreshComplete')
+
+    $scope.$on 'scroll.refreshStart', onRefresh
+    $scope.$on 'scroll.moreStart', onMore
+
+    $scope.onIdeaBookView = (obj)->
+      Nav.go
+        name: 'ideabookDetail'
+        param: id:obj.id
+        push: yes
 
     this
   )

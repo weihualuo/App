@@ -3,7 +3,7 @@ angular.module('app.ideabook', [])
 
   .directive('ideabookThumb', (ImageUtil)->
 
-    restrict:'C'
+    restrict:'AC'
     link: (scope, element, attr)->
       image = null
       index = parseInt(attr.index)
@@ -132,16 +132,17 @@ angular.module('app.ideabook', [])
   .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, $q, MESSAGE)->
     # Operation on the collection will cause inconsistent of home list
     # due to listCtrl use cache mechanisam
-    #collection = Many('ideabooks')
+    # New sulotion, Add sub id to list
+    collection = Many('ideabooks', 'my')
 
     $scope.ideabooks = ideabooks = [{id:0, title: MESSAGE.NEW_IDEABOOK, pieces:[]}]
     $scope.ideabook = ideabooks[0]
     param = author: $scope.user.id
     #Request the list without cache
-    list = null
-    Restangular.all('ideabooks').withHttpConfig({cache: false}).getList(param).then (data)->
-      list = data
-      angular.forEach data, (v)->ideabooks.push v
+    list = collection.list(param)
+    #Tricky: I prepend to list after new a item, but promise will resove with
+    # the same value last time resolved, so use list but data here
+    list.$promise.then (data)-> angular.forEach list, (v)->ideabooks.push v
 
     saveToIdeabook =(ideabook, deferred)->
       data =
@@ -180,7 +181,7 @@ angular.module('app.ideabook', [])
 
       #Create a new ideabook
       if ideabook.id is 0
-        list.post(title:title).then(
+        collection.new(title:title, yes).then(
           (newObj)-> saveToIdeabook(newObj, deferred)
 
           (error)->

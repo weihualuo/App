@@ -1,6 +1,6 @@
 
 <div class="my-menu" ng-show="user">
-    <div class="bar bar-header bar-stable">
+    <div class="bar bar-header bar-stable common-bar">
         <h2 class="title">我的家居</h2>
     </div>
     <div class="fill has-header" include="my/myMenu.tpl.html">
@@ -8,11 +8,9 @@
 </div>
 
 <div class="my-detail" ng-show="user">
-    <div class="bar bar-header bar-stable">
-        <a ng-click="onLeft()">
-            <span ng-show="env.left">
-                <i class="icon ion-ios7-arrow-back"></i> {{env.left}}
-            </span>
+    <div class="bar bar-header bar-stable common-bar">
+        <a ng-click="onLeft()" ng-show="env.left">
+            {{env.left}}
         </a>
         <h3 class="flex1"></h3>
 
