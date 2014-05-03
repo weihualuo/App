@@ -30,11 +30,10 @@ angular.module('app.my', [])
 
     loadUserData = (user)->
       $scope.user = user
-      $scope.profile = $scope.user?.userprofile or {}
-      if $scope.profile.image
-        $scope.profile.image = $scope.meta.imgbase + $scope.profile.image
-      else
-        $scope.profile.image = "/m/assets/img/user.gif"
+      if user
+        user.profile ?= {}
+        user.profile.pro ?= {}
+
       Env.my.right = if user then ['注销'] else ['登录']
       $scope.$emit 'envUpdate'
 
@@ -92,23 +91,27 @@ angular.module('app.my', [])
   )
   .controller('myProfileCtrl', ($scope, $http, Service, MESSAGE, Popup)->
 
-    data = $scope.data = {}
     $scope.$watch 'user', (user)->
-      if user
-        profile = $scope.profile
-        data.name = user.first_name
-        data.email = user.email
-        data.gender = profile.gender
-        data.location= _.find($scope.meta.location, id: profile.location)
-        data.desc = profile.desc
+      if not user then return
+      $scope.data = angular.copy user
+      $scope.profile = $scope.data.profile
+      $scope.pro = $scope.profile.pro
+      $scope.pro.contact ?= {}
+
+      #Conver some values
+      if user.profile.location
+        $scope.profile.location= _.find($scope.meta.location, id: user.profile.location)
+      $scope.profile.image = null
+      if user.profile.pro.category
+        $scope.pro.category = _.find($scope.meta.category, id: user.profile.pro.category)
 
     uploadImage = (id)->
       url = '/api/profile/'+ id
-      promise = Service.uploadFile('image', data.image, url, 'PATCH')
+      promise = Service.uploadFile('image', $scope.profile.image, url, 'PATCH')
       promise.then(
         (ret)->
-          data.image = null
-          $scope.profile.image = $scope.meta.imgbase + JSON.parse(ret).image
+          $scope.profile.image = null
+          $scope.user.profile.image = JSON.parse(ret).image
           Popup.alert MESSAGE.UPDATE_OK
           $scope.modal.close()
         (ret)->
@@ -116,50 +119,75 @@ angular.module('app.my', [])
       )
       promise
 
+
+    validateMsg =
+      email:
+        email: MESSAGE.EMAIL_VALID
+      required:
+        email: MESSAGE.REQ_EMAIL
+        address: MESSAGE.REQ_ADDR
+        phone: MESSAGE.REQ_PHONE
+      url:
+        link: MESSAGE.URL_VALID
+
+    validateForms = ->
+      if Service.validate($scope.form, validateMsg) and
+          (not $scope.formPro or Service.validate($scope.formPro, validateMsg)) and
+          (not $scope.formCon or Service.validate($scope.formCon, validateMsg))
+        return yes
+      return no
+
+    setPristine = ->
+      $scope.form.$setPristine()
+      $scope.formPro?.$setPristine()
+      $scope.formCon?.$setPristine()
+
+    isDirty = ->
+      $scope.form.$dirty or $scope.formPro?.$dirty or $scope.formCon?.$dirty or $scope.profile.image
+
     $scope.onSubmit = ->
 
-      console.log $scope.form, $scope.formPro
+      console.log $scope.form, $scope.formPro, $scope.formCon
+      console.log $scope.data, $scope.pro, $scope.con
 
-      validateMsg =
-        email:
-          email: MESSAGE.EMAIL_VALID
-        required:
-          email: MESSAGE.REQ_EMAIL
+      if Service.noRepeat('updateProfile') and validateForms() and isDirty()
 
-      if Service.noRepeat('updateProfile') and Service.validate($scope.form, validateMsg)
+        param = angular.copy($scope.data)
+        #Conver some values
+        if $scope.profile.location
+          param.profile.location = $scope.profile.location.id
+        # Set if no profile created
+        if not $scope.profile.status
+          param.profile.status = 1
 
-        if $scope.form.$dirty or data.image
-          param = {}
-          param.first_name = data.name
-          param.email = data.email
-          param.profile = profile = {}
-          profile.gender = data.gender
-          # Set if selected
-          profile.location = data.location.id if data.location
-          profile.desc = data.desc
-          # Set if no profile created
-          profile.status = 1 unless $scope.profile.status
+        if not $scope.formCon or $scope.formCon.$pristine
+          delete param.profile.pro.contact
+          if not $scope.formPro or $scope.formPro.$pristine
+            delete param.profile.pro
 
-          promise = $http.post('/auth/update', param).then(
-            (ret)->
-              user = ret.data.user
-              $scope.meta.user = user
-              $scope.form.$setPristine()
-              if data.image
-                # Retrur a chained promise
-                return uploadImage(user.userprofile.id)
-              else
-                Popup.alert MESSAGE.UPDATE_OK
-                $scope.modal.close()
-                null
-            (ret)->
-              console.log ret
-              #django backend use diffrent email validation strategy with angular
-              msg = if ret.data.error?.email then MESSAGE.EMAIL_VALID else MESSAGE.SUBMIT_FAILED
-              Popup.alert msg
+        if param.profile.pro?.category
+          param.profile.pro.category = param.profile.pro.category.id
+
+        promise = $http.post('/auth/update', param).then(
+          (ret)->
+            user = ret.data.user
+            $scope.meta.user = user
+            setPristine()
+            if $scope.profile.image
+              # Retrur a chained promise
+              return uploadImage(user.profile.id)
+            else
+              Popup.alert MESSAGE.UPDATE_OK
+              $scope.modal.close()
               null
-          )
-          Popup.loading promise, showWin:yes
+          (ret)->
+            console.log ret
+            #django backend use diffrent email validation strategy with angular
+            msg = if ret.data.error?.email then MESSAGE.EMAIL_VALID else MESSAGE.SUBMIT_FAILED
+            Popup.alert msg
+            null
+        )
+        Popup.loading promise, showWin:yes
 
     this
   )

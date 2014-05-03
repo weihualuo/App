@@ -2,21 +2,22 @@
 <header class="bar bar-header bar-stable">
     <button class="button button-clear icon ion-ios7-arrow-back" ng-click="navCtrl.back()"></button>
     <h1 class="title">联系方式</h1>
-    <button class="button button-clear" ng-click="onSubmit()">更新</button>
+    <button class="button button-clear" ng-click="navCtrl.back()">确定</button>
 </header>
 
 <form name="formCon" class="list list-inset padding-header">
     <div style="padding-top: 100px"></div>
     <label class="item item-input">
         <span class="input-label">地址</span>
-        <input maxlength="100" name="addr" type="text" ng-model="con.addr">
+        <input maxlength="100" name="address" type="text" ng-model="pro.contact.address" required>
     </label>
     <label class="item item-input">
         <span class="input-label">邮件</span>
-        <input maxlength="50" name="email" type="email" ng-model="con.email">
+        <input maxlength="50" name="email" type="email" ng-model="pro.contact.email">
     </label>
     <label class="item item-input">
         <span class="input-label">电话</span>
-        <input maxlength="50" name="number" type="number" ng-model="con.number">
+        <input maxlength="50" name="phone" type="text" ng-model="pro.contact.phone" required>
     </label>
+    <button class="button button-block" ng-click="navCtrl.back()">确定</button>
 </form>

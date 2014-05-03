@@ -117,6 +117,12 @@ angular.module('app.utils', [])
   .filter( 'imagePath',  (ImageUtil)->
     (obj)-> ImageUtil.best(obj)
   )
+  .filter( 'fullImagePath', (Single)->
+
+    meta = Single('meta').get()
+    (path, fallback)->
+      if path then meta.imgbase + path else fallback
+  )
   .directive('listRender', ()->
     (scope)->
       if scope.$last

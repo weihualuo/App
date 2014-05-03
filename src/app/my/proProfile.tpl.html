@@ -8,15 +8,15 @@
 <form name="formPro" class="list list-inset padding-header">
     <label class="item item-input">
         <file-select class="file-select box-center"
-                     imgsrc="{{profile.image}}"
-                     file="data.image"
+                     imgsrc="{{user.profile.image | fullImagePath:'/m/assets/img/user.gif'}}"
+                     file="profile.image"
                      name='image'
                 >
         </file-select>
     </label>
     <label class="item item-input">
         <span class="input-label">设计师/公司名</span>
-        <input maxlength="50" name="name" type="text" ng-model="pro.name">
+        <input maxlength="50" name="title" type="text" ng-model="pro.title">
     </label>
     <label class="item item-input">
         <span class="input-label">职业类别</span>
