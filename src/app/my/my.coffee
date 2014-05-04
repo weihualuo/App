@@ -8,15 +8,24 @@ angular.module('app.my', [])
         name: 'ideabook'
         url: 'my/myIdeabooks.tpl.html'
         controller: 'myIdeabooksCtrl'
+        cache: yes
         env:
           right: ['新建灵感集']
-      profile:
-        name: 'profile'
-        url: 'my/profile.tpl.html'
-        controller: 'myProfileCtrl'
-        class: 'has-form'
-        env:
-          right: ['更新']
+
+      bookmark:
+        name: 'bookmark'
+        url: 'my/myBookmark.tpl.html'
+        controller: 'myBookmarkCtrl'
+
+      topic:
+        name: 'topic'
+        url: 'my/myTopic.tpl.html'
+        controller: 'myTopicCtrl'
+
+      upload:
+        name: 'upload'
+        url: 'my/myUpload.tpl.html'
+        controller: 'myUploadCtrl'
 
     $scope.myView = subviews.ideabook
     $scope.onItem = (item)->
@@ -53,6 +62,7 @@ angular.module('app.my', [])
 
 
     $scope.onRight = (index)->
+      $scope.cacheViewCtrl.scope.$broadcast 'onRight', index
 
     $scope.onLeft = ()->
 
@@ -83,7 +93,7 @@ angular.module('app.my', [])
     $scope.$watch 'user', (user)->
       if user
         $scope.objects = objects = collection.list(author:user.id)
-        if not objects .$resolved
+        if not objects.$resolved
           Popup.loading objects.$promise, failMsg:MESSAGE.LOAD_FAILED
         objects.$promise.then (data)->
           $scope.haveMore = objects.meta.more
@@ -117,6 +127,9 @@ angular.module('app.my', [])
         name: 'ideabookDetail'
         param: id:obj.id
         push: yes
+
+    $scope.$on 'onRight', ->
+      console.log "new ideabook"
 
     this
   )
@@ -220,5 +233,14 @@ angular.module('app.my', [])
         )
         Popup.loading promise, showWin:yes
 
+    this
+  )
+  .controller('myBookmarkCtrl', ($scope)->
+    this
+  )
+  .controller('myTopicCtrl', ($scope)->
+    this
+  )
+  .controller('myUploadCtrl', ($scope)->
     this
   )
