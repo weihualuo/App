@@ -1,6 +1,6 @@
 angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
                          'templates-app', 'templates-common', 'Model', 'MESSAGE'
-                         'app.utils', 'app.home', 'app.photo', 'app.product', 'app.ideabook', 'app.my',
+                         'app.utils', 'app.home', 'app.photo', 'app.product', 'app.ideabook', 'app.my', 'app.pro'
                          'CacheView', 'Service', 'Popup', 'Scroll', 'Widget'
 ])
   .config( ($routeProvider, $compileProvider, $httpProvider) ->
@@ -42,7 +42,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     .when( '/pros'
       name: 'pros'
       controller: 'ProsCtrl'
-      templateUrl: 'home/pros.tpl.html'
+      templateUrl: 'pro/pros.tpl.html'
       cache: yes
       )
     .when( '/ideabooks'

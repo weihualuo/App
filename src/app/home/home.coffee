@@ -51,12 +51,6 @@ angular.module('app.home', ['restangular'])
     $scope.$on 'scroll.moreStart', onMore
 
   )
-  .controller( 'ProsCtrl', ($scope, $controller, Nav)->
-    #extend from ListCtrl
-    $controller('ListCtrl', {$scope:$scope, name: 'pros'})
-
-    this
-  )
   .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
     console.log 'AdviceCtrl'
 

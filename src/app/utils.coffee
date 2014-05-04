@@ -123,6 +123,12 @@ angular.module('app.utils', [])
     (path, fallback)->
       if path then meta.imgbase + path else fallback
   )
+  .filter( 'categoryName', (Single)->
+    meta = Single('meta').get()
+    (id)->
+      ca = _.find(meta.category, id:id)
+      ca?.cn
+  )
   .directive('listRender', ()->
     (scope)->
       if scope.$last
