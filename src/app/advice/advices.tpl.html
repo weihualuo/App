@@ -1,0 +1,25 @@
+
+
+<ul scrollable refreshable class="container">
+    <li class="advice-list" list-render
+        ng-click="onAdviceView(obj)"
+        ng-repeat="obj in objects track by obj.id">
+
+        <img ng-src="{{obj.image | thumbPath }}">
+        <div class="advice-info">
+            <h3 no-watch="obj.title"></h3>
+            <p no-watch="obj.body"></p>
+            <img ng-src="{{obj.author.profile.image | fullImagePath:'/m/assets/img/user.gif'}}">
+            <span no-watch="obj.author.username"></span> <br>
+            <span><i class="icon ion-ios7-chatbubble-outline"></i>{{obj.replies.length}}</span>
+        </div>
+
+    </li>
+    <div class="list-more" ng-show="loadingMore">
+        <i class="icon ion-loading-d"></i>
+    </div>
+</ul>
+
+<div class="box-center fill" ng-show="objects.$resolved && !objects.length">
+    这里空荡荡
+</div>

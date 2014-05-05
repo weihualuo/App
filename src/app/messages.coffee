@@ -55,5 +55,11 @@ angular.module('MESSAGE', [])
           id: 0
           en: 'Any Area'
           cn: '全部地点'
+      topic:
+        title: '话题'
+        any:
+          id:0
+          en: 'Any topic'
+          cn: '全部话题'
   )
 

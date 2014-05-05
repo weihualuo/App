@@ -1,6 +1,7 @@
 angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
                          'templates-app', 'templates-common', 'Model', 'MESSAGE'
-                         'app.utils', 'app.home', 'app.photo', 'app.product', 'app.ideabook', 'app.my', 'app.pro'
+                         'app.utils', 'app.home', 'app.photo', 'app.product',
+                         'app.ideabook', 'app.my', 'app.pro', 'app.advice',
                          'CacheView', 'Service', 'Popup', 'Scroll', 'Widget'
 ])
   .config( ($routeProvider, $compileProvider, $httpProvider) ->
@@ -66,12 +67,20 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       templateUrl: 'ideabook/ideabookUnit.tpl.html'
       class: 'no-background no-header no-side'
     )
-    .when( '/advice'
-      name: 'advice'
+    .when( '/advices'
+      name: 'advices'
       controller: 'AdviceCtrl'
-      templateUrl: 'home/advice.tpl.html'
-      class: 'no-sub'
+      templateUrl: 'advice/advices.tpl.html'
       cache: yes
+    )
+    .when( '/advice/:id'
+      name: 'adviceDetail'
+      controller: 'AdviceDetailCtrl'
+      templateUrl: 'advice/advice.tpl.html'
+      class: 'no-sub no-side'
+      extends:
+        $aniIn: 'from-right'
+        $aniOut: 'from-right'
     )
     .when( '/my'
       name: 'my'
@@ -97,8 +106,11 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     ideabooks:
       filters: []
       title: '灵感集'
-    advice:
-      title: '建议'
+    advices:
+      filters: ['topic']
+    adviceDetail:
+      noSide: true
+      back: '建议'
     my:
       right: []
     productDetail:
@@ -114,7 +126,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
       back: '灵感集'
     ideabookUnit:
       noSide: true
-      #noHeader: true
+
   )
   .run( ($location, $document)->
     # simulate html5Mode

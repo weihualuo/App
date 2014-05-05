@@ -3,7 +3,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
   .directive('imageThumb', (ImageUtil)->
 
-    restrict:'C'
+    restrict:'AC'
     link: (scope, element)->
 
       image = null
@@ -18,7 +18,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           image = new Image()
           image.src = ImageUtil.thumb(scope.obj)
           image.onload = ->
-            element.append image
+            element.prepend image
       #image.onerror = ->
       #console.log "onerror", scope.obj.id
       if not scope.dynamic

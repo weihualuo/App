@@ -51,11 +51,6 @@ angular.module('app.home', ['restangular'])
     $scope.$on 'scroll.moreStart', onMore
 
   )
-  .controller( 'AdviceCtrl', ($scope, $timeout, $filter, Many, Popup, MESSAGE) ->
-    console.log 'AdviceCtrl'
 
-    this
-
-  )
 
 
