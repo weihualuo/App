@@ -27,5 +27,13 @@ angular.module('app.advice', [])
 
     $scope.onBack = ->
       Nav.back({name:'advices'})
+
+    #right button of main bar
+    $scope.$on 'rightButton', (e, index)->
+      console.log index
+
+      if index is 1
+        no
+
     this
   )

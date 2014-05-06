@@ -9,7 +9,7 @@
         <div class="advice-info">
             <h3 no-watch="obj.title"></h3>
             <p no-watch="obj.body"></p>
-            <img ng-src="{{obj.author.profile.image | fullImagePath:'/m/assets/img/user.gif'}}">
+            <img profile-image='obj'>
             <span no-watch="obj.author.username"></span> <br>
             <span><i class="icon ion-ios7-chatbubble-outline"></i>{{obj.replies.length}}</span>
         </div>

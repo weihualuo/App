@@ -2,7 +2,7 @@
 
 <ul scrollable class="list" delegate-watch='myView.name' delegate-class='active'>
     <li class="item item-avatar" ng-click="onEditProfile()">
-        <img ng-src="{{user.profile.image | fullImagePath:'/m/assets/img/user.gif'}}">
+        <img profile-image='user'>
         <h2>{{user.username}}</h2>
         <p>修改资料</p>
     </li>

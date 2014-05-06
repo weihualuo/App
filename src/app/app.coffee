@@ -1,4 +1,4 @@
-angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
+angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
                          'templates-app', 'templates-common', 'Model', 'MESSAGE'
                          'app.utils', 'app.home', 'app.photo', 'app.product',
                          'app.ideabook', 'app.my', 'app.pro', 'app.advice',
@@ -111,6 +111,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate',
     adviceDetail:
       noSide: true
       back: '建议'
+      right: ['发表评论']
     my:
       right: []
     productDetail:

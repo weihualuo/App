@@ -139,17 +139,18 @@
   padding: @thumb-padding;
   background: @bodyBackground;
   top: 0;
-  bottom: 0;
-  left: @side-ctrl-width;
+  left: 0;
+  bottom: @side-ctrl-width;
   right: 0;
 }
 
 .res-side-ctrl{
   position: absolute;
   left: 0;
-  width: @side-ctrl-width;
-  height: 100%;
-  padding: 15px (@side-ctrl-width - @ctrl-item-width)/2;
+  bottom: 0;
+  right: 0;
+  height: @side-ctrl-width;
+  padding: (@side-ctrl-width - @ctrl-item-width)/2 15px;
 }
 
 .ctrl-item{
@@ -157,7 +158,7 @@
   width: @ctrl-item-width;
   height: @ctrl-item-width;
   padding: (@ctrl-item-width - @icon-large)/2;
-  margin:  15px 0;
+  margin:  0 15px;
   font-size: @icon-large;
   color: white;
   text-align: center;
@@ -168,4 +169,3 @@
     background: @bg-active-state;
   }
 }
-

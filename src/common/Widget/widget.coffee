@@ -5,13 +5,13 @@ angular.module( 'Widget', [])
     restrict: 'E'
     replace: true
     scope:
-      imgsrc: "@"
+      src: "@"
       file: "="
       name: '@'
     template: '<div>
                 <div class="image-preview">
                   <div ng-show="reading" class="image-loading"><i class="icon ion-load-a loading-rotate"></i></div>
-                  <img ng-hide="reading" ng-src="{{imgsrc}}">
+                  <img ng-hide="reading" ng-src="{{src}}">
                 </div>
                 <input name="{{name}}" type="file"/>
                </div>'
@@ -24,7 +24,7 @@ angular.module( 'Widget', [])
       $input.on 'change', (e)->
 
         #Save the origin src
-        originSrc ?= scope.imgsrc
+        originSrc ?= scope.src
         file = e.target.files[0]
         if file and file.type.indexOf('image') >= 0
 
@@ -32,7 +32,7 @@ angular.module( 'Widget', [])
           reader.onload = (e)->
             scope.reading = no
             scope.file = file
-            scope.imgsrc = e.target.result
+            scope.src = e.target.result
             scope.$apply()
           #read data take a while on mp
           reader.readAsDataURL(file)
@@ -40,7 +40,7 @@ angular.module( 'Widget', [])
           scope.$apply()
         # Set to origin src in case of no selection
 #        else
-#          scope.imgsrc = originSrc
+#          scope.src = originSrc
 #          scope.$apply()
 
 

@@ -1,5 +1,18 @@
 angular.module('app.my', [])
 
+  .directive('profileImage', (Single)->
+    (scope, element, attr)->
+
+      meta = Single('meta').get()
+
+      scope.$watch attr.profileImage, (obj)->
+        if obj?.profile?.image
+          src = meta.imgbase + obj.profile.image
+        else
+          src = '/m/assets/img/user.gif'
+        attr.$set 'src', src
+  )
+
   .controller( 'MyCtrl', ($scope, $http, Popup, Env, ToggleModal) ->
     console.log 'Myctrl'
 

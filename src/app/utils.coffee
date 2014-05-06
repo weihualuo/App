@@ -112,10 +112,10 @@ angular.module('app.utils', [])
         obj.best
   )
   .filter( 'thumbPath',  (ImageUtil)->
-    (obj)-> ImageUtil.thumb(obj)
+    (obj)-> ImageUtil.thumb(obj) if obj
   )
   .filter( 'imagePath',  (ImageUtil)->
-    (obj)-> ImageUtil.best(obj)
+    (obj)-> ImageUtil.best(obj) if obj
   )
   .filter( 'fullImagePath', (Single)->
 
