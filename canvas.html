@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="chart" width="1200" height="300" onmousemove="onMove()">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+<script>
+
+cal = function (wid) {
+  var n;
+  n = 6;
+  if (wid <= 1024) {
+    n = 5;
+  }
+  if (wid <= 800) {
+    n = 4;
+  }
+  if (wid <= 630) {
+    n = 3;
+  }
+  if (wid <= 420) {
+    n = 2;
+  }
+  if (wid >= 850) {
+    wid -= 60;
+  }
+  wid -= 4;
+  return wid / n * 0.98;
+};
+
+var margin = 8
+var width = 1200;
+var height = 300;
+var c=document.getElementById("chart");
+var ctx=c.getContext("2d");
+ctx.moveTo(0,height);
+
+start = 320
+values = {}
+for(i=start; i<=1280; i++){
+	values[i] = cal(i)
+	ctx.lineTo(i-start, height - values[i])
+}
+ctx.stroke()
+
+onMove = function(){
+	w = event.x-margin+start
+	if (values[w]){
+		console.log(w, values[w]);
+	}
+	
+}
+</script>
+</body>
+</html>

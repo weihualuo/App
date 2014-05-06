@@ -1,0 +1,50 @@
+ipad 	
+	1024*768*2
+iphone4 
+	320*480*2
+iphone5 
+	320*568*2
+amazon kindle fire 7  
+	 853*533*1.5
+amazon kindlefire HD
+	 1280*800*1.5
+amazon kindlefire, 
+blackberry playbook
+	 1024*600*1
+blackberry z10
+	384*640*2
+blackberry Z30
+	360*640*2
+google nexus 10
+	1280*800*2	
+google Nexus 4
+	384*640*2
+google Nexus 5
+	360*640*3
+google Nexus 7 2
+	960*600*2
+google Nexus 7
+	966*604*1.3250000476837158	
+google Nexus S
+	320*533*1.5	
+htc	320*533*1.5	
+	360*640*2
+Samsung Galaxy S4
+	360*640*3
+Samsung S
+	320*533*1.5
+Samsung Tab 
+	1280*800*1
+LG
+	424*753*1.7000000476837158
+
+xiaomi:
+	854*480
+	
+	
+	
+solution:
+sidepane: w > 850	
+
+
+

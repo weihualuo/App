@@ -67,11 +67,7 @@ angular.module('app.ideabook', [])
 
     $scope.$on '$scopeUpdate', ->
       $scope.obj = obj = collection.get parseInt($routeParams.id)
-      if not obj.$resolved
-        #Loading will end automatically when promise resolved or rejected
-        Popup.loading obj.$promise
-      #reset the tab state
-      obj.$promise.then ->
+      Popup.loading(obj.$promise) if not obj.$resolved
 
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})

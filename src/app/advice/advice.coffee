@@ -1,5 +1,5 @@
 angular.module('app.advice', [])
-  .controller( 'AdviceCtrl', ($scope, $controller, Nav, Popup, MESSAGE) ->
+  .controller( 'AdviceCtrl', ($scope, $controller, Nav, ToggleModal, Popup, MESSAGE) ->
     console.log 'AdviceCtrl'
     $scope.listCtrl = $controller('ListCtrl', {$scope:$scope, name: 'advices'})
 
@@ -11,7 +11,7 @@ angular.module('app.advice', [])
     this
 
   )
-  .controller('AdviceDetailCtrl', ($scope, Many, Nav, $routeParams, Popup)->
+  .controller('AdviceDetailCtrl', ($scope, Many, Nav, $routeParams, MESSAGE, Popup, ToggleModal)->
     console.log 'AdviceDetailCtrl'
     # Init locals
     collection = Many('advices')
@@ -19,21 +19,30 @@ angular.module('app.advice', [])
 
     $scope.$on '$scopeUpdate', ->
       $scope.obj = obj = collection.get parseInt($routeParams.id)
-      if not obj.$resolved
-        #Loading will end automatically when promise resolved or rejected
-        Popup.loading obj.$promise
-      #reset the tab state
-      obj.$promise.then ->
+      Popup.loading(obj.$promise) if not obj.$resolved
 
     $scope.onBack = ->
       Nav.back({name:'advices'})
 
-    #right button of main bar
-    $scope.$on 'rightButton', (e, index)->
-      console.log index
+    $scope.onComment = ->
+      if not $scope.isLogin(yes) then return
+      ToggleModal
+        id: 'comment'
+        template: "<modal animation='popup-in-right' class='fade-in-out'></modal>"
+        url: "modal/comment.tpl.html"
+        locals:
+          title: MESSAGE.COMMENT
+        success: (comment)->
+          if comment
+            Popup.loading collection.new(
+              body: comment
+              reply: obj.id
+            ).then (data)->
+              obj.replies.unshift data
+              null
 
-      if index is 1
-        no
+    #right button of main bar
+    $scope.$on 'rightButton', $scope.onComment
 
     this
   )

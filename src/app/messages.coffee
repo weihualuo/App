@@ -2,6 +2,7 @@
 
 angular.module('MESSAGE', [])
   .constant('MESSAGE',
+    COMMENT: '发表评论'
     LOAD_FAILED: '加载失败'
     SAVE_NOK: '保存失败'
     SAVE_OK: '保存成功'

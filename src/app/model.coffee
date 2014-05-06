@@ -24,11 +24,12 @@ angular.module( 'Model', ['restangular'])
       @name = name
       @cursor = null
       @param = null
+      @rest = Restangular.all @name
       this
 
     Factory.prototype.list = (param, cache=true)->
       if !angular.equals @param, param
-        objs = @objects = _.extend [], Restangular.all @name
+        objs = @objects = _.extend [], @rest
         @param = angular.copy param
         #resolved should be reset because collection will be different
         objs.$resolved = no
@@ -70,7 +71,7 @@ angular.module( 'Model', ['restangular'])
 
       #Should set to @cursor if create successfuls
     Factory.prototype.new = (param, prepend)->
-      promise = @objects.post(param)
+      promise = @rest.post(param)
       if prepend
         promise.then (data)=>
           @objects.unshift data

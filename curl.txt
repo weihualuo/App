@@ -1,0 +1,17 @@
+curl -i localhost:8080/auth/login -d "username=txz&password=12345"
+curl -i localhost:8080/auth/register  -H "X-CSRFToken:H" -b "csrftoken=H" -d "username=hjb&password=12345"
+curl -i localhost:8080/auth/login -d "username=hjb&password=12345"
+curl -X DELETE localhost:8080/api/photos/1536 
+curl -X DELETE localhost:8080/api/photos/1355 -b "sessionid=ktlbkscsx6h4w6y78e3be8p46eeoe987;csrftoken=H" -H "X-CSRFToken:H"
+
+
+HTTP/1.0 200 OK
+Date: Mon, 21 Apr 2014 05:59:07 GMT
+Server: WSGIServer/0.1 Python/2.7.5
+Vary: Accept-Language, Cookie
+X-Frame-Options: SAMEORIGIN
+Content-Type: text/html; charset=utf-8
+Content-Language: zh-cn
+Set-Cookie:  sessionid=r0ckk8umc1kqnx8a5i8aww8omxvtod90; expires=Mon, 05-May-2014 05:59:07 GMT; httponly; Max-Age=1209600; Path=/
+
+OK
