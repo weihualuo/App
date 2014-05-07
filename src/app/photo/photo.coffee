@@ -105,8 +105,9 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
         template: "<side-pane position='right' class='pane-image-info popup-in-right'></side-pane>"
         url: "photo/photoInfo.tpl.html"
         closeOnBackdrop: yes
+        controller: 'PhotoInfoCtrl'
         locals:
-          image: $scope.objects[index]
+          id: $scope.objects[index].id
 
     $scope.onCtrl = (e, id)->
 
@@ -145,17 +146,11 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
     this
   )
-  .controller('PhotoInfoCtrl', ($scope, Env, Nav)->
+  .controller('PhotoInfoCtrl', ($scope, Many, Popup)->
 
-    ctrl = this
-    Env.photoInfo = Env.photoDetail
-
-    $scope.$on 'content.closed', ->
-      ctrl.unregister()
-      $scope.onClose()
-
-    $scope.onClose = ->
-      Nav.back name:'photoDetail'
+    collection = Many('photos')
+    $scope.obj = obj = collection.get parseInt($scope.id)
+    Popup.loading(obj.$promise) if not obj.$resolved
 
     this
   )

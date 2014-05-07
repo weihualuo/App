@@ -5,14 +5,18 @@
     <button class="button button-clear" ng-click="modal.close()">取消</button>
 </div>
 <div class="content-view has-header padding">
-    <h5 style="text-align: center">{{image.title}}</h5>
+    <h5>{{obj.title}}</h5>
     <div>
-        {{desc}}
+        {{obj.desc}}
     </div>
-    <div>
-        <h5>相关灵感集：</h5>
+    <div class="image-author">
+        <img profile-image='obj.author'>
+        <span class="name">{{obj.author.first_name}}</span>
     </div>
     <button class="button button-block button-calm">
         评论
     </button>
+    <div>
+        <h5>相关灵感集：</h5>
+    </div>
 </div>
