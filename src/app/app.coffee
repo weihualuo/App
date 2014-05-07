@@ -45,7 +45,13 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       controller: 'ProsCtrl'
       templateUrl: 'pro/pros.tpl.html'
       cache: yes
-      )
+    )
+    .when( '/pros/:id'
+      name: 'userDetail'
+      controller: 'UserDetailCtrl'
+      templateUrl: 'pro/userInfo.tpl.html'
+      class: 'no-sub'
+    )
     .when( '/ideabooks'
       name: 'ideabooks'
       controller: 'IdeabookCtrl'

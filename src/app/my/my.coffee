@@ -6,10 +6,8 @@ angular.module('app.my', [])
       meta = Single('meta').get()
 
       scope.$watch attr.profileImage, (obj)->
-        if obj?.profile?.image
-          src = meta.imgbase + obj.profile.image
-        else
-          src = '/m/assets/img/user.gif'
+        image = if obj then (obj.image or (if obj.profile then (obj.profile.image or obj.profile.pro?.image) else null)) else null
+        src = if image then meta.imgbase + image else '/m/assets/img/user.gif'
         attr.$set 'src', src
   )
 

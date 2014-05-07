@@ -6,7 +6,7 @@ angular.module('app.home', ['restangular'])
     #name = $route.current.name
     $scope.updateFilters(name, $routeParams)
     #uri = path.match(/\/(\w+)/)[1]
-    collection = Many(name)
+    $scope.collection = collection = Many(name)
     objects = null
 
     reloadObjects = ->
@@ -50,6 +50,7 @@ angular.module('app.home', ['restangular'])
     $scope.$on 'scroll.refreshStart', onRefresh
     $scope.$on 'scroll.moreStart', onMore
 
+    this
   )
 
 

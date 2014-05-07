@@ -100,14 +100,19 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       $scope.$on 'scroll.reload', initSlide
 
     onImageInfo = (index)->
+      id = parseInt $scope.objects[index].id
       ToggleModal
         id: 'info'
         template: "<side-pane position='right' class='pane-image-info popup-in-right'></side-pane>"
         url: "photo/photoInfo.tpl.html"
         closeOnBackdrop: yes
-        controller: 'PhotoInfoCtrl'
         locals:
-          id: $scope.objects[index].id
+          obj: $scope.collection.get id
+        success: (ret)->
+          Nav.go
+            name:  ret.name
+            param: id:ret.id
+            push: yes
 
     $scope.onCtrl = (e, id)->
 
@@ -146,11 +151,20 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
     this
   )
-  .controller('PhotoInfoCtrl', ($scope, Many, Popup)->
-
-    collection = Many('photos')
-    $scope.obj = obj = collection.get parseInt($scope.id)
-    Popup.loading(obj.$promise) if not obj.$resolved
-
-    this
-  )
+#  .controller('PhotoInfoCtrl', ($scope, Many, Popup, Nav)->
+#
+#    collection = Many('photos')
+#    $scope.obj = obj = collection.get parseInt($scope.id)
+#    Popup.loading(obj.$promise) if not obj.$resolved
+#
+#    $scope.onUser = (id)->
+#
+#    $scope.onIdeabook = (id)->
+#      $scope.modal.close()
+#      Nav.go
+#        name: 'ideabookDetail'
+#        param: id:id
+#        push: yes
+#
+#    this
+#  )

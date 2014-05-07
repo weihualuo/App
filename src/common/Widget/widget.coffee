@@ -179,6 +179,22 @@ angular.module( 'Widget', [])
             $animate.removeClass(current, 'stacked')
           null
   )
+  .directive('loading', ()->
+    link: (scope, element, attr)->
+
+      indicator = angular.element '<div class="fill box-center"><i class="icon icon-large ion-loading-d"></i></div>'
+      loading = false
+      # Display loading indicator when false
+      scope.$watch attr.loading, (value)->
+
+        if not value and not loading
+          element.append indicator
+          loading = yes
+
+        if value and loading
+          indicator.remove()
+          loading = no
+  )
   .directive('subView', ($templateCache, $controller, $compile)->
     restrict: 'E'
     terminal: true

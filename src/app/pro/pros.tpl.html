@@ -5,8 +5,8 @@
     <li class="pro-list" list-render
         ng-repeat="obj in objects track by obj.id">
 
-        <div class="pro-user" ng-click="onUser(obj)">
-            <img ng-src="{{obj.profile.image | fullImagePath:'/m/assets/img/user.gif'}}">
+        <div class="pro-user" ng-click="onUser(obj.id)">
+            <img profile-image='obj'>
             <h4>{{obj.profile.pro.title}}</h4>
             <p>{{obj.profile.pro.desc}}</p>
         </div>

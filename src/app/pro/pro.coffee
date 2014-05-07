@@ -1,5 +1,6 @@
 angular.module('app.pro',[])
-  .controller( 'ProsCtrl', ($scope, $controller, Nav, ToggleModal)->
+
+  .controller( 'ProsCtrl', ($scope, $controller, Nav)->
     $scope.listCtrl = $controller('ListCtrl', {$scope:$scope, name: 'pros'})
 
     $scope.onIdeabook = (obj)->
@@ -8,25 +9,29 @@ angular.module('app.pro',[])
         param: id:obj.id
         push: yes
 
-    $scope.onUser = (obj)->
-      ToggleModal
-        id: 'userInfo'
-        template: "<side-pane position='right' class='pane-user-info popup-in-right'></side-pane>"
-        url: "pro/userInfo.tpl.html"
-        closeOnBackdrop: yes
-        scope: $scope
-        controller: 'UserInfoCtrl'
-        locals:
-          user: obj
+
+    $scope.onUser = (id)->
+      Nav.go
+        name: 'userDetail'
+        param: id:id
+        push: yes
 
     this
   )
-  .controller( 'UserInfoCtrl', ($scope)->
+  .controller( 'UserDetailCtrl', ($scope, Many, $routeParams, Popup)->
 
-    user = $scope.user
-    $scope.profile = user.profile
-    $scope.pro = $scope.profile?.pro
-    $scope.contact = $scope.pro?.contact
+    console.log 'UserDetailCtrl'
+    collection = Many('pros')
+
+    user = null
+    $scope.$on '$scopeUpdate', ->
+      $scope.user = user = collection.get parseInt($routeParams.id)
+      Popup.loading(user.$promise) if not user.$resolved
+
+      user.$promise.then ->
+        $scope.profile = user.profile
+        $scope.pro = $scope.profile?.pro
+        $scope.contact = $scope.pro?.contact
 
     this
   )

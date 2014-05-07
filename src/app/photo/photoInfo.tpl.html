@@ -4,19 +4,24 @@
     <h2 class="title">照片信息</h2>
     <button class="button button-clear" ng-click="modal.close()">取消</button>
 </div>
-<div class="content-view has-header padding">
-    <h5>{{obj.title}}</h5>
-    <div>
-        {{obj.desc}}
+<div class="content-view has-header padding" loading='obj.$resolved'>
+    <div scrollable ng-show="obj.$resolved">
+        <h5>{{obj.title}}</h5>
+        <div>
+            {{obj.desc}}
+        </div>
+        <div class="image-author" ng-click="modal.close({name: 'userDetail', id:obj.author.id})">
+            <img profile-image='obj.author'>
+            <span class="name">{{obj.author.first_name}}</span>
+        </div>
+        <button class="button button-block button-calm">
+            评论
+        </button>
+        <h5>这张照片被添加到{{obj.pieces.length}}个灵感集中</h5>
+        <div class="image-author" ng-repeat="p in obj.pieces" ng-click="modal.close({name: 'ideabookDetail', id: p.ideabook})">
+            <img profile-image='p.author'>
+            <span class="name">{{p.author.first_name}}添加到  {{p.title}}</span>
+        </div>
     </div>
-    <div class="image-author">
-        <img profile-image='obj.author'>
-        <span class="name">{{obj.author.first_name}}</span>
-    </div>
-    <button class="button button-block button-calm">
-        评论
-    </button>
-    <div>
-        <h5>相关灵感集：</h5>
-    </div>
+
 </div>
