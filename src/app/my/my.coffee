@@ -94,9 +94,7 @@ angular.module('app.my', [])
         template: "<modal class='fade-in-out profile-win'></modal>"
         url: 'my/myUpload.tpl.html'
         controller: 'myUploadCtrl'
-        locals:
-          user: $scope.meta.user
-
+        scope: $scope
     this
   )
   .controller('myIdeabooksCtrl', ($scope, $controller, Nav)->
