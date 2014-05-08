@@ -10,7 +10,7 @@
         <div>
             {{obj.desc}}
         </div>
-        <div class="image-author" ng-click="modal.close({name: 'userDetail', id:obj.author.id})">
+        <div class="image-author" ng-show="obj.author" ng-click="modal.close({name: 'userDetail', id:obj.author.id})">
             <img profile-image='obj.author'>
             <span class="name">{{obj.author.first_name}}</span>
         </div>

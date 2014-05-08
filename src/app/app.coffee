@@ -110,29 +110,28 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       filters: ['location']
       title: '设计师'
     userDetail:
-      back: '设计师'
+      title: '详细资料'
     ideabooks:
       filters: []
       title: '灵感集'
     advices:
       filters: ['topic']
+      title: '建议'
     adviceDetail:
       noSide: true
-      back: '建议'
+      title: '建议'
       right: ['发表评论']
     my:
+      title: '我的家居'
       right: []
     productDetail:
       title: '产品详情'
       noSide: true
-      back: '产品'
     photoDetail:
-      back: '照片'
-      #noSide: true
-      #noHeader: true
+      title: '照片详情'
     ideabookDetail:
       noSide: true
-      back: '灵感集'
+      title: '灵感集'
     ideabookUnit:
       noSide: true
 
@@ -229,6 +228,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       name = $route.current.name
       $scope.pos = name
       $scope.env = Env[name]
+      last = Nav.last()
+      $scope.back = if last then Env[last.name].title else null
       $scope.paramUpdateFlag++
 
     $scope.$on 'envUpdate', ->

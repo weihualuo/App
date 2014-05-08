@@ -52,6 +52,10 @@ angular.module( 'CacheView', [])
     api =
 
       stack: -> viewStack
+      last: ->
+        if len = viewStack.length
+          viewStack[len-1]
+
       reset: ->
         push = inherit = false
         data = null
@@ -109,11 +113,11 @@ angular.module( 'CacheView', [])
       popToView: (name, params)->
         ret = false
         if @current and @current.name is name
-          console.log "nav to same view", name
+          #console.log "nav to same view", name
           ret = true
 
         else if view = _.find(@stack, name:name)
-          console.log "view in stack", name, view.name
+          #console.log "view in stack", name, view.name
           @current.leave()
           while @current = @stack.pop()
             if @current isnt view
@@ -130,20 +134,20 @@ angular.module( 'CacheView', [])
         if not @current
           @current = view
           @$element.after(view.element)
-          console.log "enter first view", view.name
+          #console.log "enter first view", view.name
 
         else if push
           @current.stack()
           @stack.push(@current)
           view.enter(@current.element)
-          console.log "push view #{view.name}, stacked #{@current.name}"
+          #console.log "push view #{view.name}, stacked #{@current.name}"
           @current = view
 
         # Replace the @current view
         else
           view.enter(@current.element)
           @current.leave()
-          console.log "enter #{view.name}, replace #{@current.name}"
+          #console.log "enter #{view.name}, replace #{@current.name}"
           @current = view
 
         view.update(params, true)
