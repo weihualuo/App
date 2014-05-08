@@ -3,6 +3,14 @@ angular.module('app.advice', [])
     console.log 'AdviceCtrl'
     $scope.listCtrl = $controller('ListCtrl', {$scope:$scope, name: 'advices'})
 
+    $scope.$on 'rightButton', (e, index)->
+      if index is 0 and $scope.isLogin(yes)
+        ToggleModal
+          id: 'advice'
+          template: "<modal class='fade-in-out profile-win'></modal>"
+          url: 'advice/newAdvice.tpl.html'
+          controller: 'NewAdviceCtrl'
+
     $scope.onAdviceView = (obj)->
       Nav.go
         name: 'adviceDetail'
@@ -43,6 +51,48 @@ angular.module('app.advice', [])
 
     #right button of main bar
     $scope.$on 'rightButton', $scope.onComment
+
+    this
+  )
+  .controller('NewAdviceCtrl', ($scope, Many, Popup, MESSAGE, Service)->
+
+    collection = Many('advices')
+    $scope.data = data = {}
+
+    uploadImage = (image, advice)->
+      promise = Service.uploadFile(image:image, '/api/photos')
+      promise.then(
+        (ret)->
+          console.log ret
+          image = JSON.parse(ret)
+          p =  advice.patch("image":image.id)
+          p.finally ->
+            Popup.alert MESSAGE.SAVE_OK
+            $scope.modal.close()
+            collection.refresh() if collection.objects
+          p
+        ()->
+          Popup.alert MESSAGE.UPLOAD_FAILED
+          null
+      )
+
+    $scope.onSubmit = ->
+      param = {}
+      param.title = data.title
+      param.body = data.body
+      promise = collection.new(param).then(
+        (ret)->
+          window.advice = ret
+          if data.image
+            return uploadImage(data.image, ret)
+          else
+            Popup.alert MESSAGE.SAVE_OK
+            $scope.modal.close()
+
+        ()->
+          Popup.alert MESSAGE.SUBMIT_FAILED
+      )
+      Popup.loading promise, {showWin:yes}
 
     this
   )

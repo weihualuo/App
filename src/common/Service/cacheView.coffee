@@ -181,10 +181,9 @@ angular.module( 'CacheView', [])
     transclude: 'element'
     link: (scope, $element, attr, ctrl, $transclude)->
 
-      scope.cacheViewCtrl = ctrl
       nav = if attr.cacheView then ctrl else Nav
       viewCache = $cacheFactory('viewCache'+attr.cacheView)
-      manager = new ViewManager($element, nav.stack())
+      scope.viewManager =  manager = new ViewManager($element, nav.stack())
 
       update = (current)->
         
@@ -228,8 +227,6 @@ angular.module( 'CacheView', [])
                 node = @[i]
                 parent = node.parentNode
                 parent?.removeChild(node)
-
-        ctrl.scope = view.scope
         nav.reset()
 
       if attr.cacheView

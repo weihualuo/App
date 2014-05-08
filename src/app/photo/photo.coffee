@@ -25,11 +25,21 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
         element.triggerHandler 'dynamic.add'
 
   )
-  .controller( 'PhotoCtrl', ($scope, $controller, $element, $timeout, $filter, Many, Popup, Nav) ->
+  .controller( 'PhotoCtrl', ($scope, $controller, $element, $timeout, $filter, Many, Popup, Nav, Env, ToggleModal) ->
     console.log 'PhotoCtrl'
 
     #extend from ListCtrl
     $scope.listCtrl =  $controller('ListCtrl', {$scope:$scope, name: 'photos'})
+
+    $scope.$on 'rightButton', (e, index)->
+      #upload
+      if index is 0 and $scope.isLogin(yes)
+        ToggleModal
+          id: 'upload'
+          template: "<modal class='fade-in-out profile-win'></modal>"
+          url: 'my/myUpload.tpl.html'
+          controller: 'myUploadCtrl'
+          scope: $scope
 
     $scope.onImageView = (e)->
       #Delegate mode in large list
@@ -60,7 +70,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     $timeout (->
       env.noHeader = true
       env.noSide = true
-      $scope.$emit('envUpdate')
+      #$scope.$emit('envUpdate')
     ), 500
 
     #Wait for 1 second to enable ctrl
@@ -75,7 +85,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       $scope.hasMenu = env.noSide
       env.noHeader = not env.noHeader
       env.noSide = not env.noSide
-      $scope.$emit('envUpdate')
+      #$scope.$emit('envUpdate')
 
 
     $scope.$on 'gallery.slide', (e, index)->

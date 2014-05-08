@@ -1,0 +1,31 @@
+
+<header class="bar bar-header bar-stable">
+    <button class="button button-clear" ng-click="modal.close()">取消</button>
+    <h1 class="title">发起讨论</h1>
+    <button class="button button-clear" ng-click="onSubmit()">发布</button>
+</header>
+
+<form name="form" class="list list-inset padding-header">
+    <label class="item item-input">
+        <input maxlength="50" name="title" type="text" placeholder="标题" ng-model="data.title">
+    </label>
+
+    <label class="item item-input">
+        <textarea name="desc" ng-model="data.body" placeholder="详细说明" rows="8"></textarea>
+    </label>
+    <label class="item item-input">
+        <file-select class="file-select box-center"
+                     placeholder="添加照片"
+                     file="data.image"
+                     name='image'
+                >
+        </file-select>
+    </label>
+    <button class="button button-block" ng-click="onSubmit()">
+        发布
+    </button>
+</form>
+
+
+
+

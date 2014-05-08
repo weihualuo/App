@@ -103,9 +103,11 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     photos:
       filters: ['style', 'room', 'location']
       title: '照片'
+      right: ['<i class="icon ion-ios7-upload-outline"></i>']
     products:
       filters: ['style', 'room']
       title: '产品'
+      right: []
     pros:
       filters: ['location']
       title: '设计师'
@@ -117,6 +119,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     advices:
       filters: ['topic']
       title: '建议'
+      right: ['发起讨论']
     adviceDetail:
       noSide: true
       title: '建议'
@@ -175,8 +178,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       alert(window.innerWidth+'*'+window.innerHeight+'*'+window.devicePixelRatio)
 
     $scope.onRight = (index)->
-      console.log "onright", index, $scope.cacheViewCtrl
-      $scope.cacheViewCtrl.scope.$broadcast 'rightButton', index
+      $scope.viewManager.current.scope.$broadcast 'rightButton', index
 
     $scope.onBack = ->
       Nav.back(name:'my')
@@ -232,8 +234,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       $scope.back = if last then Env[last.name].title else null
       $scope.paramUpdateFlag++
 
-    $scope.$on 'envUpdate', ->
-      $scope.env = Env[$route.current.name]
+#    $scope.$on 'envUpdate', ->
+#      $scope.env = Env[$route.current.name]
 
     $scope.onSideMenu = (name)->
       Nav.go

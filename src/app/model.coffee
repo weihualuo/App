@@ -74,7 +74,7 @@ angular.module( 'Model', ['restangular'])
       promise = @rest.post(param)
       if prepend
         promise.then (data)=>
-          @objects.unshift data
+          @objects.unshift(data) if @objects
       promise
 
     Factory.prototype.get = (id, force)->

@@ -69,7 +69,7 @@ angular.module('app.my', [])
 
 
     $scope.onRight = (index)->
-      $scope.cacheViewCtrl.scope.$broadcast 'onRight', index
+      $scope.viewManager.current.scope.$broadcast 'onRight', index
 
     $scope.onLeft = ()->
 
@@ -231,9 +231,10 @@ angular.module('app.my', [])
   )
   .controller('myUploadCtrl', ($scope, $controller, Service, Popup, MESSAGE)->
 
-    $controller('addIdeabookCtrl', {$scope: $scope})
-
     $scope.data = data = {}
+    $scope.user = $scope.meta.user
+
+    $controller('addIdeabookCtrl', {$scope: $scope})
 
     addToIdeabook = (image)->
       if $scope.ideabook.id or $scope.title
@@ -255,7 +256,6 @@ angular.module('app.my', [])
           Popup.alert MESSAGE.UPLOAD_FAILED
           null
       )
-      promise
 
     $scope.onUpload = ->
       if not Service.noRepeat('upload') then return
