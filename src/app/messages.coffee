@@ -21,6 +21,7 @@ angular.module('MESSAGE', [])
     REQ_PHONE: '请输入号码'
     REQ_PWD: '请输入密码'
     REQ_TITLE: '请输入标题'
+    REQ_IMAGE: '请选择照片'
     LOGIN_OK: '登录成功'
     LOGIN_NOK: '登录失败'
     LOGIN_INVALID: '不正确的用户名或密码'

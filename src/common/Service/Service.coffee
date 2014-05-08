@@ -12,11 +12,12 @@ angular.module( 'Service', [])
         $timeout (-> _objs[name] = false), time
         _objs[name] = true
 
-    uploadFile : (name, file, url, method='POST')->
+    uploadFile : (data, url, method='POST')->
       deferred = $q.defer()
       xhr = new XMLHttpRequest()
       formData = new FormData()
-      formData.append(name, file)
+      for key, value of data
+        formData.append(key, value)
       #Open the AJAX call
       xhr.open(method, url, true)
 

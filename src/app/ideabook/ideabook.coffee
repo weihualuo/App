@@ -125,7 +125,7 @@ angular.module('app.ideabook', [])
 
     this
   )
-  .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, $q, MESSAGE)->
+  .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, MESSAGE)->
     # Operation on the collection will cause inconsistent of home list
     # due to listCtrl use cache mechanisam
     # New sulotion, Add sub id to list
@@ -140,22 +140,22 @@ angular.module('app.ideabook', [])
     # the same value last time resolved, so use list but data here
     list.$promise.then (data)-> angular.forEach list, (v)->ideabooks.push v
 
-    saveToIdeabook =(ideabook, deferred)->
+    saveToIdeabook =(ideabook)->
       data =
         image: $scope.image.id
         desc: $scope.desc
       ideabook.post('pieces', data).then(
         ()->
-          deferred.resolve()
           Popup.alert MESSAGE.SAVE_OK
           $scope.modal.close()
+          null
         (error)->
           msg = if error.data.image then MESSAGE.IMAGE_EXIST else  MESSAGE.SAVE_NOK
           Popup.alert msg
-          deferred.reject()
+          null
       )
 
-    $scope.onSave = ->
+    $scope.onSave = ()->
       if not Service.noRepeat('saveIdeabook') then return
 
       ideabook = $scope.ideabook
@@ -172,22 +172,21 @@ angular.module('app.ideabook', [])
         if p.image.id is id
           return Popup.alert MESSAGE.IMAGE_EXIST
 
-      deferred = $q.defer()
-      Popup.loading deferred.promise, showWin:yes
-
       #Create a new ideabook
       if ideabook.id is 0
-        collection.new(title:title, yes).then(
-          (newObj)-> saveToIdeabook(newObj, deferred)
+        promise = collection.new(title:title, yes).then(
+          (newObj)->
+            saveToIdeabook(newObj)
 
           (error)->
             msg = if error.data.title then MESSAGE.TITLE_EXIST else  MESSAGE.SAVE_NOK
             Popup.alert msg
-            deferred.reject()
-
+            null
         )
       else
-        saveToIdeabook(ideabook, deferred)
+        promise = saveToIdeabook(ideabook)
+      Popup.loading promise, {showWin:yes}
+      promise
 
     this
   )

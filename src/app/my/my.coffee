@@ -30,6 +30,7 @@ angular.module('app.my', [])
         name: 'topic'
         url: 'advice/advices.tpl.html'
         controller: 'myTopicCtrl'
+        cache: yes
 
       upload:
         name: 'upload'
@@ -87,6 +88,15 @@ angular.module('app.my', [])
         controller: 'myProfileCtrl'
         scope: $scope
 
+    $scope.onUpload = ->
+      ToggleModal
+        id: 'upload'
+        template: "<modal class='fade-in-out profile-win'></modal>"
+        url: 'my/myUpload.tpl.html'
+        controller: 'myUploadCtrl'
+        locals:
+          user: $scope.meta.user
+
     this
   )
   .controller('myIdeabooksCtrl', ($scope, $controller, Nav)->
@@ -123,7 +133,7 @@ angular.module('app.my', [])
 
     uploadImage = (id)->
       url = '/api/profile/'+ id
-      promise = Service.uploadFile('image', $scope.profile.image, url, 'PATCH')
+      promise = Service.uploadFile({image: $scope.profile.image}, url, 'PATCH')
       promise.then(
         (ret)->
           $scope.profile.image = null
@@ -221,6 +231,49 @@ angular.module('app.my', [])
         push: yes
     this
   )
-  .controller('myUploadCtrl', ($scope)->
+  .controller('myUploadCtrl', ($scope, $controller, Service, Popup, MESSAGE)->
+
+    $controller('addIdeabookCtrl', {$scope: $scope})
+
+    $scope.data = data = {}
+
+    addToIdeabook = (image)->
+      if $scope.ideabook.id or $scope.title
+        $scope.image = image
+        $scope.onSave()
+      else
+        Popup.alert MESSAGE.SAVE_OK
+        $scope.modal.close()
+        null
+
+    uploadImage = (params)->
+      promise = Service.uploadFile(params, '/api/photos')
+      promise.then(
+        (ret)->
+          console.log ret
+          return addToIdeabook(JSON.parse(ret))
+
+        ()->
+          Popup.alert MESSAGE.UPLOAD_FAILED
+          null
+      )
+      promise
+
+    $scope.onUpload = ->
+      if not Service.noRepeat('upload') then return
+      if not data.image then return Popup.alert MESSAGE.REQ_IMAGE
+
+      params = {}
+      for key, value of data
+        params[key] = value
+      #Conver some values
+      if data.style
+        params.style = data.style.id
+      if data.room
+        params.room = data.room.id
+
+      promise = uploadImage(params)
+      Popup.loading promise, showWin:yes
+
     this
   )

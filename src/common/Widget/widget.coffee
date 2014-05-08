@@ -8,8 +8,10 @@ angular.module( 'Widget', [])
       src: "@"
       file: "="
       name: '@'
+      placeholder: '@'
     template: '<div>
                 <div class="image-preview">
+                  <div ng-hide="src || reading">{{placeholder}}</div>
                   <div ng-show="reading" class="image-loading"><i class="icon ion-load-a loading-rotate"></i></div>
                   <img ng-hide="reading" ng-src="{{src}}">
                 </div>

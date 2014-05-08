@@ -1,5 +1,78 @@
 
+<header class="bar bar-header bar-stable">
+    <button class="button button-clear" ng-click="modal.close()">取消</button>
+    <h1 class="title">上传照片</h1>
+    <button class="button button-clear" ng-click="onUpload()">上传</button>
+</header>
 
-<div class="box-center fill">
-    这里空荡荡
+<div style="padding: 44px 10px 10px 10px">
+
+    <div class="flex-box">
+        <div class="box-center file-container">
+            <label class="item item-input">
+                <file-select class="file-select box-center"
+                             file="data.image"
+                             name='image'
+                             placeholder='选择照片'
+                        >
+                </file-select>
+            </label>
+        </div>
+        <div class="ideabook-add-select">
+            <h5>添加到灵感集：</h5>
+            <div class="select-wrapper">
+                <select name="ideabook" ng-model="ideabook" ng-options="book.title for book in ideabooks" required>
+                </select>
+                <i class="icon ion-arrow-down-b"></i>
+            </div>
+            <div class="ideabook-add-new">
+                <input type="text" ng-model="title" placeholder="我的新灵感集" ng-focus="ideabook=ideabooks[0]">
+            </div>
+
+        </div>
+    </div>
+
+    <label class="item item-input">
+        <span class="input-label">照片标题</span>
+        <input maxlength="50" name="title" type="text" ng-model="data.title">
+    </label>
+    <label class="item item-input">
+        <span class="input-label">照片风格</span>
+        <div class="select-wrapper">
+            <select name="ideabook" ng-model="data.style" ng-options="s.cn for s in meta.style" required>
+            </select>
+            <i class="icon ion-arrow-down-b"></i>
+        </div>
+    </label>
+    <label class="item item-input">
+        <span class="input-label">照片空间</span>
+        <div class="select-wrapper">
+            <select name="ideabook" ng-model="data.room" ng-options="r.cn for r in meta.room" required>
+            </select>
+            <i class="icon ion-arrow-down-b"></i>
+        </div>
+    </label>
+    <label class="item item-input">
+        <span class="input-label">照片描述</span>
+        <textarea name="desc" ng-model="data.desc" rows="5"></textarea>
+    </label>
+
+    <div class="ideabook-add-button">
+        <button class="button button-stable" ng-click="modal.close()">
+            取消
+        </button>
+
+        <button class="button button-positive" ng-click="onUpload()">
+            上传
+        </button>
+    </div>
+
 </div>
+
+
+
+
+
+
+
+

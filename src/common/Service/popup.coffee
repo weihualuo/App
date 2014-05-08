@@ -91,6 +91,8 @@ angular.module( 'Popup', [])
 
       element = angular.element('<div class="popup-backdrop box-center"></div>')
       win = angular.element('<div class="loading-win box-center"><i class="icon icon-large ion-loading-d"></i></div>')
+      if options.text
+        win.prepend angular.element('<span>' + options.text + '</span><br>')
       element.append(win)
 
       if options.showWin
