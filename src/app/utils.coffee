@@ -123,12 +123,6 @@ angular.module('app.utils', [])
     (path, fallback)->
       if path then meta.imgbase + path else fallback
   )
-  .filter( 'categoryName', (Single)->
-    meta = Single('meta').get()
-    (id)->
-      ca = _.find(meta.category, id:id)
-      ca?.cn
-  )
   .directive('listRender', ()->
     (scope)->
       if scope.$last
@@ -329,4 +323,11 @@ angular.module('app.utils', [])
     require: '^delegateWatch'
     link:(scope, element, attr, ctrl)->
       ctrl.register(element, attr.delegateWhen)
+  )
+  .directive('parentEvent', ()->
+    link:(scope, element, attr)->
+      parent = element.parent()
+      parent.on attr.parentEvent, (e)->
+        if e.target is parent[0]
+          scope.$broadcast('parent.event', e)
   )

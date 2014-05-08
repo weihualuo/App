@@ -50,7 +50,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       name: 'userDetail'
       controller: 'UserDetailCtrl'
       templateUrl: 'pro/userInfo.tpl.html'
-      class: 'no-sub'
+      class: 'no-sub backdrop-enable'
     )
     .when( '/ideabooks'
       name: 'ideabooks'
@@ -109,6 +109,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     pros:
       filters: ['location']
       title: '设计师'
+    userDetail:
+      back: '设计师'
     ideabooks:
       filters: []
       title: '灵感集'

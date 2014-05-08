@@ -1,14 +1,32 @@
 
 
-<div class="bar bar-header">
-    <h2 class="title">详细资料</h2>
-    <button class="button button-clear" ng-click="modal.close()">取消</button>
-</div>
-<div class="content-view has-header padding">
-    <div>
-        <img profile-image='user'>
-        <h4>{{pro.title}}</h4>
-        <p>{{pro.category | categoryName}}</p>
+
+<side-pane
+        position='right'
+        trans-in-out
+        trans-in="'from-right'"
+        trans-out="'from-right'"
+        class="user-view"
+        parent-event='touchend mouseup'
+        >
+
+    <div scrollable class="padding">
+        <div class="pro-user">
+            <img profile-image='user'>
+            <h4>{{user.first_name}}</h4>
+            <p>{{user | categoryName}}</p>
+        </div>
+
+        <h2>{{pro.title}}</h2>
+        <p>{{pro.desc}}</p>
+
+        <h3>{{ {false:'灵感集', true:'项目案例'}[!!pro] }}</h3>
+        <div class="pro-user user-ideabooks" ng-repeat="i in user.ideabooks" ng-click="onIdeabook(i.id)">
+            <img ng-src="{{i.pieces[0].image | thumbPath}}">
+            <h5>{{i.title}}</h5>
+            <p>{{i.desc}}</p>
+        </div>
     </div>
 
-</div>
+</side-pane>
+

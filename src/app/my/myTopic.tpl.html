@@ -1,4 +1,26 @@
 
+<div scrollable class="advice-view">
+    <h1>{{obj.title}}</h1>
+    <div class="advice-author" ng-click='onAuthor()'>
+        <img profile-image='obj.author'>
+        <span>{{obj.author.username}}</span>
+    </div>
+
+    <p>{{obj.body}}</p>
+    <img ng-src="{{obj.image | imagePath }}">
+
+    <div class="advice-comment">
+        <i class="icon ion-ios7-chatbubble"></i>{{obj.replies.length}} 评论
+    </div>
+
+    <div class="advice-reply" ng-repeat="re in obj.replies track by re.id">
+        <img profile-image='re.author'>
+        <h5>{{re.author.username}}</h5>
+        <p>{{re.body}}</p>
+    </div>
+
+</div>
+
 <div class="box-center fill">
     这里空荡荡
 </div>

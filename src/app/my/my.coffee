@@ -20,8 +20,6 @@ angular.module('app.my', [])
         url: 'my/myIdeabooks.tpl.html'
         controller: 'myIdeabooksCtrl'
         cache: yes
-        env:
-          right: ['新建灵感集']
 
       bookmark:
         name: 'bookmark'
@@ -30,7 +28,7 @@ angular.module('app.my', [])
 
       topic:
         name: 'topic'
-        url: 'my/myTopic.tpl.html'
+        url: 'advice/advices.tpl.html'
         controller: 'myTopicCtrl'
 
       upload:
@@ -41,9 +39,6 @@ angular.module('app.my', [])
     $scope.myView = subviews.ideabook
     $scope.onItem = (item)->
       $scope.myView = subviews[item]
-
-    $scope.$watch 'myView', (view)->
-      $scope.env = view?.env
 
     if not $scope.meta.$resolved
       Popup.loading $scope.meta.$promise
@@ -84,7 +79,6 @@ angular.module('app.my', [])
         url: "my/myMenu.tpl.html"
         closeOnBackdrop: yes
         scope: $scope
-        success: (id)->
 
     $scope.onEditProfile = ->
       ToggleModal
@@ -95,52 +89,19 @@ angular.module('app.my', [])
 
     this
   )
-  .controller('myIdeabooksCtrl', ($scope, Many, MESSAGE, Popup, Nav)->
+  .controller('myIdeabooksCtrl', ($scope, $controller, Nav)->
     console.log 'myIdeabooksCtrl'
 
-    collection = Many('ideabooks', 'my')
+    $scope.listCtrl = $controller('MyListCtrl', {$scope:$scope, name: 'ideabooks'})
 
-    $scope.objects = []
-    $scope.$watch 'user', (user)->
-      if user
-        $scope.objects = objects = collection.list(author:user.id)
-        if not objects.$resolved
-          Popup.loading objects.$promise, failMsg:MESSAGE.LOAD_FAILED
-        objects.$promise.then (data)->
-          $scope.haveMore = objects.meta.more
-          $scope.myView.env.left = user.username + "的灵感集(#{data.length})"
-          $scope.$broadcast('scroll.reload')
-
-    #Load more objects
-    onMore = ->
-      if !$scope.haveMore
-        $scope.$broadcast('scroll.moreComplete')
-      return
-      promise = collection.more()
-      if promise
-        $scope.loadingMore = true
-        promise.then( (data)->
-          $scope.haveMore = objects.meta.more
-        ).finally ->
-          $scope.loadingMore = false
-          $scope.$broadcast('scroll.moreComplete')
-
-    #Refresh the list
-    onRefresh = ()->
-      collection.refresh().finally ->
-        $scope.$broadcast('scroll.refreshComplete')
-
-    $scope.$on 'scroll.refreshStart', onRefresh
-    $scope.$on 'scroll.moreStart', onMore
+    $scope.$on 'scroll.reload', ->
+      $scope.myView.left = $scope.user.username + "的灵感集(#{$scope.objects.length})"
 
     $scope.onIdeaBookView = (obj)->
       Nav.go
         name: 'ideabookDetail'
         param: id:obj.id
         push: yes
-
-    $scope.$on 'onRight', ->
-      console.log "new ideabook"
 
     this
   )
@@ -249,7 +210,15 @@ angular.module('app.my', [])
   .controller('myBookmarkCtrl', ($scope)->
     this
   )
-  .controller('myTopicCtrl', ($scope)->
+  .controller('myTopicCtrl', ($scope, $controller, Nav)->
+
+    $scope.listCtrl = $controller('MyListCtrl', {$scope:$scope, name: 'advices'})
+
+    $scope.onAdviceView = (obj)->
+      Nav.go
+        name: 'adviceDetail'
+        param: id:obj.id
+        push: yes
     this
   )
   .controller('myUploadCtrl', ($scope)->

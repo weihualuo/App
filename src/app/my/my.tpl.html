@@ -9,12 +9,12 @@
 
 <div class="my-detail" ng-show="user">
     <div class="bar bar-header bar-stable common-bar">
-        <a ng-click="onLeft()" ng-show="env.left">
-            {{env.left}}
+        <a ng-click="onLeft()">
+            {{myView.left}}
         </a>
         <h3 class="flex1"></h3>
 
-        <a class="right" ng-click="onRight($index)" ng-repeat="r in env.right">{{r}}</a>
+        <a class="right" ng-click="onRight($index)" ng-repeat="r in myView.right">{{r}}</a>
 
         <a id="my-menu-drop" class="filter-menu" ng-click="onMenu()">
             我的菜单 <i class="icon ion-arrow-down-b"></i>
