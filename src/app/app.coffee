@@ -194,6 +194,10 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
         popupLoginModal()
       login
 
+    $scope.noRepeatAndLogin = (id, time)->
+      Service.noRepeat(id, time) and $scope.isLogin(yes)
+
+
     $scope.$watch 'paramUpdateFlag', ->
       if $route.current
         param = $scope.updateFilters $route.current.name

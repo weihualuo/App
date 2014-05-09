@@ -88,18 +88,35 @@ body, html{
   background: @bodyBackground;
 }
 
+@pane-width-small: 200px;
+@pane-width-medium: 250px;
+@pane-width-large: 320px;
+
 .side-pane{
   position: absolute;
   overflow: hidden;
 //  box-shadow: -1px 5px 10px rgba(0,0,0,0.6);
+  .opacity(98);
+  right: 0;
+  top: @mainHeaderHeight;
+  bottom: 0;
+  width: @pane-filter-bar-width;
+  background: @bodyBackground;
+  width: @pane-width-large;
 
-  &.pane-side-menu{
-    left: 0;
-    top: @mainHeaderHeight;
-    bottom: 0;
-    width: @side-pane-width;
-    background: rgba(0,0,0,0.7);
+  &.no-top{
+    top: 0;
   }
+  &.has-bottom{
+    bottom: @side-pane-height;
+  }
+  &.small{
+    width: @pane-width-small;
+  }
+  &.medium{
+    width: @pane-width-medium;
+  }
+
   &.pane-filter-bar{
     .opacity(98);
     right: 0;
@@ -131,6 +148,7 @@ body, html{
     width: @pane-user-info-width;
     background: @bodyBackground;
   }
+
 }
 
 .side-menu-item{

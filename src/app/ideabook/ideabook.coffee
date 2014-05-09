@@ -58,7 +58,7 @@ angular.module('app.ideabook', [])
     this
 
   )
-  .controller('IdeabookDetailCtrl', ($scope, $routeParams, Many, Nav, Popup, ToggleModal)->
+  .controller('IdeabookDetailCtrl', ($scope, $routeParams, Many, Nav, Popup, ToggleModal, MESSAGE)->
 
     console.log 'IdeabookDetailCtrl'
     # Init locals
@@ -67,10 +67,37 @@ angular.module('app.ideabook', [])
 
     $scope.$on '$scopeUpdate', ->
       $scope.obj = obj = collection.get parseInt($routeParams.id)
+      obj.$promise.then ->
+        user = $scope.meta.user
+        $scope.marked = user and user.id in obj.marks
       Popup.loading(obj.$promise) if not obj.$resolved
 
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})
+
+
+    $scope.onMark = ->
+      if not $scope.noRepeatAndLogin('mard') then return
+      $scope.marked = !$scope.marked
+      if $scope.marked
+        obj.post('mark')
+      else
+        obj.customDELETE('mark')
+
+    $scope.onComment = ->
+      if not $scope.noRepeatAndLogin('comment') then return
+      ToggleModal
+        id: 'comment'
+        template: "<side-pane position='right' class='popup-in-right'></side-pane>"
+        url: "modal/comment.tpl.html"
+        success: (comment)->
+          if comment
+            Popup.loading collection.new(
+              body: comment
+              reply: obj.id
+            ).then (data)->
+              obj.replies.unshift data
+              null
 
     $scope.onUnitView = (p)->
       Nav.go
