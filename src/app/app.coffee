@@ -50,7 +50,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       name: 'userDetail'
       controller: 'UserDetailCtrl'
       templateUrl: 'pro/userInfo.tpl.html'
-      class: 'no-sub backdrop-enable'
+      class: 'popup-mode'
     )
     .when( '/ideabooks'
       name: 'ideabooks'
@@ -113,6 +113,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       title: '设计师'
     userDetail:
       title: '详细资料'
+      popup: yes
     ideabooks:
       filters: []
       title: '灵感集'
@@ -123,7 +124,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     adviceDetail:
       noSide: true
       title: '建议'
-      right: ['发表评论']
+      right: ['评论']
     my:
       title: '我的家居'
       right: []
@@ -233,7 +234,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     $scope.$on '$viewContentLoaded', ->
       name = $route.current.name
       $scope.pos = name
-      $scope.env = Env[name]
+      #do not change env in popup mode
+      $scope.env = Env[name] if not Env[name].popup
       last = Nav.last()
       $scope.back = if last then Env[last.name].title else null
       $scope.paramUpdateFlag++

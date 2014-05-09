@@ -2,6 +2,8 @@ angular.module( 'Model', ['restangular'])
 
   .config( (RestangularProvider) ->
 
+    resolved = ['advices']
+
     RestangularProvider.setBaseUrl '/api/'
     RestangularProvider.setDefaultHttpFields({cache: true, timeout: 10000})
 #    RestangularProvider.setRequestSuffix '/'
@@ -9,6 +11,9 @@ angular.module( 'Model', ['restangular'])
       if operation is 'getList' and !(response instanceof Array)
         res = response.results
         res.meta= response.meta
+        if what in resolved
+          for data in response.results
+            data.$resolved = yes
       else
         res = response
       res
@@ -80,9 +85,9 @@ angular.module( 'Model', ['restangular'])
     Factory.prototype.get = (id, force)->
       #If the request id is not the last one, reset cursor
       if !@cursor or @cursor.id isnt id
-        @cursor = _.find(@objects, id:Number id) or Restangular.one @name, id
+        @cursor = _.find(@objects, id:parseInt(id)) or Restangular.one @name, id
       #If the object is loaded or not
-      if !@cursor.$promise or force
+      if (!@cursor.$resolved and !@cursor.$promise) or force
 
         @cursor.$promise = promise =  @cursor.get()
         promise.then( (data)=>

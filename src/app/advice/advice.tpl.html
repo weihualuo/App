@@ -13,10 +13,10 @@
         <img ng-src="{{obj.image | imagePath }}">
 
         <div class="advice-comment">
-            <i class="icon ion-ios7-chatbubble"></i>{{obj.replies.length}} 评论
+            <i class="icon ion-ios7-chatbubble"></i>{{obj.reply_num}} 评论
         </div>
 
-        <div class="advice-reply" ng-repeat="re in obj.replies track by re.id">
+        <div class="advice-reply" ng-repeat="re in objects track by re.id">
             <img profile-image='re.author'>
             <h5>{{re.author.username}}</h5>
             <p>{{re.body}}</p>

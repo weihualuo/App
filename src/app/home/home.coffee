@@ -48,18 +48,19 @@ angular.module('app.home', ['restangular'])
 
     this
   )
-  .controller('MyListCtrl', ($scope, name, Many, MESSAGE, Popup, $timeout)->
-    console.log 'MyListCtrl'
+  .controller('SubListCtrl', ($scope, Config, Many, MESSAGE, Popup, $timeout)->
+    console.log 'SubListCtrl'
 
-    $scope.collection = collection = Many(name, 'my')
+    $scope.collection = collection = Many(Config.name, Config.sub)
     objects = null
 
-    reloadObjects = (user)->
+    reloadObjects = (flag)->
+      if not flag then return
       # Make sure there is a reflow of empty
       # So that $last in ng-repeat works
       $scope.objects = []
-      objects = collection.list(author:user.id)
-      if !objects.$resolved
+      objects = collection.list(Config.param())
+      if not objects.$resolved
         Popup.loading objects.$promise, failMsg:MESSAGE.LOAD_FAILED
       objects.$promise.then -> $timeout ->
         $scope.objects = objects
@@ -86,7 +87,7 @@ angular.module('app.home', ['restangular'])
         $scope.$broadcast('scroll.refreshComplete')
 
 
-    $scope.$watch 'user', reloadObjects
+    $scope.$watch Config.flag, reloadObjects
     $scope.$on 'scroll.refreshStart', onRefresh
     $scope.$on 'scroll.moreStart', onMore
 

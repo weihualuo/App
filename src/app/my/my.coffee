@@ -100,7 +100,13 @@ angular.module('app.my', [])
   .controller('myIdeabooksCtrl', ($scope, $controller, Nav)->
     console.log 'myIdeabooksCtrl'
 
-    $scope.listCtrl = $controller('MyListCtrl', {$scope:$scope, name: 'ideabooks'})
+    $scope.listCtrl = $controller 'SubListCtrl',
+      $scope:$scope
+      Config:
+        name: 'ideabooks'
+        sub: 'my'
+        param: -> author:$scope.user.id
+        flag: 'user'
 
     $scope.$on 'scroll.reload', ->
       $scope.myView.left = $scope.user.username + "的灵感集(#{$scope.objects.length})"
@@ -220,7 +226,13 @@ angular.module('app.my', [])
   )
   .controller('myTopicCtrl', ($scope, $controller, Nav)->
 
-    $scope.listCtrl = $controller('MyListCtrl', {$scope:$scope, name: 'advices'})
+    $scope.listCtrl = $controller 'SubListCtrl',
+      $scope:$scope
+      Config:
+        name: 'advices'
+        sub: 'my'
+        param: -> author:$scope.user.id
+        flag: 'user'
 
     $scope.onAdviceView = (obj)->
       Nav.go

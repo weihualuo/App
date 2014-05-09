@@ -1,11 +1,19 @@
 
 
-    <header class="bar bar-header bar-stable">
-        <button class="button button-clear" ng-click="modal.close()">取消</button>
-        <h1 class="title">评论</h1>
-        <button class="button button-clear" ng-click="modal.close(comment)">取消</button>
-    </header>
-    <div class="padding-header"">
-        <textarea placeholder="说点什么吧..." rows="5" ng-model="comment"></textarea>
+<header class="bar bar-header bar-stable">
+    <h1 class="title">评论</h1>
+    <button class="button button-clear" ng-click="modal.close(comment)">取消</button>
+</header>
+<div class="padding-header"">
+    <textarea placeholder="说点什么吧..." rows="5" ng-model="comment"></textarea>
+</div>
+<div class="content-view has-header">
+    <ul scrollable class="list padding">
+        <div class="advice-reply" ng-repeat="re in objects track by re.id">
+            <img profile-image='re.author'>
+            <h5>{{re.author.username}}</h5>
+            <p>{{re.body}}</p>
+        </div>
+    </ul>
+</div>
 
-    </div>

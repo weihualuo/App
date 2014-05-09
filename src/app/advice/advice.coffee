@@ -19,7 +19,7 @@ angular.module('app.advice', [])
     this
 
   )
-  .controller('AdviceDetailCtrl', ($scope, Many, Nav, $routeParams, MESSAGE, Popup, ToggleModal)->
+  .controller('AdviceDetailCtrl', ($scope, $controller, Many, Nav, $routeParams, MESSAGE, Popup, ToggleModal)->
     console.log 'AdviceDetailCtrl'
     # Init locals
     collection = Many('advices')
@@ -29,17 +29,25 @@ angular.module('app.advice', [])
       $scope.obj = obj = collection.get parseInt($routeParams.id)
       Popup.loading(obj.$promise) if not obj.$resolved
 
+    $scope.listCtrl = $controller 'SubListCtrl',
+      $scope:$scope
+      Config:
+        name: 'advices'
+        sub: 'reply'
+        param: -> reply:obj.id
+        flag: 'obj'
+
     $scope.onBack = ->
-      Nav.back({name:'advices'})
+      Nav.back name:'advices'
 
     $scope.onComment = ->
-      if not $scope.isLogin(yes) then return
+      if not $scope.noRepeatAndLogin('comment') then return
       ToggleModal
         id: 'comment'
-        template: "<modal animation='popup-in-right' class='fade-in-out'></modal>"
+        template: "<side-pane position='right' class='popup-in-right'></side-pane>"
         url: "modal/comment.tpl.html"
-        locals:
-          title: MESSAGE.COMMENT
+        scope: $scope
+        closeOnBackdrop: yes
         success: (comment)->
           if comment
             Popup.loading collection.new(

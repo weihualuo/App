@@ -54,7 +54,6 @@ angular.module('app.pro',[])
       Nav.go
         name:  'ideabookDetail'
         param: id:id
-        push: yes
 
     this
   )
