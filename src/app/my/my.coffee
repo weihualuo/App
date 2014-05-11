@@ -51,13 +51,14 @@ angular.module('app.my', [])
         user.profile.pro ?= {}
 
       Env.my.right = if user then ['注销'] else ['登录']
-      $scope.$emit 'envUpdate'
 
     $scope.$watch 'meta.user', loadUserData
 
     $scope.$on '$viewContentLoaded', (e)->
-      if e.targetScope is $scope
-        $scope.meta.$promise.then -> $scope.isLogin(yes)
+      if e.targetScope.$parent is $scope
+        e.stopPropagation()
+        if not $scope.user
+          $scope.meta.$promise.then -> $scope.isLogin(yes)
 
     #right button of main bar
     $scope.$on 'rightButton', (e, index)->
@@ -100,13 +101,9 @@ angular.module('app.my', [])
   .controller('myIdeabooksCtrl', ($scope, $controller, Nav)->
     console.log 'myIdeabooksCtrl'
 
-    $scope.listCtrl = $controller 'SubListCtrl',
-      $scope:$scope
-      Config:
-        name: 'ideabooks'
-        sub: 'my'
-        param: -> author:$scope.user.id
-        flag: 'user'
+    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'ideabooks'}
+    $scope.$watch 'meta.user', (user)->
+      listCtrl.reload(author:user.id, 'my')
 
     $scope.$on 'scroll.reload', ->
       $scope.myView.left = $scope.user.username + "的灵感集(#{$scope.objects.length})"
@@ -226,13 +223,9 @@ angular.module('app.my', [])
   )
   .controller('myTopicCtrl', ($scope, $controller, Nav)->
 
-    $scope.listCtrl = $controller 'SubListCtrl',
-      $scope:$scope
-      Config:
-        name: 'advices'
-        sub: 'my'
-        param: -> author:$scope.user.id
-        flag: 'user'
+    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'advices'}
+    $scope.$watch 'meta.user', (user)->
+      listCtrl.reload(author:user.id, 'my')
 
     $scope.onAdviceView = (obj)->
       Nav.go

@@ -21,15 +21,19 @@ angular.module( 'Model', ['restangular'])
 #      obj
   )
 
-  .factory('Many', (Restangular, $timeout)->
+  .factory('Many', (Restangular)->
+    window.rest = Restangular
     _objects = {}
-    flag = 0
-    Factory = (name)->
+    Factory = (name, sub)->
       #make objects to be a Array and an restangular object
       @name = name
       @cursor = null
       @param = null
-      @rest = Restangular.all @name
+      if sub and sub.parent and sub.pid
+        base = Restangular.all(sub.parent).one(sub.pid)
+      else
+        base = Restangular
+      @rest = base.all @name
       this
 
     Factory.prototype.list = (param, cache=true)->
@@ -85,7 +89,7 @@ angular.module( 'Model', ['restangular'])
     Factory.prototype.get = (id, force)->
       #If the request id is not the last one, reset cursor
       if !@cursor or @cursor.id isnt id
-        @cursor = _.find(@objects, id:parseInt(id)) or Restangular.one @name, id
+        @cursor = _.find(@objects, id:parseInt(id)) or @rest.one id
       #If the object is loaded or not
       if (!@cursor.$resolved and !@cursor.$promise) or force
 
@@ -99,7 +103,14 @@ angular.module( 'Model', ['restangular'])
 
       @cursor
 
-    (name, sub='')->  _objects[name+sub] ?=  new Factory name
+    (name, sub)->
+      if sub?.parent
+        id = sub.parent + sub.pid + name
+      else if angular.isString sub
+        id = name + sub
+      else
+        id = name
+      _objects[id] ?=  new Factory name, sub
 
   )
   #Single factory guaranteed only one object is created for the same identifier

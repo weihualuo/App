@@ -95,6 +95,12 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       class: 'no-sub has-form'
       cache: yes
     )
+    .when( '/:parent/:pid/comments'
+      name: 'comments'
+      controller: 'CommentCtrl'
+      templateUrl: 'advice/comment.tpl.html'
+      class: 'popup-mode'
+    )
     .otherwise(
       redirectTo: '/photos'
     )
@@ -125,6 +131,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       noSide: true
       title: '建议'
       right: ['评论']
+    comments:
+      popup: yes
     my:
       title: '我的家居'
       right: []
@@ -165,7 +173,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
         else
           element.removeClass 'active'
   )
-  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, ToggleModal, $timeout, Config, Env, $route) ->
+  .controller('AppCtrl', ($scope, Single, Popup, Nav, Service, ToggleModal, $timeout, Config, Env, $route, $location) ->
 
     popupLoginModal = ->
       ToggleModal
@@ -222,8 +230,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
           delete pathParam[type]
 
       else if angular.isObject(type)
-        angular.copy(type, pathParam)
-        $scope.paramUpdateFlag++
+        if type isnt pathParam
+          angular.copy(type, pathParam)
+          $scope.paramUpdateFlag++
 
       else if type is 0
         angular.copy({}, pathParam)
@@ -239,6 +248,10 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       last = Nav.last()
       $scope.back = if last then Env[last.name].title else null
       $scope.paramUpdateFlag++
+
+    $scope.$on 'filter.update', (e, name, search)->
+      console.log 'filter.update', name, search
+      $scope.updateFilters(name, search)
 
 #    $scope.$on 'envUpdate', ->
 #      $scope.env = Env[$route.current.name]

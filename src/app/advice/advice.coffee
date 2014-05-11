@@ -22,40 +22,27 @@ angular.module('app.advice', [])
   .controller('AdviceDetailCtrl', ($scope, $controller, Many, Nav, $routeParams, MESSAGE, Popup, ToggleModal)->
     console.log 'AdviceDetailCtrl'
     # Init locals
-    collection = Many('advices')
     obj = null
+    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'comments'}
+    listCtrl.auto = off
 
-    $scope.$on '$scopeUpdate', ->
-      $scope.obj = obj = collection.get parseInt($routeParams.id)
+    $scope.$on '$scopeUpdate', (e)->
+      $scope.obj = obj = Many('advices').get parseInt($routeParams.id)
       Popup.loading(obj.$promise) if not obj.$resolved
-
-    $scope.listCtrl = $controller 'SubListCtrl',
-      $scope:$scope
-      Config:
-        name: 'advices'
-        sub: 'reply'
-        param: -> reply:obj.id
-        flag: 'obj'
+      listCtrl.reload({}, {parent:'advices',pid:$routeParams.id})
 
     $scope.onBack = ->
       Nav.back name:'advices'
 
     $scope.onComment = ->
-      if not $scope.noRepeatAndLogin('comment') then return
-      ToggleModal
-        id: 'comment'
-        template: "<side-pane position='right' class='popup-in-right'></side-pane>"
-        url: "modal/comment.tpl.html"
-        scope: $scope
-        closeOnBackdrop: yes
-        success: (comment)->
-          if comment
-            Popup.loading collection.new(
-              body: comment
-              reply: obj.id
-            ).then (data)->
-              obj.replies.unshift data
-              null
+      Nav.go
+        name: 'comments'
+        param:
+          parent:'advices'
+          pid:obj.id
+        data: restParent:obj
+        push: yes
+      return
 
     #right button of main bar
     $scope.$on 'rightButton', $scope.onComment
@@ -103,4 +90,37 @@ angular.module('app.advice', [])
       Popup.loading promise, {showWin:yes}
 
     this
+  )
+  .controller('CommentCtrl', ($scope, $controller, Nav, ToggleModal, Popup)->
+
+    console.log 'CommentCtrl'
+    ctrl = this
+    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'comments'}
+
+    $scope.onBack = ->
+      Nav.back name:'advices'
+
+    $scope.$on 'content.closed', ->
+      #unregister animation hook
+      ctrl.unregister()
+      $scope.onBack()
+
+    $scope.$on 'parent.event', $scope.onBack
+
+    $scope.onEdit = ->
+
+      if not $scope.noRepeatAndLogin('comment') then return
+      ToggleModal
+        id: 'comment'
+        template: "<modal class='fade-in-out'></modal>"
+        url: "modal/comment.tpl.html"
+        closeOnBackdrop: yes
+        success: (comment)->
+          if comment
+            Popup.loading $scope.collection.new(
+              body: comment
+            ).then ->
+              listCtrl.refresh()
+              null
+
   )

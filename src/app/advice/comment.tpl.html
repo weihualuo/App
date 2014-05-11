@@ -1,0 +1,28 @@
+
+<side-pane
+        position='right'
+        trans-in-out
+        trans-in="'from-right'"
+        trans-out="'from-right'"
+        class="user-view"
+        parent-event='touchend mouseup'
+        ng-class="{'no-top': env.noHeader}"
+        >
+
+    <header class="bar bar-header bar-stable">
+        <button class="button button-clear icon ion-ios7-arrow-back" ng-click="onBack()"></button>
+        <h1 class="title">评论</h1>
+        <button class="button button-clear" ng-click="onEdit()">添加评论</button>
+    </header>
+    <div class="content-view has-header">
+        <ul scrollable refreshable class="list padding">
+            <div class="advice-reply" ng-repeat="re in objects track by re.id">
+                <img profile-image='re.author'>
+                <h5>{{re.author.username}}</h5>
+                <p>{{re.body}}</p>
+            </div>
+        </ul>
+    </div>
+
+</side-pane>
+
