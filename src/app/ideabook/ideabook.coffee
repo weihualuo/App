@@ -71,7 +71,7 @@ angular.module('app.ideabook', [])
     console.log 'IdeabookDetailCtrl'
     # Init locals
     obj = null
-    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'pieces'}
+    $scope.listCtrl = listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'pieces'}
     listCtrl.auto = off
 
     $scope.$on '$scopeUpdate', ->
@@ -107,28 +107,46 @@ angular.module('app.ideabook', [])
       Nav.go
         name: 'ideabookUnit'
         param: $routeParams
-        data: index: $scope.obj.pieces.indexOf(p)
+        data:
+          index: $scope.objects.indexOf(p)
+          slideData: (data)-> data.image
+          scrollIndex: (index)-> index+1
         push: yes
         inherit: yes
+
+    $scope.onCommentPiece = (e, p)->
+      e.stopPropagation()
+      Nav.go
+        name: 'comments'
+        param:
+          parent:'pieces'
+          pid:p.id
+        push: yes
+
+    $scope.onLike = (e, p)->
+      e.stopPropagation()
+
     this
   )
-  .controller('IdeabookUnitCtrl', ($scope, $timeout, Env, Nav, Many, $routeParams, ImageSlide, TransUtil, Service)->
+  .controller('IdeabookUnitCtrl', ($scope, $controller, $timeout, When, Env, Nav, Many, $routeParams, ImageSlide, TransUtil, Service)->
 
     #Set env to hide or show side & header
     env = Env.ideabookUnit
     env.noHeader = false
     $timeout (->
       env.noHeader = true
-      $scope.$emit('envUpdate')
     ), 500
-
     #Wait for 1 second to enable ctrl
     ready = no
     $timeout (-> ready = yes), 1000
 
-    collection = Many('ideabooks')
-    $scope.obj ?= collection.get parseInt($routeParams.id)
+
+    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'pieces'}
+    listCtrl.auto = off
     $scope.index ?= 0
+
+    $scope.$on '$scopeUpdate', ->
+      listCtrl.reload({}, {parent:'ideabooks',pid:$routeParams.id})
 
     $scope.transFn = ->
       rect = $scope.scrollView?.getItemRect($scope.index+1)
@@ -136,12 +154,12 @@ angular.module('app.ideabook', [])
 
     $scope.$on 'gallery.slide', (e, index)->
       $scope.index = index
-      $scope.p = $scope.obj.pieces[index]
+      $scope.p = $scope.objects[index]
 
-    $scope.obj.$promise.then ->
-      images = (p.image for p in $scope.obj.pieces)
+    $scope.$on 'scroll.reload', ->
+      images = (p.image for p in $scope.objects)
       index = $scope.index
-      $scope.p = $scope.obj.pieces[index]
+      $scope.p = $scope.objects[index]
       #console.log images, $scope.index
       slideCtrl = $scope.slideCtrl
       slideCtrl.initSlides(ImageSlide, images, $scope.index)

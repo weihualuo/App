@@ -69,8 +69,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     )
     .when( '/ideabooks/:id/unit'
       name: 'ideabookUnit'
-      controller: 'IdeabookUnitCtrl'
-      templateUrl: 'ideabook/ideabookUnit.tpl.html'
+      controller: 'PhotoDetailCtrl'
+      templateUrl: 'photo/photoDetail.tpl.html'
       class: 'no-background no-header no-side'
     )
     .when( '/advices'
@@ -141,12 +141,15 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       noSide: true
     photoDetail:
       title: '照片详情'
+      noSide: true
+      noHeader: true
     ideabookDetail:
       noSide: true
       title: '灵感集'
       right: ['评论']
     ideabookUnit:
       noSide: true
+      noHeader: true
 
   )
   .run( ($location, $document)->

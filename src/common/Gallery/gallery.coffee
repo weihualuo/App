@@ -35,13 +35,14 @@ angular.module( 'NewGallery', [])
       loader.css getLoaderDimension(data)
       loader
 
-    Slide = (@scope, @data, @index)->
+    Slide = (@scope, data, @index)->
       #console.log "new slide", index, position
+      @data = scope.slideData?(data) or data
       @width = null
       @tagEl = []
       @element = protoElement.clone()
-      @img = createImage ImageUtil.best(data)
-      @loader = createLoader(data)
+      @img = createImage ImageUtil.best(@data)
+      @loader = createLoader(@data)
       @element.append @loader
       @img.onload = =>
         @loader.empty()
@@ -55,6 +56,7 @@ angular.module( 'NewGallery', [])
     Slide::addTags = ->
       if @imgLoad and @attached
         @tagEl = []
+        if not @data.tags then return
         for tag in @data.tags
           scope = @scope.$new()
           scope.tag = tag

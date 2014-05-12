@@ -64,24 +64,27 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     slideCtrl = null
 
     #Set env to hide or show side & header
-    env = Env.photoDetail
-    env.noHeader = false
-    env.noSide = false
-    $timeout (->
-      env.noHeader = true
-      env.noSide = true
-      #$scope.$emit('envUpdate')
-    ), 500
+#    env = Env.photoDetail
+#    env.noHeader = false
+#    env.noSide = false
+#    $timeout (->
+#      env.noHeader = true
+#      env.noSide = true
+#      #$scope.$emit('envUpdate')
+#    ), 500
 
     #Wait for 1 second to enable ctrl
     ready = no
     $timeout (-> ready = yes), 1000
 
     $scope.transFn = ->
-      rect = $scope.scrollView?.getItemRect($scope.index)
+      index = $scope.index
+      index = $scope.scrollIndex(index) if $scope.scrollIndex
+      rect = $scope.scrollView?.getItemRect(index)
       TransUtil.rectTrans(rect)
 
     $scope.toggleMenu = ->
+      env = $scope.env
       $scope.hasMenu = env.noSide
       env.noHeader = not env.noHeader
       env.noSide = not env.noSide

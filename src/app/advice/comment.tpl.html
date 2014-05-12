@@ -14,7 +14,7 @@
         <h1 class="title">评论</h1>
         <button class="button button-clear" ng-click="onEdit()">添加评论</button>
     </header>
-    <div class="content-view has-header">
+    <div class="content-view has-header" loading='objects.$resolved'>
         <ul scrollable refreshable class="list padding">
             <li class="advice-reply" ng-repeat="re in objects track by re.id" list-render>
                 <img profile-image='re.author'>

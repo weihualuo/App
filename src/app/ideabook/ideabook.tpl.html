@@ -18,10 +18,10 @@
                 <p no-watch="p.desc || p.image.desc"></p>
             </div>
             <div class="ideabook-ctrl">
-                <span>
+                <span ng-click="onLike($event, p)">
                    <i class="icon ion-ios7-heart-outline"></i>
                 </span>
-                <span>
+                <span ng-click="onCommentPiece($event, p)">
                    <i class="icon ion-ios7-chatbubble-outline"></i>
                 </span>
             </div>
