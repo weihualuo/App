@@ -55,51 +55,7 @@ angular.module('app.home', ['restangular'])
 
     this
   )
-  .controller('SubListCtrl', ($scope, Config, Many, MESSAGE, Popup, $timeout)->
-    console.log 'SubListCtrl'
 
-    $scope.collection = collection = Many(Config.name, Config.sub)
-    objects = null
-
-    reloadObjects = (flag)->
-      if not flag then return
-      # Make sure there is a reflow of empty
-      # So that $last in ng-repeat works
-      $scope.objects = []
-      objects = collection.list(Config.param())
-      if not objects.$resolved
-        Popup.loading objects.$promise, failMsg:MESSAGE.LOAD_FAILED
-      objects.$promise.then -> $timeout ->
-        $scope.objects = objects
-        $scope.haveMore = objects.meta.more
-        $scope.$broadcast('scroll.reload')
-
-    #Load more objects
-    onMore = ->
-      if !$scope.haveMore
-        $scope.$broadcast('scroll.moreComplete')
-        return
-      promise = collection.more()
-      if promise
-        $scope.loadingMore = true
-        promise.then( ->
-          $scope.haveMore = objects.meta.more
-        ).finally ->
-          $scope.loadingMore = false
-          $scope.$broadcast('scroll.moreComplete')
-
-    #Refresh the list
-    onRefresh = ()->
-      collection.refresh().finally ->
-        $scope.$broadcast('scroll.refreshComplete')
-
-
-    $scope.$watch Config.flag, reloadObjects
-    $scope.$on 'scroll.refreshStart', onRefresh
-    $scope.$on 'scroll.moreStart', onMore
-
-    this
-  )
 
 
 

@@ -16,11 +16,11 @@
     </header>
     <div class="content-view has-header">
         <ul scrollable refreshable class="list padding">
-            <div class="advice-reply" ng-repeat="re in objects track by re.id">
+            <li class="advice-reply" ng-repeat="re in objects track by re.id" list-render>
                 <img profile-image='re.author'>
                 <h5>{{re.author.username}}</h5>
                 <p>{{re.body}}</p>
-            </div>
+            </li>
         </ul>
     </div>
 

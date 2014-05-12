@@ -40,9 +40,7 @@ angular.module('app.advice', [])
         param:
           parent:'advices'
           pid:obj.id
-        data: restParent:obj
         push: yes
-      return
 
     #right button of main bar
     $scope.$on 'rightButton', $scope.onComment
@@ -123,4 +121,5 @@ angular.module('app.advice', [])
               listCtrl.refresh()
               null
 
+    this
   )

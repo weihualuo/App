@@ -85,6 +85,14 @@ angular.module('app.ideabook', [])
         obj.customDELETE('mark')
 
     $scope.onComment = ->
+      Nav.go
+        name: 'comments'
+        param:
+          parent:'ideabooks'
+          pid:obj.id
+        push: yes
+      return
+
       if not $scope.noRepeatAndLogin('comment') then return
       ToggleModal
         id: 'comment'
