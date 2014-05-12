@@ -9,9 +9,10 @@
             <h3 no-watch="obj.title"></h3>
             <p no-watch="obj.desc"></p>
         </div>
-        <div class="author">
+        <div class="author" ng-click="onUser($event, obj.author)">
             <img profile-image='obj.author'>
-            <span class="name" no-watch="obj.author.username"></span>
+            <span class="name" no-watch="obj.author.username"></span><br>
+            <span class="reply"><i class="icon ion-ios7-chatbubble"></i>{{obj.reply_num}}</span>
         </div>
         <div class="ideabook-thumbs">
             <div class="ideabook-thumb" index='0'></div>

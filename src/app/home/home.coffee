@@ -1,4 +1,12 @@
 angular.module('app.home', ['restangular'])
+
+  .factory('When', ()->
+    (obj)->
+      if obj.$resolved
+        then:(callback)-> callback(obj)
+      else
+        obj.$promise
+  )
   .controller( 'ListCtrl', ($scope, name, $timeout, $q, $routeParams, $location, Restangular, Many, Popup, Env, MESSAGE) ->
 
     ctrl = this
@@ -23,7 +31,7 @@ angular.module('app.home', ['restangular'])
         objects.$promise.then -> $timeout ->
           $scope.objects = objects
           $scope.haveMore = objects.meta.more
-          Env[name].count = objects.length + $scope.haveMore
+          Env[name]?.count = objects.length + $scope.haveMore
           $scope.$broadcast('scroll.reload')
 
       Popup.loading(promise, failMsg:MESSAGE.LOAD_FAILED)

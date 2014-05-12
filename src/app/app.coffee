@@ -144,6 +144,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     ideabookDetail:
       noSide: true
       title: '灵感集'
+      right: ['评论']
     ideabookUnit:
       noSide: true
 

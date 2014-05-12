@@ -2,7 +2,7 @@ angular.module( 'Model', ['restangular'])
 
   .config( (RestangularProvider) ->
 
-    resolved = ['advices']
+    resolved = ['advices', 'ideabooks']
 
     RestangularProvider.setBaseUrl '/api/'
     RestangularProvider.setDefaultHttpFields({cache: true, timeout: 10000})

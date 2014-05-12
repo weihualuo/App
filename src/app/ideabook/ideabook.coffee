@@ -49,6 +49,14 @@ angular.module('app.ideabook', [])
     #extend from ListCtrl
     $scope.listCtrl = $controller('ListCtrl', {$scope:$scope, name: 'ideabooks'})
 
+
+    $scope.onUser = (e, user)->
+      e.stopPropagation()
+      Nav.go
+        name: 'userDetail'
+        param: id:user.id
+        push: yes
+
     $scope.onIdeaBookView = (obj)->
       Nav.go
         name: 'ideabookDetail'
@@ -58,26 +66,27 @@ angular.module('app.ideabook', [])
     this
 
   )
-  .controller('IdeabookDetailCtrl', ($scope, $routeParams, Many, Nav, Popup, ToggleModal, MESSAGE)->
+  .controller('IdeabookDetailCtrl', ($scope, $controller, $routeParams, Many, Nav, Popup, When, ToggleModal, MESSAGE)->
 
     console.log 'IdeabookDetailCtrl'
     # Init locals
-    collection = Many('ideabooks')
     obj = null
+    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'pieces'}
+    listCtrl.auto = off
 
     $scope.$on '$scopeUpdate', ->
-      $scope.obj = obj = collection.get parseInt($routeParams.id)
-      obj.$promise.then ->
+      $scope.obj = obj = Many('ideabooks').get parseInt($routeParams.id)
+      Popup.loading(obj.$promise) if not obj.$resolved
+      listCtrl.reload({}, {parent:'ideabooks',pid:$routeParams.id})
+      When(obj).then ->
         user = $scope.meta.user
         $scope.marked = user and user.id in obj.marks
-      Popup.loading(obj.$promise) if not obj.$resolved
 
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})
 
-
     $scope.onMark = ->
-      if not $scope.noRepeatAndLogin('mard') then return
+      if not $scope.noRepeatAndLogin('mark') then return
       $scope.marked = !$scope.marked
       if $scope.marked
         obj.post('mark')
@@ -91,21 +100,8 @@ angular.module('app.ideabook', [])
           parent:'ideabooks'
           pid:obj.id
         push: yes
-      return
-
-      if not $scope.noRepeatAndLogin('comment') then return
-      ToggleModal
-        id: 'comment'
-        template: "<side-pane position='right' class='popup-in-right'></side-pane>"
-        url: "modal/comment.tpl.html"
-        success: (comment)->
-          if comment
-            Popup.loading collection.new(
-              body: comment
-              reply: obj.id
-            ).then (data)->
-              obj.replies.unshift data
-              null
+    #right button of main bar
+    $scope.$on 'rightButton', $scope.onComment
 
     $scope.onUnitView = (p)->
       Nav.go
@@ -168,9 +164,8 @@ angular.module('app.ideabook', [])
 
     $scope.ideabooks = ideabooks = [{id:0, title: MESSAGE.NEW_IDEABOOK, pieces:[]}]
     $scope.ideabook = ideabooks[0]
-    param = author: $scope.user.id
     #Request the list without cache
-    list = collection.list(param)
+    list = collection.list(author: $scope.user.id)
     #Tricky: I prepend to list after new a item, but promise will resove with
     # the same value last time resolved, so use list but data here
     list.$promise.then (data)-> angular.forEach list, (v)->ideabooks.push v
