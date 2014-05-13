@@ -30,11 +30,10 @@ angular.module('app.pro',[])
 
     console.log 'UserDetailCtrl'
     ctrl = this
-    collection = Many('pros')
 
     user = null
     $scope.$on '$scopeUpdate', ->
-      $scope.user = user = collection.get parseInt($routeParams.id)
+      $scope.user = user = Many('pros').get parseInt($routeParams.id)
       Popup.loading(user.$promise) if not user.$resolved
 
       user.$promise.then ->

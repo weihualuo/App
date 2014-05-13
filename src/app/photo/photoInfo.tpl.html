@@ -1,27 +1,38 @@
 
 
-<div class="bar bar-header">
-    <h2 class="title">照片信息</h2>
-    <button class="button button-clear" ng-click="modal.close()">取消</button>
-</div>
-<div class="content-view has-header padding" loading='obj.$resolved'>
-    <div scrollable ng-show="obj.$resolved">
-        <h5>{{obj.title}}</h5>
-        <div>
-            {{obj.desc}}
-        </div>
-        <div class="image-author" ng-show="obj.author" ng-click="modal.close({name: 'userDetail', id:obj.author.id})">
-            <img profile-image='obj.author'>
-            <span class="name">{{obj.author.first_name}}</span>
-        </div>
-        <button class="button button-block button-calm">
-            评论
-        </button>
-        <h5>这张照片被添加到{{obj.pieces.length}}个灵感集中</h5>
-        <div class="image-author" ng-repeat="p in obj.pieces" ng-click="modal.close({name: 'ideabookDetail', id: p.ideabook})">
-            <img profile-image='p.author'>
-            <span class="name">{{p.author.first_name}}添加到  {{p.title}}</span>
+<side-pane
+        position='right'
+        trans-in-out
+        trans-in="'from-right'"
+        trans-out="'from-right'"
+        class="user-view"
+        parent-event='touchend mouseup'
+        ng-class="{'no-top': env.noHeader}"
+        >
+
+
+    <header class="bar bar-header bar-stable">
+        <button class="button button-clear icon ion-ios7-arrow-back" ng-click="onBack()"></button>
+        <h2 class="title">照片信息</h2>
+        <button class="button button-clear" ng-click="onComment()">评论</button>
+    </header>
+    <div class="content-view has-header padding" loading='promise'>
+        <div scrollable ng-show="obj.$resolved">
+            <h5>{{obj.title}}</h5>
+            <div>
+                {{obj.desc}}
+            </div>
+            <div class="image-author" ng-show="obj.author" ng-click="onUser(obj.author)">
+                <img profile-image='obj.author'>
+                <span class="name">{{obj.author.username}}</span>
+            </div>
+
+            <h5>这张照片被添加到{{objects.length}}个灵感集中：</h5>
+            <div class="image-author" ng-repeat="p in objects track by p.id" list-render ng-click="onIdeabook(p.ideabook)">
+                <img profile-image='p.author'>
+                <span class="name">{{p.author.username}}添加到  {{p.title}}</span>
+            </div>
         </div>
     </div>
 
-</div>
+</side-pane>

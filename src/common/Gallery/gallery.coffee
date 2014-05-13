@@ -35,9 +35,9 @@ angular.module( 'NewGallery', [])
       loader.css getLoaderDimension(data)
       loader
 
-    Slide = (@scope, data, @index)->
+    Slide = (@scope, @index)->
       #console.log "new slide", index, position
-      @data = scope.slideData?(data) or data
+      @data = scope.getDataAt(index)
       @width = null
       @tagEl = []
       @element = protoElement.clone()

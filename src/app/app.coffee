@@ -24,6 +24,12 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       class: 'no-background no-header no-side'
             
     )
+    .when( '/photos/:id/info'
+      name: 'photoInfo'
+      controller: 'PhotoInfoCtrl'
+      templateUrl: 'photo/photoInfo.tpl.html'
+      class: 'popup-mode'
+    )
     .when( '/products'
       name: 'products'
       controller: 'ProductCtrl'
@@ -150,7 +156,8 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     ideabookUnit:
       noSide: true
       noHeader: true
-
+    photoInfo:
+      popup: yes
   )
   .run( ($location, $document)->
     # simulate html5Mode

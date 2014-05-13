@@ -31,7 +31,6 @@ angular.module( 'Slide', [])
   )
   .controller('SlideCtrl', ($scope, $timeout)->
     console.log 'SlideCtrl'
-    objects = null
     current = null
     page = null
     ctrl = this
@@ -67,13 +66,12 @@ angular.module( 'Slide', [])
         dir = 'none'
       slideView.setDirection dir
 
-    @initSlides = (factory, objs, index)->
+    @initSlides = (factory, index)->
 
       #console.log 'initSlides'
       Slide = factory
       slideView = $scope.slideView
-      objects = objs
-      current = new Slide($scope, objs[index], index)
+      current = new Slide($scope, index)
       page = slideView.getCurrentPage()
       page.content current
       current.onAttach()
@@ -138,7 +136,7 @@ angular.module( 'Slide', [])
       for [1..range]
         if index-- > 0
           if not next.left
-            next.left = new Slide($scope, objects[index], index)
+            next.left = new Slide($scope, index)
             #console.log "add #{index} to left of  #{next.index}"
             next.left.right = next
           next = next.left
@@ -149,10 +147,11 @@ angular.module( 'Slide', [])
 
       index = slide.index
       next = slide
+      length = $scope.getDataLen()
       for [1..range]
-        if ++index < objects.length
+        if ++index < length
           if not next.right
-            next.right = new Slide($scope, objects[index], index)
+            next.right = new Slide($scope, index)
             #console.log "add #{index} to right of  #{next.index}"
             next.right.left = next
           next = next.right

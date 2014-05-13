@@ -37,7 +37,7 @@ angular.module( 'Model', ['restangular'])
       this
 
     Factory.prototype.list = (param, cache=true)->
-      if !angular.equals @param, param
+      if not angular.equals(@param, param) or not @objects?.$resolved
         objs = @objects = _.extend [], @rest
         @param = angular.copy param
         #resolved should be reset because collection will be different
@@ -90,8 +90,9 @@ angular.module( 'Model', ['restangular'])
       #If the request id is not the last one, reset cursor
       if !@cursor or @cursor.id isnt id
         @cursor = _.find(@objects, id:parseInt(id)) or @rest.one id
+
       #If the object is loaded or not
-      if (!@cursor.$resolved and !@cursor.$promise) or force
+      if not @cursor.$resolved or force
 
         @cursor.$promise = promise =  @cursor.get()
         promise.then( (data)=>

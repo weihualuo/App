@@ -24,7 +24,7 @@ angular.module('app.home', ['restangular'])
       # So that $last in ng-repeat works
       $scope.objects = []
       #search maybe a promise object
-      promise = $q.when(search).then (search)->
+      $scope.promise = $q.when(search).then (search)->
         $scope.collection = collection = Many(name, sub)
         objects = collection.list(search)
         #Use timeout to force a reflow of empty objects
@@ -34,7 +34,7 @@ angular.module('app.home', ['restangular'])
           Env[name]?.count = objects.length + $scope.haveMore
           $scope.$broadcast('scroll.reload')
 
-      Popup.loading(promise, failMsg:MESSAGE.LOAD_FAILED)
+      Popup.loading($scope.promise, failMsg:MESSAGE.LOAD_FAILED)
 
 
     #Load more objects

@@ -64,36 +64,27 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
     slideCtrl = null
 
     #Set env to hide or show side & header
-#    env = Env.photoDetail
-#    env.noHeader = false
-#    env.noSide = false
-#    $timeout (->
-#      env.noHeader = true
-#      env.noSide = true
-#      #$scope.$emit('envUpdate')
-#    ), 500
-
-    #Wait for 1 second to enable ctrl
-    ready = no
-    $timeout (-> ready = yes), 1000
-
-    $scope.transFn = ->
-      index = $scope.index
-      index = $scope.scrollIndex(index) if $scope.scrollIndex
-      rect = $scope.scrollView?.getItemRect(index)
-      TransUtil.rectTrans(rect)
+    env = Env[$scope.name or 'photoDetail']
+    env.noHeader = yes
+    env.noSide = yes
 
     $scope.toggleMenu = ->
-      env = $scope.env
       $scope.hasMenu = env.noSide
       env.noHeader = not env.noHeader
       env.noSide = not env.noSide
-      #$scope.$emit('envUpdate')
 
+    #Overidable function
+    $scope.getDataAt ?= (index)-> $scope.objects[index]
+    $scope.getDataLen ?= -> $scope.objects.length
+    $scope.getElementIndex ?= (index)-> index
+
+    $scope.transFn = ->
+      index = $scope.getElementIndex($scope.index)
+      rect = $scope.scrollView?.getItemRect(index)
+      TransUtil.rectTrans(rect)
 
     $scope.$on 'gallery.slide', (e, index)->
       $scope.index = index
-      $scope.title = $scope.objects[index].title
       if $scope.haveMore and index+6 > $scope.objects.length
         $scope.$emit 'scroll.moreStart'
 
@@ -105,7 +96,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
     initSlide = ->
       slideCtrl = $scope.slideCtrl
-      slideCtrl.initSlides(ImageSlide, $scope.objects, $scope.index)
+      slideCtrl.initSlides(ImageSlide, $scope.index)
 
     if $scope.objects
       $scope.objects.$promise.then initSlide
@@ -113,19 +104,26 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       $scope.$on 'scroll.reload', initSlide
 
     onImageInfo = (index)->
-      id = parseInt $scope.objects[index].id
-      ToggleModal
-        id: 'info'
-        template: "<side-pane position='right' class='pane-image-info popup-in-right'></side-pane>"
-        url: "photo/photoInfo.tpl.html"
-        closeOnBackdrop: yes
-        locals:
-          obj: $scope.collection.get id
-        success: (ret)->
-          Nav.go
-            name:  ret.name
-            param: id:ret.id
-            push: yes
+      Nav.go
+        name: 'photoInfo'
+        param: id: $scope.getDataAt(index).id
+        push: yes
+      return
+
+    onAddIdeabook = (index)->
+      if $scope.isLogin(yes)
+        ToggleModal
+          id: 'add-to-ideabook'
+          template: "<modal class='fade-in-out'></modal>"
+          controller: 'addIdeabookCtrl'
+          url: 'modal/addIdeabook.tpl.html'
+          locals:
+            user: $scope.meta.user
+            image: $scope.getDataAt(index)
+
+    #Wait for 1 second to enable ctrl
+    ready = no
+    $timeout (-> ready = yes), 1000
 
     $scope.onCtrl = (e, id)->
 
@@ -142,15 +140,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
           Nav.back({name:'photos'})
 
         when 'add'
-          if $scope.isLogin(yes)
-            ToggleModal
-              id: 'add-to-ideabook'
-              template: "<modal class='fade-in-out'></modal>"
-              controller: 'addIdeabookCtrl'
-              url: 'modal/addIdeabook.tpl.html'
-              locals:
-                user: $scope.meta.user
-                image: $scope.objects[$scope.index]
+          onAddIdeabook($scope.index)
 
         when 'prev'
           slideCtrl.prev()
@@ -164,20 +154,43 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
     this
   )
-#  .controller('PhotoInfoCtrl', ($scope, Many, Popup, Nav)->
-#
-#    collection = Many('photos')
-#    $scope.obj = obj = collection.get parseInt($scope.id)
-#    Popup.loading(obj.$promise) if not obj.$resolved
-#
-#    $scope.onUser = (id)->
-#
-#    $scope.onIdeabook = (id)->
-#      $scope.modal.close()
-#      Nav.go
-#        name: 'ideabookDetail'
-#        param: id:id
-#        push: yes
-#
-#    this
-#  )
+  .controller('PhotoInfoCtrl', ($scope, $controller, $routeParams, Many, Popup, Nav)->
+
+    ctrl = this
+    obj = null
+    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'pieces'}
+    listCtrl.auto = off
+    $scope.$on '$scopeUpdate', ->
+      $scope.obj = obj = Many('photos').get parseInt($routeParams.id)
+      listCtrl.reload({}, {parent:'photos',pid:$routeParams.id})
+
+    $scope.$on 'content.closed', ->
+      #unregister animation hook
+      ctrl.unregister()
+      $scope.onBack()
+
+    $scope.onBack = ->
+      Nav.back name:'photos'
+
+    $scope.$on 'parent.event', $scope.onBack
+
+    $scope.onUser = (user)->
+      Nav.go
+        name: 'userDetail'
+        param: id:user.id
+
+    $scope.onIdeabook = (id)->
+      Nav.go
+        name: 'ideabookDetail'
+        param: id:id
+
+    $scope.onComment = ->
+      Nav.go
+        name: 'comments'
+        param:
+          parent:'photos'
+          pid:obj.id
+        push: yes
+
+    this
+  )

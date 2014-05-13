@@ -108,9 +108,10 @@ angular.module('app.ideabook', [])
         name: 'ideabookUnit'
         param: $routeParams
         data:
+          name: 'ideabookUnit'
           index: $scope.objects.indexOf(p)
-          slideData: (data)-> data.image
-          scrollIndex: (index)-> index+1
+          getDataAt: (index)-> $scope.objects[index].image
+          getElementIndex: (index)-> index+1
         push: yes
         inherit: yes
 

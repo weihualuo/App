@@ -181,19 +181,25 @@ angular.module( 'Widget', [])
             $animate.removeClass(current, 'stacked')
           null
   )
-  .directive('loading', ()->
+  .directive('loading', ($parse)->
     link: (scope, element, attr)->
 
       indicator = angular.element '<div class="fill box-center"><i class="icon icon-large ion-loading-d"></i></div>'
       loading = false
+      flag = $parse(attr.loading)
       # Display loading indicator when false
-      scope.$watch attr.loading, (value)->
+      scope.$watch flag, (value)->
 
-        if not value and not loading
+        if value and not loading
           element.append indicator
           loading = yes
+          #value if a promise objects
+          value.then?(->
+            indicator.remove()
+            loading = no
+          )
 
-        if value and loading
+        if not value and loading
           indicator.remove()
           loading = no
   )
