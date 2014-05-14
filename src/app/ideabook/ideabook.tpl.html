@@ -1,9 +1,13 @@
 
 
-<div class="res-detail-view" ng-show="obj.$resolved">
-    <div scrollable='x' class="ideabook-view">
+<div class="res-detail-view" loading="!objects.$resolved">
 
-        <div class="ideabook-unit text">
+    <div scrollable='x' class="ideabook-view" ng-class="{edit:editMode}">
+
+        <div class="ideabook-unit text"
+             ng-class="{select:select===0}"
+             ng-click="onText()"
+                >
             <div class="ideabook-text">
                 <h1>{{obj.title}}</h1>
                 <p>{{obj.desc}}</p>
@@ -12,9 +16,10 @@
 
         <div class="ideabook-unit"
              ng-click="onUnitView(p)"
+             ng-class="{select:select==p}"
              ng-repeat="p in objects track by p.id">
             <div class="ideabook-info">
-                <h3 no-watch="p.image.title"></h3>
+                <!--<h3 no-watch="p.image.title"></h3>-->
                 <p no-watch="p.desc || p.image.desc"></p>
             </div>
             <div class="ideabook-ctrl">
@@ -38,7 +43,7 @@
     <span class="ctrl-item" ng-click="onComment()">
        <i class="icon ion-ios7-chatbubble"></i>
     </span>
-    <span class="ctrl-item" ng-click="onEdit()">
+    <span class="ctrl-item" ng-click="onEdit()" ng-show="isOwner">
        <i class="icon ion-ios7-compose"></i>
     </span>
 

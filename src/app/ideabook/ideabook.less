@@ -91,6 +91,28 @@
   height: 100%;
   padding: 60px 15px;
 
+  &.edit{
+    position: absolute;
+    height: 20%;
+    bottom: 0;
+    padding: 10px 15px;
+
+    >.ideabook-unit{
+      padding: 0 @idea-unit-padding/2;
+      &.text{
+        width: 20%;
+        max-width: 120px;
+      }
+      >.ideabook-info{
+        display: none;
+      }
+      >.ideabook-ctrl{
+        display: none;
+      }
+
+    }
+
+  }
 }
 
 @idea-unit-padding: 20px;
@@ -106,6 +128,9 @@
     .box-center;
     width: 75%;
     min-width: 310px;
+  }
+  &.select{
+    border: 2px solid blue;
   }
   >img{
     height: 100%;

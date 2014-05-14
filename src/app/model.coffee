@@ -89,12 +89,12 @@ angular.module( 'Model', ['restangular'])
     Factory.prototype.get = (id, force)->
       #If the request id is not the last one, reset cursor
       if !@cursor or @cursor.id isnt id
-        @cursor = _.find(@objects, id:parseInt(id)) or @rest.one id
+        @cursor = _.find(@objects, id:parseInt(id)) or {}
 
       #If the object is loaded or not
       if not @cursor.$resolved or force
 
-        @cursor.$promise = promise =  @cursor.get()
+        @cursor.$promise = promise =  @rest.get(id)
         promise.then( (data)=>
           # bug: restAngular url is not correct
           data.$promise = promise

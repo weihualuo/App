@@ -271,18 +271,19 @@ angular.module('app.utils', [])
       ctrl.register transIn, transOut
 
   )
-  .directive('aniHide', (Transitor, $parse)->
-    #ani-hide="{class: 'from-top', style: 'opacity: 0', flag: 'env.noHeader', transition: 'all 300ms ease-in'}"
-    #ani-hide="{class: 'from-top', flag: '!env.filters'}">
+  .directive('transDom', (Transitor, $parse)->
+    #transDom ="{class: 'from-top', style: 'opacity: 0', flag: 'env.noHeader', transition: 'all 300ms ease-in'}"
+    #transDom= "{class: 'from-top', flag: '!env.filters'}, hide: true">
     #class and style can not use at same time
     link:(scope, element, attr)->
 
-      options = scope.$eval(attr.aniHide)
+      options = scope.$eval(attr.transDom)
       options.attached = yes
+      hide = options.hide
       style = options.class or options.style
       flag = $parse(options.flag)
       #Set initial status
-      if scope.$eval(flag)
+      if hide and scope.$eval(flag)
         element.css display: 'none'
 
       saved = null
@@ -295,13 +296,48 @@ angular.module('app.utils', [])
           Transitor.transOut(element, style, options)(->
             #console.log "hide end", style
             #value maybe changed during transition
-            if saved then element.css display: 'none'
+            if hide and saved then element.css display: 'none'
           )
         #perform show
         else
           #console.log "perform show", style
-          element.css display: null
+          if hide then element.css display: null
           Transitor.transIn(element, style, options)(->
+            #console.log "show end ", style
+          )
+
+  )
+  .directive('transFlag', (Transitor, $parse)->
+
+    link:(scope, element, attr)->
+
+      options =
+        attached : yes
+        transition: attr.transTransition
+
+      hide = attr.transHide?
+      flag = $parse(attr.transFlag)
+      #Set initial status
+      if hide and scope.$eval(flag)
+        element.css display: 'none'
+
+      saved = null
+      scope.$watch flag, (value, old)->
+        if !value is !old then return
+        saved = value
+        #perform hide
+        if value
+          #console.log "perform hide", style
+          Transitor.transOut(element, scope.$eval(attr.transStyle), options)(->
+            #console.log "hide end", style
+            #value maybe changed during transition
+            if hide and saved then element.css display: 'none'
+          )
+        #perform show
+        else
+          #console.log "perform show", style
+          if hide then element.css display: null
+          Transitor.transIn(element, scope.$eval(attr.transStyle), options)(->
             #console.log "show end ", style
           )
 

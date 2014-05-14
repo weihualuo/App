@@ -1,6 +1,9 @@
 
 
-<header class="bar bar-header bar-dark main-bar" ani-hide="{class: 'from-top', flag: 'env.noHeader'}">
+<header class="bar bar-header bar-dark main-bar"
+        trans-flag="env.noHeader"
+        trans-style="'from-top'"
+        trans-hide>
     <a ng-click="onBack()">
         <span ng-show="back">
             <i class="icon ion-ios7-arrow-back"></i> {{back}}
@@ -14,7 +17,10 @@
     <a class="right" ng-show='env.count'>({{env.count}})</a>
 </header>
 
-<header class="bar bar-subheader res-has-side" ani-hide="{class: 'from-top', flag: '!env.filters'}">
+<header class="bar bar-subheader res-has-side"
+        trans-flag="!env.filters"
+        trans-style="'from-top'"
+        trans-hide>
     <form class="flex1" ng-submit="onSearch(se)" ng-class="{focused:inFocus}">
         <label class="box-align-center">
             <i class="icon ion-ios7-search placeholder-icon"></i>
@@ -34,7 +40,11 @@
 
 </header>
 
-<ul class="side-pane res-side-pane" include="modal/sideMenu.tpl.html" ani-hide="{class: 'res-from-side', flag: 'env.noSide'}"></ul>
+<ul class="side-pane res-side-pane"
+    include="modal/sideMenu.tpl.html"
+    trans-flag="env.noSide"
+    trans-style="'res-from-side'"
+    trans-hide></ul>
 
 <cache-view class="content-view res-has-side"></cache-view>
 

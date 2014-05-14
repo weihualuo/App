@@ -37,12 +37,15 @@ angular.module('app.ideabook', [])
       image.onload = ->
         element.prepend image
 
-      #console.log element[0].offsetHeight
-#      element.ready ->
-#        height = element[0].offsetHeight
-#        width = Math.round obj.width*(height/obj.height)
-#        #element.css width: width+'px'
-#        console.log height, width, obj.height, obj.width
+      resize = ->
+        height = element[0].offsetHeight
+        width = Math.round(obj.width*(height/obj.height))+40
+        element.css width: width+'px'
+      resize()
+      scope.$watch 'editMode', (value, old)->
+        if !value isnt !old then resize()
+        if value and scope.$last
+          scope.scrollView.scrollTo(0, 0)
   )
 
   .controller( 'IdeabookCtrl', ($scope, $controller, Nav)->
@@ -76,11 +79,12 @@ angular.module('app.ideabook', [])
 
     $scope.$on '$scopeUpdate', ->
       $scope.obj = obj = Many('ideabooks').get parseInt($routeParams.id)
-      Popup.loading(obj.$promise) if not obj.$resolved
+      #Popup.loading(obj.$promise) if not obj.$resolved
       listCtrl.reload({}, {parent:'ideabooks',pid:$routeParams.id})
       When(obj).then ->
         user = $scope.meta.user
         $scope.marked = user and user.id in obj.marks
+        $scope.isOwner = user.id is obj.author.id
 
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})
@@ -103,7 +107,17 @@ angular.module('app.ideabook', [])
     #right button of main bar
     $scope.$on 'rightButton', $scope.onComment
 
+
+    $scope.onText = ->
+      if $scope.editMode
+        $scope.select = 0
+
     $scope.onUnitView = (p)->
+
+      if $scope.editMode
+        $scope.select = p
+        return
+
       Nav.go
         name: 'ideabookUnit'
         param: $routeParams
@@ -123,6 +137,10 @@ angular.module('app.ideabook', [])
           parent:'pieces'
           pid:p.id
         push: yes
+
+    $scope.onEdit = ->
+      $scope.editMode = !$scope.editMode
+      $scope.select = if $scope.editMode then 0 else null
 
     $scope.onLike = (e, p)->
       e.stopPropagation()
