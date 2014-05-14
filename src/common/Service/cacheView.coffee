@@ -46,8 +46,24 @@ angular.module( 'CacheView', [])
   .factory('Nav', ($route, $location, Service)->
 
     push = inherit = false
-    data = null
+    data = backTo = null
     viewStack = []
+
+    setPath = (option)->
+      {name, data, param, search, hash, push, inherit} = option
+      route = _.find $route.routes, name:name
+      return no if not route
+
+      replace = not push
+      path = route.originalPath
+      _.each param, (value, key)->
+        re = new RegExp(':'+key)
+        path = path.replace(re, value)
+
+      $location.replace() if replace
+      $location.path path
+      $location.search search or {}
+      $location.hash hash or null
 
     api =
 
@@ -58,7 +74,7 @@ angular.module( 'CacheView', [])
 
       reset: ->
         push = inherit = false
-        data = null
+        data = backTo = null
 
       inherit: (value)->
         inherit = value if value?
@@ -68,6 +84,7 @@ angular.module( 'CacheView', [])
         push
 
       data: -> data
+      backTo: -> backTo
 
       back: (option)->
         #throttle the Navigation by 500ms
@@ -80,35 +97,33 @@ angular.module( 'CacheView', [])
           ##console.log "no stack, go", option.name
           @go option
 
+      backOver: (to)->
+        backTo = null
+        setPath(to)
+
       go: (option)->
 
         #throttle the Navigation by 500ms
         return no unless Service.noRepeat('nav', 600)
-        {name, data, param, search, hash, push, inherit} = option
 
-        route = _.find $route.routes, name:name
-        return no if not route
+        # back to the view if in stack
+        if _.find(viewStack, name:option.name)
+          backTo = option
+          history.back()
+        else
+          setPath option
 
-        replace = not push
-
-        #View is not in stack
-        path = route.originalPath
-        _.each param, (value, key)->
-          re = new RegExp(':'+key)
-          path = path.replace(re, value)
-
-        $location.replace() if replace
-        $location.path path
-        $location.search search or {}
-        $location.hash hash or null
-
-        ##console.log "set url", $location.url(), replace
   )
   .factory('ViewManager', ->
 
     class Manager
 
       constructor: (@$element, @stack)->
+
+      popup: ->
+        @current.leave()
+        @current = @stack.pop()
+        @current?.onPopup()
 
       popToView: (name, params)->
         ret = false
@@ -171,6 +186,7 @@ angular.module( 'CacheView', [])
       push
 
     @data = -> data
+    @backTo = -> null
     this
   )
   .directive('cacheView', ($cacheFactory,  $route, ViewManager, Nav, ViewFactory)->
@@ -189,6 +205,15 @@ angular.module( 'CacheView', [])
         
         name = current?.name
         if not name then return
+
+
+        if backTo = nav.backTo()
+          manager.popup()
+          if manager.current.name isnt backTo.name
+            history.back()
+          else
+            nav.backOver(backTo)
+          return
 
         ctrl.current = current
         # if view is in stack, popup to it
