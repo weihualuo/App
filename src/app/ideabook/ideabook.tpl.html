@@ -5,7 +5,7 @@
     <div scrollable='x' class="ideabook-view" ng-class="{edit:editMode}">
 
         <div class="ideabook-unit text"
-             ng-class="{select:select===0}"
+             ng-class="{select:select==obj}"
              ng-click="onText()"
                 >
             <div class="ideabook-text">
@@ -20,7 +20,7 @@
              ng-repeat="p in objects track by p.id">
             <div class="ideabook-info">
                 <!--<h3 no-watch="p.image.title"></h3>-->
-                <p no-watch="p.desc || p.image.desc"></p>
+                <p>{{p.desc}}</p>
             </div>
             <div class="ideabook-ctrl">
                 <span ng-click="onLike($event, p)">
@@ -32,6 +32,17 @@
             </div>
         </div>
     </div>
+    <form name="form" class="ideabook-form" ng-show="editMode">
+        <label class="item item-input" ng-show="select.title">
+            <span class="input-label">标题</span>
+            <input maxlength="50" name="title" type="text" ng-model="select.title" required>
+        </label>
+
+        <label class="item item-input">
+            <span class="input-label">描述</span>
+            <textarea name="desc" ng-model="select.desc" rows="5"></textarea>
+        </label>
+    </form>
 </div>
 <div class="res-side-ctrl">
     <span class="ctrl-item" ng-click="onBack()">
@@ -43,7 +54,7 @@
     <span class="ctrl-item" ng-click="onComment()">
        <i class="icon ion-ios7-chatbubble"></i>
     </span>
-    <span class="ctrl-item" ng-click="onEdit()" ng-show="isOwner">
+    <span class="ctrl-item" ng-click="onEdit()" ng-show="isOwner" ng-class="{active:editMode}">
        <i class="icon ion-ios7-compose"></i>
     </span>
 

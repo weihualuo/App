@@ -69,7 +69,7 @@ angular.module('app.ideabook', [])
     this
 
   )
-  .controller('IdeabookDetailCtrl', ($scope, $controller, $routeParams, Many, Nav, Popup, When, ToggleModal, MESSAGE)->
+  .controller('IdeabookDetailCtrl', ($scope, $controller, $routeParams, $timeout, Many, Env, Nav, Popup, When, ToggleModal, MESSAGE)->
 
     console.log 'IdeabookDetailCtrl'
     # Init locals
@@ -105,12 +105,15 @@ angular.module('app.ideabook', [])
           pid:obj.id
         push: yes
     #right button of main bar
-    $scope.$on 'rightButton', $scope.onComment
-
+    $scope.$on 'rightButton', ->
+      if $scope.editMode
+        $scope.editMode = false
+      else
+        $scope.onComment()
 
     $scope.onText = ->
       if $scope.editMode
-        $scope.select = 0
+        $scope.select = obj
 
     $scope.onUnitView = (p)->
 
@@ -140,7 +143,35 @@ angular.module('app.ideabook', [])
 
     $scope.onEdit = ->
       $scope.editMode = !$scope.editMode
-      $scope.select = if $scope.editMode then 0 else null
+
+    $scope.onSave = ->
+      console.log obj.$dirty
+      if obj.$dirty
+        obj.$dirty = no
+        obj.patch(title:obj.title, desc:obj.desc)
+
+      for p in $scope.objects
+        console.log p.$dirty
+        if p.$dirty
+          p.$dirty = no
+          p.patch(desc:p.desc)
+
+    $scope.$watch 'editMode', (value, old)->
+      Env.ideabookDetail.right = if value then ['完成'] else ['评论']
+      $scope.select = if value then obj else null
+      if old
+        #wait for select digest over
+        $timeout $scope.onSave
+
+    $scope.$watch 'select', (select, old)->
+      if old
+        old.$dirty = $scope.form.$dirty
+      if select
+        if select.$dirty
+          $scope.form.$setDirty()
+        else
+          $scope.form.$setPristine()
+      console.log $scope.form
 
     $scope.onLike = (e, p)->
       e.stopPropagation()

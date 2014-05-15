@@ -103,7 +103,8 @@ angular.module('app.my', [])
 
     listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'ideabooks'}
     $scope.$watch 'meta.user', (user)->
-      listCtrl.reload(author:user.id, 'my')
+      if user
+        listCtrl.reload(author:user.id, 'my')
 
     $scope.$on 'scroll.reload', ->
       $scope.myView.left = $scope.user.username + "的灵感集(#{$scope.objects.length})"
