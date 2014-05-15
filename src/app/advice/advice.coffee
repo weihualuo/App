@@ -51,6 +51,8 @@ angular.module('app.advice', [])
         param:
           parent:'advices'
           pid:obj.id
+        data:
+          obj:obj
         push: yes
 
     #right button of main bar
@@ -121,7 +123,7 @@ angular.module('app.advice', [])
   )
   .controller('CommentCtrl', ($scope, $controller, Nav, ToggleModal, Popup)->
 
-    console.log 'CommentCtrl'
+    console.log 'CommentCtrl', $scope.obj
     ctrl = this
     listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'comments'}
 
@@ -148,6 +150,7 @@ angular.module('app.advice', [])
             Popup.loading $scope.collection.new(
               body: comment
             ).then ->
+              $scope.obj?.reply_num++
               listCtrl.refresh()
               null
 

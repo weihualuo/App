@@ -85,6 +85,11 @@ angular.module('app.ideabook', [])
         user = $scope.meta.user
         $scope.marked = user and user.id in obj.marks
         $scope.isOwner = user.id is obj.author.id
+        $scope.$watch 'objects', (objs)->
+          if user
+            for p in objs
+              p.like_num = p.likes.length
+              p.liked = yes if user.id in p.likes
 
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})
@@ -103,6 +108,8 @@ angular.module('app.ideabook', [])
         param:
           parent:'ideabooks'
           pid:obj.id
+        data:
+          obj:obj
         push: yes
     #right button of main bar
     $scope.$on 'rightButton', ->
@@ -139,6 +146,8 @@ angular.module('app.ideabook', [])
         param:
           parent:'pieces'
           pid:p.id
+        data:
+          obj:p
         push: yes
 
     $scope.onEdit = ->
@@ -175,6 +184,14 @@ angular.module('app.ideabook', [])
 
     $scope.onLike = (e, p)->
       e.stopPropagation()
+      if not $scope.noRepeatAndLogin('mark') then return
+      p.liked = !p.liked
+      if p.liked
+        p.like_num++
+        p.post('like')
+      else
+        p.like_num--
+        p.customDELETE('like')
 
     this
   )

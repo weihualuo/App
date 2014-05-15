@@ -31,10 +31,12 @@ angular.module('app.home', ['restangular'])
         objects.$promise.then -> $timeout ->
           $scope.objects = objects
           $scope.haveMore = objects.meta.more
-          Env[name]?.count = objects.length + $scope.haveMore
+          $scope.totalCount = objects.length + $scope.haveMore
+          Env[name]?.count = $scope.totalCount
           $scope.$broadcast('scroll.reload')
 
       Popup.loading($scope.promise, failMsg:MESSAGE.LOAD_FAILED)
+      $scope.promise
 
 
     #Load more objects

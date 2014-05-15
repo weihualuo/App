@@ -23,11 +23,11 @@
                 <p>{{p.desc}}</p>
             </div>
             <div class="ideabook-ctrl">
-                <span ng-click="onLike($event, p)">
-                   <i class="icon ion-ios7-heart-outline"></i>
+                <span ng-click="onLike($event, p)" ng-class="{active:p.liked}">
+                   <i class="icon ion-ios7-heart-outline"></i>{{p.like_num}}
                 </span>
                 <span ng-click="onCommentPiece($event, p)">
-                   <i class="icon ion-ios7-chatbubble-outline"></i>
+                   <i class="icon ion-ios7-chatbubble-outline"></i>{{p.reply_num}}
                 </span>
             </div>
         </div>
