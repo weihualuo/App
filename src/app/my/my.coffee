@@ -25,6 +25,8 @@ angular.module('app.my', [])
         name: 'bookmark'
         url: 'my/myBookmark.tpl.html'
         controller: 'myBookmarkCtrl'
+        right: ['灵感集', '话题']
+        cache: yes
 
       topic:
         name: 'topic'
@@ -108,7 +110,26 @@ angular.module('app.my', [])
         listCtrl.reload(author:user.id, 'my')
 
     $scope.$on 'scroll.reload', ->
-      $scope.myView.left = $scope.user.username + "的灵感集(#{$scope.objects.length})"
+      $scope.myView.left = $scope.user.username + "的灵感集(#{$scope.totalCount})"
+
+    $scope.onIdeaBookView = (obj)->
+      Nav.go
+        name: 'ideabookDetail'
+        param: id:obj.id
+        push: yes
+
+    this
+  )
+  .controller('markIdeabooksCtrl', ($scope, $controller, Nav)->
+    console.log 'markIdeabooksCtrl'
+
+    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'ideabooks'}
+    $scope.$watch 'meta.user', (user)->
+      if user
+        listCtrl.reload(mark:user.id, 'mark')
+
+    #    $scope.$on 'scroll.reload', ->
+#      $scope.myView.left = "收藏的灵感集(#{$scope.totalCount})"
 
     $scope.onIdeaBookView = (obj)->
       Nav.go
@@ -221,13 +242,51 @@ angular.module('app.my', [])
     this
   )
   .controller('myBookmarkCtrl', ($scope)->
+
+    subviews = [
+      {
+        name: 'ideabook'
+        url: 'my/myIdeabooks.tpl.html'
+        controller: 'markIdeabooksCtrl'
+        cache: yes
+      },
+      {
+        name: 'topic'
+        url: 'advice/advices.tpl.html'
+        controller: 'markTopicCtrl'
+        cache: yes
+      }
+    ]
+
+    $scope.markView = subviews[0]
+    $scope.myView.active = 0
+
+    $scope.$on 'onRight', (e, index)->
+      $scope.markView = subviews[index]
+      $scope.myView.active = index
+
+    this
+  )
+  .controller('markTopicCtrl', ($scope, $controller, Nav)->
+
+    listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'advices'}
+    $scope.$watch 'meta.user', (user)->
+      if user
+        listCtrl.reload(mark:user.id, 'mark')
+
+    $scope.onAdviceView = (obj)->
+      Nav.go
+        name: 'adviceDetail'
+        param: id:obj.id
+        push: yes
     this
   )
   .controller('myTopicCtrl', ($scope, $controller, Nav, ToggleModal)->
 
     listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'advices'}
     $scope.$watch 'meta.user', (user)->
-      listCtrl.reload(author:user.id, 'my')
+      if user
+        listCtrl.reload(author:user.id, 'my')
 
     $scope.onAdviceView = (obj)->
       Nav.go
