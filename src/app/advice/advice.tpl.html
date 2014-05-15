@@ -1,7 +1,7 @@
 
 
 
-<div class="res-detail-view box-align-hcenter" ng-show="obj.$resolved">
+<div class="res-detail-view box-align-hcenter" loading="!objects.$resolved">
     <div scrollable class="advice-view">
         <h1>{{obj.title}}</h1>
         <div class="advice-author" ng-click='onAuthor()'>
@@ -9,7 +9,7 @@
             <span>{{obj.author.username}}</span>
         </div>
 
-        <p>{{obj.body}}</p>
+        <p>{{obj.desc}}</p>
         <img ng-src="{{obj.image | imagePath }}">
 
         <div class="advice-comment">
@@ -29,13 +29,13 @@
     <span class="ctrl-item" ng-click="onBack()">
        <i class="icon ion-chevron-left"></i>
     </span>
-    <span class="ctrl-item" ng-click="marked=!marked" ng-class="{active:marked}">
+    <span class="ctrl-item" ng-click="onMark()" ng-class="{active:marked}">
        <i class="icon ion-ios7-star"></i>
     </span>
     <span class="ctrl-item" ng-click="onComment()">
        <i class="icon ion-ios7-chatbubble"></i>
     </span>
-    <span class="ctrl-item" ng-click="onEdit()">
+    <span class="ctrl-item" ng-click="onEdit()" ng-show="isOwner">
        <i class="icon ion-ios7-compose"></i>
     </span>
 

@@ -34,20 +34,21 @@ angular.module('app.pro',[])
     user = null
     $scope.$on '$scopeUpdate', ->
       $scope.user = user = Many('pros').get parseInt($routeParams.id)
-      Popup.loading(user.$promise) if not user.$resolved
 
       user.$promise.then ->
         $scope.profile = user.profile
         $scope.pro = $scope.profile?.pro
         $scope.contact = $scope.pro?.contact
 
+
+    $scope.onBack = -> Nav.back name:'pros'
+
     $scope.$on 'content.closed', ->
       #unregister animation hook
       ctrl.unregister()
-      Nav.back name:'pros'
+      $scope.onBack()
 
-    $scope.$on 'parent.event', (e, event)->
-      Nav.back name:'pros'
+    $scope.$on 'parent.event', $scope.onBack
 
     $scope.onIdeabook = (id)->
       Nav.go

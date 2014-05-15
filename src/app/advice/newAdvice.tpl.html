@@ -1,7 +1,7 @@
 
 <header class="bar bar-header bar-stable">
     <button class="button button-clear" ng-click="modal.close()">取消</button>
-    <h1 class="title">发起讨论</h1>
+    <h1 class="title">{{{false:'发起讨论', true:'编辑'}[!!obj]}}</h1>
     <button class="button button-clear" ng-click="onSubmit()">发布</button>
 </header>
 
@@ -11,11 +11,12 @@
     </label>
 
     <label class="item item-input">
-        <textarea name="desc" ng-model="data.body" placeholder="详细说明" rows="8"></textarea>
+        <textarea name="desc" ng-model="data.desc" placeholder="详细说明" rows="8"></textarea>
     </label>
     <label class="item item-input">
         <file-select class="file-select box-center"
                      placeholder="添加照片"
+                     src="{{obj.image|thumbPath}}"
                      file="data.image"
                      name='image'
                 >

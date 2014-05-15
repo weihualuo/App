@@ -7,10 +7,10 @@
 
         <img ng-src="{{obj.image | thumbPath }}">
         <div class="advice-info">
-            <h3 no-watch="obj.title"></h3>
-            <p no-watch="obj.desc"></p>
+            <h3>{{obj.title}}</h3>
+            <p>{{obj.desc}}</p>
             <img profile-image='obj.author'>
-            <span no-watch="obj.author.username"></span> <br>
+            <span>{{obj.author.username}}</span> <br>
             <span><i class="icon ion-ios7-chatbubble-outline"></i>{{obj.reply_num}}</span>
         </div>
 

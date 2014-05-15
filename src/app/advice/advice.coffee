@@ -19,7 +19,7 @@ angular.module('app.advice', [])
     this
 
   )
-  .controller('AdviceDetailCtrl', ($scope, $controller, Many, Nav, $routeParams, MESSAGE, Popup, ToggleModal)->
+  .controller('AdviceDetailCtrl', ($scope, $controller, When, Many, Nav, $routeParams, MESSAGE, Popup, ToggleModal)->
     console.log 'AdviceDetailCtrl'
     # Init locals
     obj = null
@@ -28,11 +28,22 @@ angular.module('app.advice', [])
 
     $scope.$on '$scopeUpdate', (e)->
       $scope.obj = obj = Many('advices').get parseInt($routeParams.id)
-      Popup.loading(obj.$promise) if not obj.$resolved
       listCtrl.reload({}, {parent:'advices',pid:$routeParams.id})
+      When(obj).then ->
+        user = $scope.meta.user
+        $scope.marked = user and user.id in obj.marks
+        $scope.isOwner = user.id is obj.author.id
 
     $scope.onBack = ->
       Nav.back name:'advices'
+
+    $scope.onMark = ->
+      if not $scope.noRepeatAndLogin('mark') then return
+      $scope.marked = !$scope.marked
+      if $scope.marked
+        obj.post('mark')
+      else
+        obj.customDELETE('mark')
 
     $scope.onComment = ->
       Nav.go
@@ -45,25 +56,39 @@ angular.module('app.advice', [])
     #right button of main bar
     $scope.$on 'rightButton', $scope.onComment
 
+    $scope.onEdit = ->
+      ToggleModal
+        id: 'advice'
+        template: "<modal class='fade-in-out profile-win'></modal>"
+        url: 'advice/newAdvice.tpl.html'
+        controller: 'NewAdviceCtrl'
+        locals:
+          obj:obj
+
     this
   )
   .controller('NewAdviceCtrl', ($scope, Many, Popup, MESSAGE, Service)->
 
     collection = Many('advices')
     $scope.data = data = {}
+    obj = $scope.obj
+    if obj
+      angular.copy(obj, data)
+      data.image = null
 
     uploadImage = (image, advice)->
       promise = Service.uploadFile(image:image, '/api/photos')
       promise.then(
         (ret)->
-          console.log ret
+          #console.log ret
           image = JSON.parse(ret)
-          p =  advice.patch("image":image.id)
-          p.finally ->
+          pros =  advice.patch("image":image.id)
+          pros.then( -> obj.image = image if obj).finally ->
             Popup.alert MESSAGE.SAVE_OK
             $scope.modal.close()
-            collection.refresh() if collection.objects
-          p
+            if collection.objects and not obj
+              collection.refresh()
+          pros
         ()->
           Popup.alert MESSAGE.UPLOAD_FAILED
           null
@@ -72,10 +97,15 @@ angular.module('app.advice', [])
     $scope.onSubmit = ->
       param = {}
       param.title = data.title
-      param.body = data.body
-      promise = collection.new(param).then(
+      param.desc = data.desc
+      if obj
+        p1 = obj.patch(param)
+      else
+        p1 = collection.new(param)
+      promise = p1.then(
         (ret)->
-          window.advice = ret
+          if obj
+            angular.extend(obj, param)
           if data.image
             return uploadImage(data.image, ret)
           else
