@@ -30,6 +30,7 @@ angular.module('app.my', [])
         name: 'topic'
         url: 'advice/advices.tpl.html'
         controller: 'myTopicCtrl'
+        right: ['新建讨论']
         cache: yes
 
       upload:
@@ -222,7 +223,7 @@ angular.module('app.my', [])
   .controller('myBookmarkCtrl', ($scope)->
     this
   )
-  .controller('myTopicCtrl', ($scope, $controller, Nav)->
+  .controller('myTopicCtrl', ($scope, $controller, Nav, ToggleModal)->
 
     listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'advices'}
     $scope.$watch 'meta.user', (user)->
@@ -233,6 +234,15 @@ angular.module('app.my', [])
         name: 'adviceDetail'
         param: id:obj.id
         push: yes
+
+    $scope.$on 'onRight', ->
+      ToggleModal
+        id: 'advice'
+        template: "<modal class='fade-in-out profile-win'></modal>"
+        url: 'advice/newAdvice.tpl.html'
+        controller: 'NewAdviceCtrl'
+        locals:
+          collection: $scope.collection
     this
   )
   .controller('myUploadCtrl', ($scope, $controller, Service, Popup, MESSAGE)->

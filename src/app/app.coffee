@@ -132,7 +132,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     advices:
       filters: ['topic']
       title: '建议'
-      right: ['发起讨论']
+      right: ['新建讨论']
     adviceDetail:
       noSide: true
       title: '建议'

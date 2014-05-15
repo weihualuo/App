@@ -7,11 +7,11 @@
 
 <form name="form" class="list list-inset padding-header">
     <label class="item item-input">
-        <input maxlength="50" name="title" type="text" placeholder="标题" ng-model="data.title">
+        <input maxlength="50" name="title" type="text" placeholder="标题" ng-model="data.title" required>
     </label>
 
     <label class="item item-input">
-        <textarea name="desc" ng-model="data.desc" placeholder="详细说明" rows="8"></textarea>
+        <textarea name="desc" ng-model="data.desc" placeholder="详细说明" rows="8" required></textarea>
     </label>
     <label class="item item-input">
         <file-select class="file-select box-center"

@@ -71,7 +71,7 @@ angular.module('app.advice', [])
   )
   .controller('NewAdviceCtrl', ($scope, Many, Popup, MESSAGE, Service)->
 
-    collection = Many('advices')
+    collection = $scope.collection or Many('advices')
     $scope.data = data = {}
     obj = $scope.obj
     if obj
@@ -88,36 +88,42 @@ angular.module('app.advice', [])
           pros.then( -> obj.image = image if obj).finally ->
             Popup.alert MESSAGE.SAVE_OK
             $scope.modal.close()
-            if collection.objects and not obj
-              collection.refresh()
+            collection.refresh() if collection.objects and not obj
           pros
         ()->
           Popup.alert MESSAGE.UPLOAD_FAILED
           null
       )
 
-    $scope.onSubmit = ->
-      param = {}
-      param.title = data.title
-      param.desc = data.desc
-      if obj
-        p1 = obj.patch(param)
-      else
-        p1 = collection.new(param)
-      promise = p1.then(
-        (ret)->
-          if obj
-            angular.extend(obj, param)
-          if data.image
-            return uploadImage(data.image, ret)
-          else
-            Popup.alert MESSAGE.SAVE_OK
-            $scope.modal.close()
+    validateMsg =
+      required:
+        title: MESSAGE.REQ_TITLE
+        desc: MESSAGE.REQ_DESC
 
-        ()->
-          Popup.alert MESSAGE.SUBMIT_FAILED
-      )
-      Popup.loading promise, {showWin:yes}
+    $scope.onSubmit = ->
+
+      if Service.noRepeat('submit') and Service.validate($scope.form, validateMsg)
+        param = {}
+        param.title = data.title
+        param.desc = data.desc
+        if obj
+          p1 = obj.patch(param)
+        else
+          p1 = collection.new(param)
+        promise = p1.then(
+          (ret)->
+            if obj
+              angular.extend(obj, param)
+            if data.image
+              return uploadImage(data.image, ret)
+            else
+              Popup.alert MESSAGE.SAVE_OK
+              $scope.modal.close()
+              collection.refresh() if collection.objects and not obj
+          ()->
+            Popup.alert MESSAGE.SUBMIT_FAILED
+        )
+        Popup.loading promise, {showWin:yes}
 
     this
   )
