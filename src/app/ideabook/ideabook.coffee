@@ -83,21 +83,15 @@ angular.module('app.ideabook', [])
       listCtrl.reload({}, {parent:'ideabooks',pid:$routeParams.id})
       When(obj).then ->
         user = $scope.meta.user
-        $scope.marked = user and user.id in obj.marks
         $scope.isOwner = user.id is obj.author.id
-        $scope.$watch 'objects', (objs)->
-          if user
-            for p in objs
-              p.like_num = p.likes.length
-              p.liked = yes if user.id in p.likes
 
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})
 
     $scope.onMark = ->
       if not $scope.noRepeatAndLogin('mark') then return
-      $scope.marked = !$scope.marked
-      if $scope.marked
+      obj.marked = !obj.marked
+      if obj.marked
         obj.post('mark')
       else
         obj.customDELETE('mark')
@@ -184,7 +178,7 @@ angular.module('app.ideabook', [])
 
     $scope.onLike = (e, p)->
       e.stopPropagation()
-      if not $scope.noRepeatAndLogin('mark') then return
+      if not $scope.noRepeatAndLogin('like') then return
       p.liked = !p.liked
       if p.liked
         p.like_num++

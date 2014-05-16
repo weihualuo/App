@@ -31,7 +31,6 @@ angular.module('app.advice', [])
       listCtrl.reload({}, {parent:'advices',pid:$routeParams.id})
       When(obj).then ->
         user = $scope.meta.user
-        $scope.marked = user and user.id in obj.marks
         $scope.isOwner = user.id is obj.author.id
 
     $scope.onBack = ->
@@ -39,8 +38,8 @@ angular.module('app.advice', [])
 
     $scope.onMark = ->
       if not $scope.noRepeatAndLogin('mark') then return
-      $scope.marked = !$scope.marked
-      if $scope.marked
+      obj.marked = !obj.marked
+      if obj.marked
         obj.post('mark')
       else
         obj.customDELETE('mark')
