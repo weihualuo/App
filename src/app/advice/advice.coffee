@@ -31,7 +31,7 @@ angular.module('app.advice', [])
       listCtrl.reload({}, {parent:'advices',pid:$routeParams.id})
       When(obj).then ->
         user = $scope.meta.user
-        $scope.isOwner = user.id is obj.author.id
+        $scope.isOwner = user and user.id is obj.author.id
 
     $scope.onBack = ->
       Nav.back name:'advices'

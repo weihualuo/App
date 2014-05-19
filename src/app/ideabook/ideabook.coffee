@@ -83,7 +83,7 @@ angular.module('app.ideabook', [])
       listCtrl.reload({}, {parent:'ideabooks',pid:$routeParams.id})
       When(obj).then ->
         user = $scope.meta.user
-        $scope.isOwner = user.id is obj.author.id
+        $scope.isOwner = user and user.id is obj.author.id
 
     $scope.onBack = ->
       Nav.back({name:'ideabooks'})
@@ -148,13 +148,13 @@ angular.module('app.ideabook', [])
       $scope.editMode = !$scope.editMode
 
     $scope.onSave = ->
-      console.log obj.$dirty
+      #console.log obj.$dirty
       if obj.$dirty
         obj.$dirty = no
         obj.patch(title:obj.title, desc:obj.desc)
 
       for p in $scope.objects
-        console.log p.$dirty
+        #console.log p.$dirty
         if p.$dirty
           p.$dirty = no
           p.patch(desc:p.desc)
@@ -174,7 +174,7 @@ angular.module('app.ideabook', [])
           $scope.form.$setDirty()
         else
           $scope.form.$setPristine()
-      console.log $scope.form
+      #console.log $scope.form
 
     $scope.onLike = (e, p)->
       e.stopPropagation()
