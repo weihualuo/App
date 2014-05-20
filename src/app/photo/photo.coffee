@@ -36,7 +36,9 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       if index is 0 and $scope.isLogin(yes)
         ToggleModal
           id: 'upload'
-          template: "<modal class='fade-in-out profile-win'></modal>"
+          template: "<modal class='profile-win'></modal>"
+          $aniIn: 'from-center'
+          $aniOut: 'from-center'
           url: 'my/myUpload.tpl.html'
           controller: 'myUploadCtrl'
           scope: $scope
@@ -114,7 +116,9 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
       if $scope.isLogin(yes)
         ToggleModal
           id: 'add-to-ideabook'
-          template: "<modal class='fade-in-out'></modal>"
+          template: "<modal></modal>"
+          $aniIn: 'from-center'
+          $aniOut: 'from-center'
           controller: 'addIdeabookCtrl'
           url: 'modal/addIdeabook.tpl.html'
           locals:

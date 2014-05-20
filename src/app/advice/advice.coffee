@@ -7,7 +7,9 @@ angular.module('app.advice', [])
       if index is 0 and $scope.isLogin(yes)
         ToggleModal
           id: 'advice'
-          template: "<modal class='fade-in-out profile-win'></modal>"
+          template: "<modal class='profile-win'></modal>"
+          $aniIn: 'from-center'
+          $aniOut: 'from-center'
           url: 'advice/newAdvice.tpl.html'
           controller: 'NewAdviceCtrl'
 
@@ -60,7 +62,9 @@ angular.module('app.advice', [])
     $scope.onEdit = ->
       ToggleModal
         id: 'advice'
-        template: "<modal class='fade-in-out profile-win'></modal>"
+        template: "<modal class='profile-win'></modal>"
+        $aniIn: 'from-center'
+        $aniOut: 'from-center'
         url: 'advice/newAdvice.tpl.html'
         controller: 'NewAdviceCtrl'
         locals:
@@ -147,7 +151,9 @@ angular.module('app.advice', [])
       if not $scope.noRepeatAndLogin('comment') then return
       ToggleModal
         id: 'comment'
-        template: "<modal class='fade-in-out'></modal>"
+        template: "<modal></modal>"
+        $aniIn: 'from-center'
+        $aniOut: 'from-center'
         url: "modal/comment.tpl.html"
         closeOnBackdrop: yes
         success: (comment)->

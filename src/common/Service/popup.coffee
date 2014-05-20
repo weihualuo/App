@@ -110,7 +110,7 @@ angular.module( 'Popup', [])
       #return a end function to manully hide the view
       end: hidePopup
   )
-  .factory('Modal', ($rootScope, $compile, $animate, $timeout, $location, $q, $http, $templateCache, $controller, $document, $window)->
+  .factory('Modal', ($rootScope, $compile, Tansformer, $timeout, $location, $q, $http, $templateCache, $controller, $document, $window)->
     (options)->
 
       {locals, scope, template, controller, url, hash, backdrop, parent} = options
@@ -163,7 +163,8 @@ angular.module( 'Popup', [])
           deferred.reject()
         scope.$destroy()
         #console.log 'leaving'
-        $animate.leave element, ->
+        Tansformer.leave element, options.$aniOut, ->
+          #$animate.leave element, ->
           #console.log 'leaved'
           backdrop.remove() if backdrop
 
@@ -171,7 +172,8 @@ angular.module( 'Popup', [])
 
       enterModal = ->
         element = $compile(angularDomEl)(scope)
-        $animate.enter element, parent, null, ->
+        Tansformer.enter element, parent, null, options.$aniIn, ->
+          #$animate.enter element, parent, null, ->
           scope.$broadcast 'modal.ready'
           ready = true
           #To be compatible with browser and android back button

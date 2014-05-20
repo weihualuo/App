@@ -80,7 +80,9 @@ angular.module('app.my', ['app.utils'])
     $scope.onMenu = ->
       ToggleModal
         id: 'myMenu'
-        template: "<side-pane close-on-resize position='right' class='pane-my-menu popup-in-right'></side-pane>"
+        template: "<side-pane close-on-resize position='right' class='pane-my-menu'></side-pane>"
+        $aniIn: 'from-right'
+        $aniOut: 'from-right'
         url: "my/myMenu.tpl.html"
         closeOnBackdrop: yes
         scope: $scope
@@ -88,14 +90,18 @@ angular.module('app.my', ['app.utils'])
     $scope.onEditProfile = ->
       ToggleModal
         id: 'editProfile'
-        template: "<modal navable='my/profile.tpl.html' animation='popup-in-right' class='fade-in-out profile-win'></modal>"
+        template: "<modal navable='my/profile.tpl.html' animation='popup-in-right' class='profile-win'></modal>"
+        $aniIn: 'from-center'
+        $aniOut: 'from-center'
         controller: 'myProfileCtrl'
         scope: $scope
 
     $scope.onUpload = ->
       ToggleModal
         id: 'upload'
-        template: "<modal class='fade-in-out profile-win'></modal>"
+        template: "<modal class='profile-win'></modal>"
+        $aniIn: 'from-center'
+        $aniOut: 'from-center'
         url: 'my/myUpload.tpl.html'
         controller: 'myUploadCtrl'
         scope: $scope
@@ -297,7 +303,9 @@ angular.module('app.my', ['app.utils'])
     $scope.$on 'onRight', ->
       ToggleModal
         id: 'advice'
-        template: "<modal class='fade-in-out profile-win'></modal>"
+        template: "<modal class='profile-win'></modal>"
+        $aniIn: 'from-center'
+        $aniOut: 'from-center'
         url: 'advice/newAdvice.tpl.html'
         controller: 'NewAdviceCtrl'
         locals:

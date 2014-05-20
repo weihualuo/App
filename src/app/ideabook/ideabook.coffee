@@ -71,7 +71,7 @@ angular.module('app.ideabook', [])
     this
 
   )
-  .controller('IdeabookDetailCtrl', ($scope, $controller, $routeParams, $timeout, Many, Env, Nav, Popup, When, ToggleModal, MESSAGE)->
+  .controller('IdeabookDetailCtrl', ($scope, $controller, $routeParams, $timeout, Many, Env, Nav, Popup, When)->
 
     #console.log 'IdeabookDetailCtrl'
     # Init locals

@@ -195,7 +195,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     popupLoginModal = ->
       ToggleModal
         id: 'login'
-        template: "<modal navable='modal/login.tpl.html' animation='popup-in-right' class='fade-in-out'></modal>"
+        template: "<modal navable='modal/login.tpl.html' animation='popup-in-right'></modal>"
+        $aniIn: 'from-center'
+        $aniOut: 'from-center'
         locals: url:location.href
         controller: 'loginCtrl'
         scope: $scope
@@ -290,7 +292,9 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       name = $route.current.name
       ToggleModal
         id: 'filters'
-        template: "<side-pane position='right' class='pane-filter-bar popup-in-right'></side-pane>"
+        template: "<side-pane position='right' class='pane-filter-bar'></side-pane>"
+        $aniIn: 'from-right'
+        $aniOut: 'from-right'
         url: "modal/filterBar.tpl.html"
         closeOnBackdrop: yes
         locals:

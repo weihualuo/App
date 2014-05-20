@@ -273,11 +273,12 @@ angular.module( 'CacheView', [])
           parent.append(element)
         perform complete
 
-      leave: (element, transitOutStyle)->
+      leave: (element, transitOutStyle, complete)->
         perform = Transitor.transOut(element, transitOutStyle)
         perform ->
           #console.log "remove view"
           element.remove()
+          complete?()
 
   )
   .factory('ViewController', ($controller, Tansformer)->
