@@ -11,6 +11,10 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken'
     $httpProvider.defaults.xsrfCookieName = 'csrftoken'
 
+    if window.SERVER
+      $httpProvider.defaults.withCredentials = true
+      $httpProvider.defaults.headers.common['X-CSRFToken'] = localStorage.csrf
+
     $routeProvider.when( '/photos',
       name: 'photos'
       controller: 'PhotoCtrl'
@@ -317,7 +321,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       item
 
   )
-  .controller('loginCtrl', ($scope, Popup, Service, $http, MESSAGE)->
+  .controller('loginCtrl', ($scope, Popup, Service, $http, MESSAGE, Url)->
 
     console.log 'loginCtrl'
 
@@ -333,12 +337,16 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
 
     $scope.onLogin = ->
       if Service.noRepeat('login') and Service.validate($scope.loginForm, validateMsg)
-        promise = $http.post('/auth/login', {username:$scope.username, password:$scope.password})
+        promise = $http.post(Url.login, {username:$scope.username, password:$scope.password})
         Popup.loading promise, showWin:yes
         promise.then(
           (ret)->
             Popup.alert MESSAGE.LOGIN_OK
             $scope.meta.user = ret.data.user
+            #save for cross domain use
+            if window.SERVER
+              localStorage.setItem('csrf', ret.data.csrf)
+              $http.defaults.headers.common['X-CSRFToken'] = ret.data.csrf
             $scope.modal.close()
           (ret)->
             msg = if ret.data.error is 'invalid' then MESSAGE.LOGIN_INVALID else MESSAGE.LOGIN_NOK
@@ -347,7 +355,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
 
     $scope.onRegister = ->
       if Service.noRepeat('login') and Service.validate($scope.registerForm, validateMsg)
-        promise = $http.post '/auth/register',
+        promise = $http.post Url.reg,
           username:$scope.username
           password:$scope.password
           email:$scope.email
@@ -356,6 +364,10 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
           (ret)->
             Popup.alert MESSAGE.REGISTER_OK
             $scope.meta.user = ret.data.user
+            #save for cross domain use
+            if window.SERVER
+              localStorage.setItem('csrf', ret.data.csrf)
+              $http.defaults.headers.common['X-CSRFToken'] = ret.data.csrf
             $scope.modal.close()
           (ret)->
             msg = if ret.data.error is 'exist' then MESSAGE.USRNAME_EXIST else MESSAGE.REGISTER_NOK

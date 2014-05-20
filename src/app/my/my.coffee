@@ -1,17 +1,17 @@
-angular.module('app.my', [])
+angular.module('app.my', ['app.utils'])
 
-  .directive('profileImage', (Single)->
+  .directive('profileImage', (Single, Url)->
     (scope, element, attr)->
 
       meta = Single('meta').get()
 
       scope.$watch attr.profileImage, (obj)->
         image = if obj then (obj.image or (if obj.profile then (obj.profile.image or obj.profile.pro?.image) else null)) else null
-        src = if image then meta.imgbase + image else '/m/assets/img/user.gif'
+        src = if image then meta.imgbase + image else Url.user
         attr.$set 'src', src
   )
 
-  .controller( 'MyCtrl', ($scope, $http, Popup, Env, ToggleModal) ->
+  .controller( 'MyCtrl', ($scope, $http, Popup, Env, ToggleModal, Url) ->
     console.log 'Myctrl'
 
     subviews =
@@ -68,7 +68,7 @@ angular.module('app.my', [])
       if $scope.isLogin(yes) then $scope.onLogout()
 
     $scope.onLogout = ->
-      $http.post('/auth/logout').then ->
+      $http.post(Url.logout).then ->
         $scope.meta.user = null
 
 
@@ -139,7 +139,7 @@ angular.module('app.my', [])
 
     this
   )
-  .controller('myProfileCtrl', ($scope, $http, Service, MESSAGE, Popup)->
+  .controller('myProfileCtrl', ($scope, $http, Service, MESSAGE, Popup, Url)->
 
     $scope.$watch 'user', (user)->
       if not user then return
@@ -218,7 +218,7 @@ angular.module('app.my', [])
         if param.profile.pro?.category
           param.profile.pro.category = param.profile.pro.category.id
 
-        promise = $http.post('/auth/update', param).then(
+        promise = $http.post(Url.update, param).then(
           (ret)->
             user = ret.data.user
             $scope.meta.user = user
@@ -327,8 +327,12 @@ angular.module('app.my', [])
           console.log ret
           return addToIdeabook(JSON.parse(ret))
 
-        ()->
-          Popup.alert MESSAGE.UPLOAD_FAILED
+        (timeout)->
+          if timeout
+            Popup.alert MESSAGE.TIMEOUT
+            $scope.modal.close()
+          else
+            Popup.alert MESSAGE.UPLOAD_FAILED
           null
       )
 

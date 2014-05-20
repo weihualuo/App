@@ -1,3 +1,7 @@
+
+#window.SERVER = 'http://10.0.1.2:8080'
+#window.TEST = true
+
 angular.module('app.utils', [])
 
   .factory('ImageUtil', (Single)->
@@ -367,3 +371,13 @@ angular.module('app.utils', [])
         if e.target is parent[0]
           scope.$broadcast('parent.event', e)
   )
+  .constant('Url',
+    U : (url)-> (window.SERVER or '') + url
+    api : (window.SERVER or '') + '/api/'
+    login : (window.SERVER or '') + '/auth/login'
+    reg : (window.SERVER or '') + '/auth/register'
+    logout : (window.SERVER or '') + '/auth/logout'
+    update : (window.SERVER or '') + '/auth/update'
+    user: (window.SERVER or '') + '/m/assets/img/user.gif'
+  )
+

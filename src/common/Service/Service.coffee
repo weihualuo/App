@@ -1,8 +1,9 @@
 angular.module( 'Service', [])
 
-.factory('Service', ($q, $timeout, Popup, $browser)->
+.factory('Service', ($q, $timeout, Popup, $browser, Url)->
 
   _objs={}
+
   Service =
     noRepeat : (name, time=1000)->
       _objs[name] ?= false
@@ -18,10 +19,14 @@ angular.module( 'Service', [])
       formData = new FormData()
       for key, value of data
         formData.append(key, value)
+      formData.append('fuid', new Date().valueOf())
       #Open the AJAX call
-      xhr.open(method, url, true)
+      xhr.open(method, Url.U(url), true)
 
-      csrfToken = $browser.cookies()['csrftoken']
+      if window.SERVER
+        csrfToken = localStorage.csrf
+      else
+        csrfToken = $browser.cookies()['csrftoken']
       if csrfToken
         xhr.setRequestHeader('X-CSRFToken', csrfToken)
 
@@ -33,10 +38,10 @@ angular.module( 'Service', [])
           if this.status is 200 or this.status is 201
             deferred.resolve this.responseText
           # 504 is sae gateway timeout error, most of the case the file is created
-          else if this.status is 504
-            deferred.resolve()
+          else if this.status is 504 or this.status is 409
+            deferred.reject(yes)
           else
-            deferred.reject  this.responseText
+            deferred.reject(no)  #this.responseText
 
       xhr.send(formData)
       #Return a promise

@@ -1,10 +1,10 @@
-angular.module( 'Model', ['restangular'])
+angular.module( 'Model', ['restangular', 'app.utils'])
 
-  .config( (RestangularProvider) ->
+  .config( (RestangularProvider, Url) ->
 
     resolved = ['advices', 'ideabooks']
 
-    RestangularProvider.setBaseUrl '/api/'
+    RestangularProvider.setBaseUrl Url.api
     RestangularProvider.setDefaultHttpFields({cache: true, timeout: 10000})
 #    RestangularProvider.setRequestSuffix '/'
     RestangularProvider.setResponseExtractor (response, operation, what, url)->
@@ -17,8 +17,12 @@ angular.module( 'Model', ['restangular'])
       else
         res = response
       res
-#    RestangularProvider.addElementTransformer 'photos', (obj) ->
-#      obj
+
+    if window.TEST
+      RestangularProvider.addElementTransformer 'meta', (obj) ->
+        console.log 'meta transformer', obj
+        obj.imgbase = window.SERVER + obj.imgbase
+        obj
   )
 
   .factory('Many', (Restangular)->

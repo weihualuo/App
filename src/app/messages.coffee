@@ -32,6 +32,7 @@ angular.module('MESSAGE', [])
     IMAGE_EXIST: '该照片已在此灵感集中'
     NEW_IDEABOOK: '新建灵感集'
     TITLE_EXIST: '这个标题已经存在了，换一个吧'
+    TIMEOUT: '网速不给力，上传或返回超时了'
   )
   .constant('Config',
     $meta:
