@@ -144,7 +144,9 @@ angular.module( 'Popup', [])
           history.back()
 
       #emit by sidepane or something
-      scope.$on 'content.closed', -> closeModal()
+      scope.$on 'content.closed', ->
+        options.$aniOut = null
+        closeModal()
 
 
       if backdrop
