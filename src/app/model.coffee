@@ -26,7 +26,6 @@ angular.module( 'Model', ['restangular', 'app.utils'])
   )
 
   .factory('Many', (Restangular)->
-    window.rest = Restangular
     _objects = {}
     Factory = (name, sub)->
       #make objects to be a Array and an restangular object

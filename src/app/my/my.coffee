@@ -12,7 +12,7 @@ angular.module('app.my', ['app.utils'])
   )
 
   .controller( 'MyCtrl', ($scope, $http, Popup, Env, ToggleModal, Url) ->
-    console.log 'Myctrl'
+    #console.log 'Myctrl'
 
     subviews =
       ideabook:
@@ -102,7 +102,7 @@ angular.module('app.my', ['app.utils'])
     this
   )
   .controller('myIdeabooksCtrl', ($scope, $controller, Nav)->
-    console.log 'myIdeabooksCtrl'
+    #console.log 'myIdeabooksCtrl'
 
     listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'ideabooks'}
     $scope.$watch 'meta.user', (user)->
@@ -121,7 +121,7 @@ angular.module('app.my', ['app.utils'])
     this
   )
   .controller('markIdeabooksCtrl', ($scope, $controller, Nav)->
-    console.log 'markIdeabooksCtrl'
+    #console.log 'markIdeabooksCtrl'
 
     listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'ideabooks'}
     $scope.$watch 'meta.user', (user)->
@@ -197,8 +197,8 @@ angular.module('app.my', ['app.utils'])
 
     $scope.onSubmit = ->
 
-      console.log $scope.form, $scope.formPro, $scope.formCon
-      console.log $scope.data, $scope.pro, $scope.con
+      #console.log $scope.form, $scope.formPro, $scope.formCon
+      #console.log $scope.data, $scope.pro, $scope.con
 
       if Service.noRepeat('updateProfile') and validateForms() and isDirty()
 
@@ -231,7 +231,7 @@ angular.module('app.my', ['app.utils'])
               $scope.modal.close()
               null
           (ret)->
-            console.log ret
+            #console.log ret
             #django backend use diffrent email validation strategy with angular
             msg = if ret.data.error?.email then MESSAGE.EMAIL_VALID else MESSAGE.SUBMIT_FAILED
             Popup.alert msg
@@ -324,7 +324,7 @@ angular.module('app.my', ['app.utils'])
       promise = Service.uploadFile(params, '/api/photos')
       promise.then(
         (ret)->
-          console.log ret
+          #console.log ret
           return addToIdeabook(JSON.parse(ret))
 
         (timeout)->

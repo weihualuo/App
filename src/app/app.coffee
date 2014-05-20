@@ -163,13 +163,15 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
     photoInfo:
       popup: yes
   )
-  .run( ($location, $document)->
+  .run( ($location, $document, $rootScope)->
     # simulate html5Mode
     if !location.hash
       $location.path(location.pathname)
 
     #prevent webkit drag
     $document.on 'touchmove mousemove', (e)->e.preventDefault()
+    window.addEventListener 'resize', ->
+      $rootScope.$broadcast('resize')
   )
   .directive('listFilter', ()->
     restrict: 'E'

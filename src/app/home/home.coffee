@@ -16,7 +16,7 @@ angular.module('app.home', ['restangular'])
 
     @reload = (search=$location.search(), sub=$routeParams)->
 
-      console.log "reload", name, search, sub
+      #console.log "reload", name, search, sub
 
       if angular.isObject(sub) and angular.isUndefined(sub.parent)
         $scope.$emit('filter.update', name, search)

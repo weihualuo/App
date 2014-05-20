@@ -46,6 +46,8 @@ angular.module('app.ideabook', [])
         if !value isnt !old then resize()
         if value and scope.$last
           scope.scrollView.scrollTo(0, 0)
+
+      scope.$on 'resize', resize
   )
 
   .controller( 'IdeabookCtrl', ($scope, $controller, Nav)->
@@ -71,7 +73,7 @@ angular.module('app.ideabook', [])
   )
   .controller('IdeabookDetailCtrl', ($scope, $controller, $routeParams, $timeout, Many, Env, Nav, Popup, When, ToggleModal, MESSAGE)->
 
-    console.log 'IdeabookDetailCtrl'
+    #console.log 'IdeabookDetailCtrl'
     # Init locals
     obj = null
     $scope.listCtrl = listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'pieces'}
