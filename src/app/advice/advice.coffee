@@ -146,24 +146,21 @@ angular.module('app.advice', [])
 
     $scope.$on 'parent.event', $scope.onBack
 
-    $scope.onEdit = ->
-
-      if not $scope.noRepeatAndLogin('comment') then return
-      ToggleModal
-        id: 'comment'
-        template: "<modal></modal>"
-        $aniIn: 'from-center'
-        $aniOut: 'from-center'
-        url: "modal/comment.tpl.html"
-        closeOnBackdrop: yes
-        success: (comment)->
-          if comment
-            Popup.loading $scope.collection.new(
-              body: comment
-            ).then ->
-              $scope.obj?.reply_num++
-              listCtrl.refresh()
-              null
+    $scope.data = data = {}
+    $scope.status = 'idle'
+    $scope.onRight = ->
+      if $scope.status is 'idle'
+        $scope.status = 'edit'
+      else if $scope.status is 'edit'
+        if data.comment
+          $scope.status = 'send'
+          $scope.collection.new(
+            body: data.comment
+          ).then ->
+            data.comment = ''
+            $scope.status = 'idle'
+            $scope.obj?.reply_num++
+            listCtrl.refresh()
 
     this
   )

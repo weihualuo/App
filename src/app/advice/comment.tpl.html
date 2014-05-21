@@ -12,16 +12,26 @@
     <header class="bar bar-header bar-stable">
         <button class="button button-clear icon ion-ios7-arrow-back" ng-click="onBack()"></button>
         <h1 class="title">评论</h1>
-        <button class="button button-clear" ng-click="onEdit()">添加评论</button>
+        <button class="button button-clear"
+                ng-click="onRight()"
+                text-watch='status'
+                text-config="{idle:'添加评论', edit:'发送', send:'$loading'}">
+        </button>
     </header>
     <div class="content-view has-header" loading='promise'>
         <ul scrollable refreshable class="list padding">
+            <div trans-flag="status!='edit'"
+                 trans-style="'from-top'"
+                 trans-hide>
+                <textarea placeholder="说点什么吧..." rows="5" ng-model="data.comment"></textarea>
+            </div>
             <li class="advice-reply" ng-repeat="re in objects track by re.id" list-render>
                 <img profile-image='re.author'>
                 <h5>{{re.author.username}}</h5>
                 <p>{{re.body}}</p>
             </li>
         </ul>
+
     </div>
 
 </side-pane>

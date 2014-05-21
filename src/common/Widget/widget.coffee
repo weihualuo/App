@@ -187,7 +187,7 @@ angular.module( 'Widget', [])
       indicator = angular.element '<div class="fill box-center"><i class="icon icon-large ion-loading-d"></i></div>'
       loading = false
       flag = $parse(attr.loading)
-      # Display loading indicator when false
+      # Display loading indicator when true
       scope.$watch flag, (value)->
 
         if value and not loading
@@ -202,6 +202,20 @@ angular.module( 'Widget', [])
         if not value and loading
           indicator.remove()
           loading = no
+  )
+  .directive('textWatch', ($parse)->
+    link: (scope, element, attr)->
+
+      icons =
+        $loading: '<i class="icon icon-large ion-loading-d"></i>'
+
+      flag = $parse(attr.textWatch)
+      config = scope.$eval(attr.textConfig)
+      scope.$watch flag, (value)->
+        content = config[value] or ''
+        content = icons[content] or content
+        element.html(content)
+
   )
   .directive('subView', ($templateCache, $controller, $compile)->
     restrict: 'E'
