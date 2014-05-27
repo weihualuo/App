@@ -237,7 +237,7 @@ angular.module('app.ideabook', [])
 
     this
   )
-  .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, MESSAGE)->
+  .controller('addIdeabookCtrl', ($scope, Many, Service, Restangular, Popup, MESSAGE, $timeout)->
     # Operation on the collection will cause inconsistent of home list
     # due to listCtrl use cache mechanisam
     # New sulotion, Add sub id to list
@@ -255,8 +255,10 @@ angular.module('app.ideabook', [])
       data =
         image: $scope.image.id
         desc: $scope.desc
+        order: (ideabook.piece_num+1)*100
       ideabook.post('pieces', data).then(
         ()->
+          ideabook.piece_num++
           Popup.alert MESSAGE.SAVE_OK
           $scope.modal.close()
           null
@@ -285,8 +287,12 @@ angular.module('app.ideabook', [])
 
       #Create a new ideabook
       if ideabook.id is 0
-        promise = collection.new(title:title, yes).then(
+        promise = collection.new(title:title).then(
           (newObj)->
+            newObj.pieces = []
+            newObj.piece_num = 0
+            #present the new ideabook on next add
+            $timeout -> collection.refresh()
             saveToIdeabook(newObj)
 
           (error)->
