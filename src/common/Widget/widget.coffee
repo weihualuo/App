@@ -240,6 +240,61 @@ angular.module( 'Widget', [])
       scope.$watch(attr.subView, update)
 
   )
+  .directive('draggable', (PrefixedStyle)->
+    link: (scope, element, attr)->
+
+      `
+        function getCoordinates(event) {
+          var touches = event.touches && event.touches.length ? event.touches : [event];
+          var e = (event.changedTouches && event.changedTouches[0]) ||
+              (event.originalEvent && event.originalEvent.changedTouches &&
+                  event.originalEvent.changedTouches[0]) ||
+              touches[0].originalEvent || touches[0];
+
+          return {
+            x: e.clientX,
+            y: e.clientY
+          };
+        }
+      `
+
+      exp = attr.draggable
+      startX = startY = 0
+
+      updatePosition = (x, y)->
+        if x or y
+          PrefixedStyle element[0], 'transform', "translate3d(#{x}px, #{y}px, 0)"
+        else
+          PrefixedStyle element[0], 'transform', null
+
+      onMove = (event)->
+        event.preventDefault()
+        event.stopPropagation()
+        cords = getCoordinates(event)
+        y = cords.y - startY
+        x = cords.x - startX
+        #console.log x, y, startX, startY
+        updatePosition(x, y)
+
+      onEnd = (event)->
+        event.preventDefault()
+        event.stopPropagation()
+        element.off 'touchmove mousemove', onMove
+        element.off 'touchend touchcancel mouseup', onEnd
+        updatePosition(0, 0)
+        #console.log 'end'
+
+      element.on 'touchstart mousedown', (event)->
+        if scope.$eval(exp)
+          event.preventDefault()
+          event.stopPropagation()
+          cords = getCoordinates(event)
+          startX = cords.x
+          startY = cords.y
+          element.on 'touchmove mousemove', onMove
+          element.on 'touchend touchcancel mouseup', onEnd
+
+  )
 
 
 
