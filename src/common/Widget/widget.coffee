@@ -259,9 +259,11 @@ angular.module( 'Widget', [])
       `
 
       exp = attr.draggable
-      startX = startY = 0
+      startX = startY = currentX = currentY = 0
 
       updatePosition = (x, y)->
+        currentX = x
+        currentY = y
         if x or y
           PrefixedStyle element[0], 'transform', "translate3d(#{x}px, #{y}px, 0)"
         else
@@ -289,8 +291,8 @@ angular.module( 'Widget', [])
           event.preventDefault()
           event.stopPropagation()
           cords = getCoordinates(event)
-          startX = cords.x
-          startY = cords.y
+          startX = cords.x - currentX
+          startY = cords.y - currentY
           element.on 'touchmove mousemove', onMove
           element.on 'touchend touchcancel mouseup', onEnd
 

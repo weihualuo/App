@@ -37,14 +37,8 @@ Samsung Tab
 	1280*800*1
 LG
 	424*753*1.7000000476837158
-
 xiaomi:
 	854*480
-	
-	
-	
-solution:
-sidepane: w > 850	
 
 
 

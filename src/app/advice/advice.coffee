@@ -132,7 +132,7 @@ angular.module('app.advice', [])
   )
   .controller('CommentCtrl', ($scope, $controller, Nav, ToggleModal, Popup)->
 
-    console.log 'CommentCtrl', $scope.obj
+    #console.log 'CommentCtrl', $scope.obj
     ctrl = this
     listCtrl = $controller 'ListCtrl', {$scope:$scope, name:'comments'}
 
