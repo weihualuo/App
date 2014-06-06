@@ -283,7 +283,7 @@ angular.module( 'Widget', [])
         event.stopPropagation()
         element.off 'touchmove mousemove', onMove
         element.off 'touchend touchcancel mouseup', onEnd
-        updatePosition(0, 0)
+        #updatePosition(0, 0)
         #console.log 'end'
 
       element.on 'touchstart mousedown', (event)->
@@ -296,6 +296,103 @@ angular.module( 'Widget', [])
           element.on 'touchmove mousemove', onMove
           element.on 'touchend touchcancel mouseup', onEnd
 
+  )
+  .directive( 'orderList', (PrefixedStyle, $document)->
+    controller: ->
+      this
+    link: (scope, element, attr, ctrl)->
+
+      `
+        function getCoordinates(event) {
+          var touches = event.touches && event.touches.length ? event.touches : [event];
+          var e = (event.changedTouches && event.changedTouches[0]) ||
+              (event.originalEvent && event.originalEvent.changedTouches &&
+                  event.originalEvent.changedTouches[0]) ||
+              touches[0].originalEvent || touches[0];
+
+          return {
+            x: e.clientX,
+            y: e.clientY
+          };
+        }
+      `
+      clone = current = null
+      startX = width = lastStep = left = diffx = 0
+
+      swapRight = ()->
+        objects = scope[attr.orderList]
+        index = current.scope().$index
+        if index + 1 < objects.length
+          scope[attr.onSwap]?(index, index+1)
+          scope.$digest()
+          diffx = current[0].offsetLeft - left
+        #console.log 'swap right', index
+        #console.log left, current[0].offsetLeft
+
+      swapLeft = ()->
+        index = current.scope().$index
+        if index > 0
+          scope[attr.onSwap]?(index-1, index)
+          scope.$digest()
+          diffx = current[0].offsetLeft - left
+        #console.log 'swap left', index
+        #console.log left, current[0].offsetLeft
+
+      updatePosition = (x)->
+        if x
+          PrefixedStyle clone[0], 'transform', "translate3d(#{x}px, 0, 0)"
+        else
+          PrefixedStyle clone[0], 'transform', null
+
+      onMove = (event)->
+        event.preventDefault()
+        event.stopPropagation()
+        cords = getCoordinates(event)
+        x = cords.x - startX
+        updatePosition(x)
+        if x - lastStep > 10 and x - diffx > width/2 + 20
+          lastStep = x
+          swapRight()
+        else if x - lastStep < -10 and x - diffx < -width/2 - 20
+          lastStep = x
+          swapLeft()
+
+      onEnd = (event)->
+        event.preventDefault()
+        event.stopPropagation()
+        $document.off 'touchmove mousemove', onMove
+        $document.off 'touchend touchcancel mouseup', onEnd
+        updatePosition(0)
+        current.css visibility: null
+        clone.remove()
+        clone = current = null
+
+      ctrl.onStart = (child, event)->
+        current = child
+        cords = getCoordinates(event)
+        startX = cords.x
+        clone = child.clone()
+        width = child[0].offsetWidth
+        left = child[0].offsetLeft
+        lastStep = diffx = 0
+        clone.css
+          'position': 'absolute'
+          'padding-bottom': '20px'
+          'left': left+'px'
+        element.append clone
+        child.css visibility: 'hidden'
+        $document.on 'touchmove mousemove', onMove
+        $document.on 'touchend touchcancel mouseup', onEnd
+  )
+  .directive('orderable', ()->
+    require: '^orderList'
+    link: (scope, element, attr, ctrl)->
+      exp = attr.orderable
+      element.on 'touchstart mousedown', (event)->
+        if scope.$eval(exp)
+          event.preventDefault()
+          event.stopPropagation()
+          ctrl.onStart(element, event)
   )
 
 

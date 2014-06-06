@@ -146,30 +146,41 @@ angular.module('app.ideabook', [])
           obj:p
         push: yes
 
+    $scope.onSwap = (indexA, indexB)->
+      objects = $scope.objects
+      #swap the objects then swap the order
+      objA = objects[indexA]
+      objB = objects[indexB]
+      objects[indexA] = objB
+      objects[indexB] = objA
+      objA.$dirty = objB.$dirty = yes
+      orderA = objA.order
+      objA.order = objB.order
+      objB.order = orderA
+
     $scope.onEdit = ->
       $scope.editMode = !$scope.editMode
 
     $scope.onSave = ->
-      #console.log obj.$dirty
+
       if obj.$dirty
         obj.$dirty = no
         obj.patch(title:obj.title, desc:obj.desc)
 
       for p in $scope.objects
-        #console.log p.$dirty
         if p.$dirty
           p.$dirty = no
-          p.patch(desc:p.desc)
+          p.patch(desc:p.desc, order:p.order)
+      null
 
     $scope.$watch 'editMode', (value, old)->
       Env.ideabookDetail.right = if value then ['完成'] else ['评论']
       $scope.select = if value then obj else null
-      if old
-        #wait for select digest over
-        $timeout $scope.onSave
+      #wait for select digest over
+      if old then $timeout $scope.onSave
 
     $scope.$watch 'select', (select, old)->
-      if old
+      if old and not old.$dirty
         old.$dirty = $scope.form.$dirty
       if select
         if select.$dirty

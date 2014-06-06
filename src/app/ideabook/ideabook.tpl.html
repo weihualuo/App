@@ -2,7 +2,12 @@
 
 <div class="res-detail-view" loading="!objects.$resolved">
 
-    <div scrollable='x' class="ideabook-view" ng-class="{edit:editMode}">
+    <div scrollable='x'
+         class="ideabook-view"
+         ng-class="{edit:editMode}"
+         order-list='objects'
+         on-swap='onSwap'
+            >
 
         <div class="ideabook-unit text"
              ng-class="{select:select==obj}"
@@ -17,7 +22,7 @@
         <div class="ideabook-unit"
              ng-click="onUnitView(p)"
              ng-class="{select:select==p}"
-             draggable="select==p"
+             orderable="select==p"
              ng-repeat="p in objects track by p.id">
             <div class="ideabook-info">
                 <!--<h3 no-watch="p.image.title"></h3>-->

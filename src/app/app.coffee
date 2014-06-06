@@ -269,7 +269,7 @@ angular.module( 'app', [ 'ngRoute', 'ngTouch', 'ngAnimate', 'ngSanitize',
       $scope.paramUpdateFlag++
 
     $scope.$on 'filter.update', (e, name, search)->
-      console.log 'filter.update', name, search
+      #console.log 'filter.update', name, search
       $scope.updateFilters(name, search)
 
 #    $scope.$on 'envUpdate', ->

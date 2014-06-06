@@ -26,7 +26,7 @@ angular.module('app.photo', ['NewGallery', 'Slide'])
 
   )
   .controller( 'PhotoCtrl', ($scope, $controller, $element, $timeout, $filter, Many, Popup, Nav, Env, ToggleModal) ->
-    console.log 'PhotoCtrl'
+    #console.log 'PhotoCtrl'
 
     #extend from ListCtrl
     $scope.listCtrl =  $controller('ListCtrl', {$scope:$scope, name: 'photos'})

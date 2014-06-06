@@ -30,7 +30,7 @@ angular.module( 'Slide', [])
     Page
   )
   .controller('SlideCtrl', ($scope, $timeout)->
-    console.log 'SlideCtrl'
+    #console.log 'SlideCtrl'
     current = null
     page = null
     ctrl = this
