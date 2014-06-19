@@ -8,3 +8,4 @@ node_modules/
 vendor/
 component/
 deploy.sh
+platform.less
